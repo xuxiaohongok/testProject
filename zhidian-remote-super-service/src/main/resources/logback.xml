@@ -1,0 +1,72 @@
+<!-- DEBUG < INFO < WARN < ERROR < FATAL -->
+<configuration debug="false">
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<!-- encoder 默认配置为PatternLayoutEncoder -->
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
+			</pattern>
+		</encoder>
+	</appender>
+	
+	 <!-- 出错日志 appender  -->
+    <appender name="ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 按天回滚 daily -->
+            <!-- log.dir 在maven profile里配置 -->
+            <fileNamePattern>/var/log/resin/zhidian-remote-service/err/exception-%d{yyyy-MM-dd}.log</fileNamePattern>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger - %msg%n</pattern>
+        </encoder>
+    </appender>
+    
+    <appender name="ERRORREQUSET" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 按天回滚 daily -->
+            <!-- log.dir 在maven profile里配置 -->
+            <fileNamePattern>/var/log/resin/zhidian-remote-service/errRequest/errRequest-%d{yyyy-MM-dd}.log</fileNamePattern>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+  
+  <appender name="apiRequestAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <File>/var/log/resin/zhidian-remote-service/apiRequest/apiRequest-01.log</File>
+    <Append>true</Append>
+    <encoder>
+      <pattern>%m%n</pattern>
+    </encoder>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>/var/log/resin/zhidian-remote-service/apiRequest/apiRequest-01.log.%d{yyyy-MM-dd_HH}</fileNamePattern>
+    </rollingPolicy>
+  </appender> 
+  
+ 	<!--  **********************************************        -->
+	<!--logback.LogbackDemo：类的全路径 -->
+	
+	<logger name="apiRequestLog" level="INFO" additivity="true">
+		<appender-ref ref="apiRequestAppender" />
+	</logger>
+
+	<!--错误日志-->
+    <logger name="exceptionLog" level="info">
+        <appender-ref ref="ERROR"/>
+    </logger>
+    
+    <!--错误请求日志-->
+    <logger name="errRequestLog" level="info">
+        <appender-ref ref="ERRORREQUSET"/>
+    </logger>
+    
+    <!-- spring日志级别设置 -->
+    <logger name="org.springframework" level="WARN"/>
+    <logger name="org.apache.ibatis" level="WARN"/>
+    <logger name="org.apache.http" level="DEBUG"/>
+
+	<root level="baseLog">
+		<appender-ref ref="STDOUT" />
+	</root>
+
+</configuration>
