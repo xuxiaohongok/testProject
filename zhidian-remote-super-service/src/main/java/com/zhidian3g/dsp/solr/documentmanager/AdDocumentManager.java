@@ -13,10 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.zhidian.dsp.constant.DspConstant;
-import com.zhidian3g.common.mail.MailService;
-import com.zhidian3g.common.util.CommonLoggerUtil;
+import com.zhidian.dsp.util.SolrUtil;
 import com.zhidian3g.common.util.PropertiesUtil;
-import com.zhidian3g.common.util.Utils;
 import com.zhidian3g.dsp.solr.SolrServerFactory;
 import com.zhidian3g.dsp.solr.document.DspAdDocument;
 
@@ -49,7 +47,6 @@ public class AdDocumentManager extends DocumentManager<DspAdDocument>{
 	 * @param condition
 	 * @return
 	 */
-	private int excetionCount = 0;
 	private Logger logger = LoggerFactory.getLogger("stdout");
 	public List<Long> searchAdDocumentId(String condition) {
 		long startTime = System.currentTimeMillis();
@@ -65,7 +62,7 @@ public class AdDocumentManager extends DocumentManager<DspAdDocument>{
 			logger.info("查询时间：" + response.getQTime() + "; 查询文档个数：" + docs.getNumFound());
 			if(docs == null || docs.size() == 0) {
 				logger.info("= 根据条件获取不到相应的广告 =");
-				return null;
+				return adIdList;
 			}
 			
 			for(SolrDocument doc : docs ) {
@@ -73,8 +70,8 @@ public class AdDocumentManager extends DocumentManager<DspAdDocument>{
 			}
 			
 		} catch (SolrServerException e) {
-			saveExceptionLogAndSendEmail(e);
-			return null;
+			SolrUtil.saveExceptionLogAndSendEmail(e);
+			return adIdList;
 		}
 		
 		logger.info("查询广告共有：" + adIdList  +";用时：" + ((System.currentTimeMillis() - startTime)/1000.0));
@@ -92,7 +89,7 @@ public class AdDocumentManager extends DocumentManager<DspAdDocument>{
 		SolrQuery query = new SolrQuery();// 查询全部
 		query.setRows(DspConstant.DEFAULT_ROW);
 		if(fifterString != null) {
-			query.addFilterQuery(new String[]{fifterString});
+			query.addFilterQuery(fifterString);
 		}
 		
 		query.setQuery(condition);
@@ -110,7 +107,7 @@ public class AdDocumentManager extends DocumentManager<DspAdDocument>{
 			logger.info("查询时间：" + response.getQTime() + "; 查询文档个数：" + docs.getNumFound());
 			if(docs == null || docs.size() == 0) {
 				logger.info("= 根据条件获取不到相应的广告 =");
-				return null;
+				return adIdList;
 			}
 			
 			for(SolrDocument doc : docs ) {
@@ -131,35 +128,9 @@ public class AdDocumentManager extends DocumentManager<DspAdDocument>{
 			
 			return adIdList;
 		} catch (SolrServerException e) {
-			excetionCount++;
-			if(excetionCount == 3) {
-				String exceptionString = CommonLoggerUtil.getExceptionString(e);
-				MailService.send("广告适配器solr查询异常", "solr查询异常3次了==========   <br>" + exceptionString);
-				CommonLoggerUtil.addExceptionLog(e);
-				Utils.sleepTime(5);
-				/***异常出现三次重启服务器***********************/
-				System.exit(0);
-			}
-			
-			saveExceptionLogAndSendEmail(e);
-			return null;
+			SolrUtil.saveExceptionLogAndSendEmail(e);
+			return adIdList;
 		}
 	}
 	
-	/**
-	 * 
-	 * solr异常同时发送邮件报警
-	 * @param e
-	 */
-	private Integer solrExceptionCount = 0;
-	private void saveExceptionLogAndSendEmail(Exception e) {
-		solrExceptionCount++;
-		String exception = CommonLoggerUtil.getExceptionString(e);
-		CommonLoggerUtil.addExceptionLog(e);
-		MailService.send(DspConstant.IP_ADRESS + " Dsp适配器系统solr异常", "sorl异常=============<br>" + exception);
-		Utils.sleepTime(10);
-		if(solrExceptionCount == 3) {
-			System.exit(0);
-		}
-	}
 }

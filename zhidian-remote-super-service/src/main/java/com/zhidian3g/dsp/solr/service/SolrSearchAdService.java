@@ -1,8 +1,9 @@
 package com.zhidian3g.dsp.solr.service;
 
-import com.zhidian3g.dsp.solr.document.SolrAd;
-import com.zhidian3g.dsp.vo.solr.SearchAd;
+import java.util.Map;
+
+import com.zhidian3g.dsp.vo.solr.SearchAdCondition;
 
 public interface SolrSearchAdService {
-	public SolrAd searchAdFormSolr(SearchAd ad);
+	public Map<String, Object> searchAdFormSolr(SearchAdCondition ad);
 }

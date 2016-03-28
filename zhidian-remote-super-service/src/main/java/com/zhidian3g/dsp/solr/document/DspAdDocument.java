@@ -43,13 +43,7 @@ public class DspAdDocument {
 	private Integer length;
 	
 	@Field
-	private String title;
-	
-	@Field
 	private String areas;
-	
-	@Field("text")
-	private List<String> content;
 
 	public String getId() {
 		return id;
@@ -74,7 +68,6 @@ public class DspAdDocument {
 	public void setAdId(Long adId) {
 		this.adId = adId;
 	}
-
 
 	public String getAdPlatform() {
 		return adPlatform;
@@ -124,22 +117,6 @@ public class DspAdDocument {
 		this.timeZones = timeZones;
 	}
 
-	public String getAreas() {
-		return areas;
-	}
-
-	public void setAreas(String areas) {
-		this.areas = areas;
-	}
-
-	public List<String> getContent() {
-		return content;
-	}
-
-	public void setContent(List<String> content) {
-		this.content = content;
-	}
-
 	public Integer getLength() {
 		return length;
 	}
@@ -148,13 +125,12 @@ public class DspAdDocument {
 		this.length = length;
 	}
 
-	public String getTitle() {
-		return title;
+	public String getAreas() {
+		return areas;
 	}
 
-	public void setTitle(String title) {
-		this.title = title;
+	public void setAreas(String areas) {
+		this.areas = areas;
 	}
 	
-
 }

@@ -41,6 +41,7 @@ public class SolrTest {
 		Ad ad = new Ad();
 		ad.setId(id.longValue());
 		ad.setAdCategory(id);
+		ad.setShowType(id);
 		ad.setAdxType(id);
 		ad.setAdPlatform("android, phone");
 		ad.setAdName("广告");

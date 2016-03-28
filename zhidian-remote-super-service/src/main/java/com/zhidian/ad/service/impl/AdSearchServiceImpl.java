@@ -10,20 +10,29 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import redis.clients.jedis.Jedis;
+
 import com.alibaba.fastjson.JSON;
 import com.zhidian.ad.service.AdSearchService;
 import com.zhidian.dsp.constant.DspConstant;
+import com.zhidian.dsp.constant.RedisConstant;
 import com.zhidian.dsp.util.ImageUrlCache;
 import com.zhidian.remote.vo.request.AdConditionParam;
 import com.zhidian.remote.vo.request.AdRequestParam;
 import com.zhidian.remote.vo.request.AdSlotParam;
+import com.zhidian.remote.vo.request.AssetParam;
+import com.zhidian.remote.vo.request.ImageAdTypeParam;
+import com.zhidian.remote.vo.request.ImgParam;
 import com.zhidian.remote.vo.request.ImpParam;
+import com.zhidian.remote.vo.request.NativeAdTypeParam;
+import com.zhidian.remote.vo.request.TitleParam;
+import com.zhidian3g.common.redisClient.JedisPools;
 import com.zhidian3g.common.util.CommonLoggerUtil;
 import com.zhidian3g.common.util.DateUtil;
+import com.zhidian3g.common.util.JedisUtil;
 import com.zhidian3g.common.util.JsonUtil;
-import com.zhidian3g.dsp.solr.document.SolrAd;
 import com.zhidian3g.dsp.solr.service.SolrSearchAdService;
-import com.zhidian3g.dsp.vo.solr.SearchAd;
+import com.zhidian3g.dsp.vo.solr.SearchAdCondition;
 
 
 /**
@@ -252,6 +261,8 @@ public class AdSearchServiceImpl implements AdSearchService{
 	
 	@Resource
 	private SolrSearchAdService solrSearchAdService;
+	private final String H_W = "*";
+	
 	
 	@Override
 	public String adSearchHanderV1(String adMessage) {
@@ -263,6 +274,7 @@ public class AdSearchServiceImpl implements AdSearchService{
 		//获取终端类型：电脑、移动端
 //		Integer terminalType = param.getTerminalType();
 		String ip = param.getIp();
+		String userId = param.getUserId();
 		String serianlNumber = param.getSerialNumber();
 		
 //		String userId = param.getUserId();
@@ -271,21 +283,63 @@ public class AdSearchServiceImpl implements AdSearchService{
 		List<ImpParam> listImplList = param.getImps();
 		for(ImpParam impParam : listImplList) {
 			CommonLoggerUtil.addBaseLog("传过来的参数impParam：" + JsonUtil.toJson(param));
-			//获取广告展示类型
+			//广告位id
+			String impId = impParam.getImpId();
+			
+			//获取广告展示类型:也就是创意类型
 			Integer showType = impParam.getShowType();
+			
+			//广告创意类型
 			String adType = impParam.getAdType();
 			
+			List<ImageAdTypeParam> imageAdTypeList = null;
+			List<NativeAdTypeParam> nativeAdTypeParamList = null;
+			
 			if(showType == DspConstant.NATIVE_AD_TYPE) {
+				NativeAdTypeParam nativeAdTypeParam = null;
+				nativeAdTypeParam = impParam.getNativeAdTypes().get(0);
+				Integer bids = nativeAdTypeParam.getPlcmtcnt();
 				
+				List<AssetParam> listAssetParams = nativeAdTypeParam.getAssets();
+				for(AssetParam asseet:listAssetParams) {
+					int isAdRequire = asseet.getIsRequiredAd();
+					//如果是不必要的广告暂时过滤掉
+					if(isAdRequire == 0) continue;
+					//广告查询条件对象
+					SearchAdCondition searchAd = new SearchAdCondition(userId, DspConstant.ADX_TYPE + adxType, DspConstant.AD_SHOW_TYPE + showType, ip);
+					
+					
+					TitleParam titleParam = asseet.getTitle();
+					//设置标题条件
+					if(titleParam != null) {
+						Integer len = titleParam.getLen();
+						searchAd.setLength(len);
+					}
+					
+					//设置图片条件
+					ImgParam imgParam = asseet.getImg();
+					if(imgParam != null) {
+						String imageHW = imgParam.getH() + H_W + imgParam.getW();
+						searchAd.setAdHW(imageHW);
+					}
+					
+					Map<String, Object> adMap = solrSearchAdService.searchAdFormSolr(searchAd);
+					if(adMap == null) {
+						CommonLoggerUtil.addBaseLog("=======获取不了广告===" + JsonUtil.toJson(impParam));
+					}
+				}
 			} else if(showType == DspConstant.IMAGE_TYPE) {
-				
+				//广告查询条件对象
+				SearchAdCondition searchAd = new SearchAdCondition(userId, DspConstant.ADX_TYPE + adxType, DspConstant.AD_SHOW_TYPE + showType, ip);
+				imageAdTypeList = impParam.getImageAdType();
+				ImageAdTypeParam imageAdTypeParam = imageAdTypeList.get(0) ;
+				String imageHW = imageAdTypeParam.getHeight() + H_W + imageAdTypeParam.getWidth();
+				searchAd.setShowType(DspConstant.AD_SHOW_TYPE + showType);
+				searchAd.setAdHW(imageHW);
+				Map<String, Object> adMap = solrSearchAdService.searchAdFormSolr(searchAd);
 			}
-			
-			SearchAd searchAd = new SearchAd();
-			
-			SolrAd solrAd = solrSearchAdService.searchAdFormSolr(searchAd);
+			//条件
 		}
-		
 		
 		param.getBidType();
 		return JSON.toJSONString(map);

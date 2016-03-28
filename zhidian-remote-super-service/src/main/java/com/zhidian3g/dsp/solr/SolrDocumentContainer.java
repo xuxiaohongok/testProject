@@ -21,14 +21,14 @@ public class SolrDocumentContainer {
 		String title = ad.getTitle();
 		DspAdDocument adDocument = new DspAdDocument();
 		adDocument.setId("id" + ad.getId());
+		adDocument.setAdxType(DspConstant.ADX_TYPE + ad.getAdxType());
+		adDocument.setShowType(DspConstant.AD_SHOW_TYPE + ad.getShowType());
 		adDocument.setAdId(ad.getId());
-		adDocument.setAdxType(DspConstant.ADX_TYPE + 1);
 		adDocument.setAdHW(ad.getHeight() + "*" + ad.getWidth());
 		adDocument.setAdType(DspConstant.AD_TYPE + ad.getAdxType());
 		adDocument.setAdCategory(DspConstant.AD_CATEGORY + ad.getAdCategory());
 		adDocument.setAdPlatform(ad.getAdPlatform());
 		adDocument.setAreas(ad.getAreas());
-		adDocument.setTitle(title);
 		adDocument.setLength(title.length());
 		adDocument.setTimeZones(ad.getTimeZones());
     	return adDocument;

@@ -1,6 +1,6 @@
 package com.zhidian.dsp.util;
 
-import com.zhidian.dsp.constant.DspConstant;
+import com.zhidian.dsp.constant.PropertieConstant;
 import com.zhidian3g.common.mail.MailService;
 import com.zhidian3g.common.util.CommonLoggerUtil;
 import com.zhidian3g.common.util.Utils;
@@ -17,9 +17,9 @@ public class SolrUtil {
 		solrExceptionCount++;
 		String exception = CommonLoggerUtil.getExceptionString(e);
 		CommonLoggerUtil.addExceptionLog(e);
-		MailService.send(DspConstant.IP_ADRESS + " Dsp适配器系统solr异常", "sorl异常=============<br>" + exception);
+		MailService.send(PropertieConstant.IP_ADRESS + " Dsp适配器系统solr异常", "sorl异常=============<br>" + exception);
 		Utils.sleepTime(10);
-		if(solrExceptionCount == 3) {
+		if(solrExceptionCount == 6) {
 			System.exit(0);
 		}
 	}
