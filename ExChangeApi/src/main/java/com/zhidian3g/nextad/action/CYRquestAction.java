@@ -233,8 +233,8 @@ public class CYRquestAction {
 //		String valueString = null;
 		Set<String> adSortSet = adSortSetResponse.get();
 		Set<String> stopAdSet = stopAdSetResponse.get();
-		adSortSet.removeAll(stopAdSet);
 		LoggerUtil.addBaseLog("当前广告有：[" + adSortSet + "] =需要停止投放的广告有=" + stopAdSet);
+		adSortSet.removeAll(stopAdSet);
 		LoggerUtil.addBaseLog("过滤掉的广告剩下广告：" + adSortSet);
 		
 		if(adSortSet == null || adSortSet.size() == 0) {

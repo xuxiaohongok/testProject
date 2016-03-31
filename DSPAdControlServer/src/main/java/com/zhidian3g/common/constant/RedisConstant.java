@@ -4,7 +4,6 @@ public class RedisConstant {
 	/******广告id的排序集合*********/
 	public static String AD_IDS_KEY = "ad_ids_key";
 	
-	public static String AD_DEL_KEY = "ad_del_key";
 	/******广告的基本信息key value 前缀*********/
 	public static String AD_BASE = "ad_base_";
 	/******广告展示类型信息key value 前缀 + adId + "_" + adSlotType*********/

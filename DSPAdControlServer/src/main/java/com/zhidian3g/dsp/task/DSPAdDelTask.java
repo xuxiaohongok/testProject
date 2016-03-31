@@ -27,10 +27,8 @@ public class DSPAdDelTask implements Runnable {
   				if(StringUtils.isNotBlank(delAdId)) {
 					//从广告排序中移除
 //  					ZRANGEBYSCORE
-  					Double score = jedis.zscore(RedisConstant.AD_IDS_KEY, delAdId);
   					jedis.zrem(RedisConstant.AD_IDS_KEY, delAdId);
   					jedis.lrem(RedisConstant.BACKUP_DEL_ADID, 0, delAdId);
-  					jedis.zadd(RedisConstant.AD_DEL_KEY, score,delAdId);
   					LoggerUtil.addTimeLog("===========删除的广告Id============delAdId=" + delAdId);
 				} else {
 					LoggerUtil.addTimeLog("=======cx=====没有删除的广告Id=============");
