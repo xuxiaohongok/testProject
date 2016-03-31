@@ -31,26 +31,23 @@ public class DSPAdControlCountTimer implements Job{
 		Jedis jedis = jedisPools.getJedis();
 		
 		Set<String> adIdSet = new HashSet<String>();
-		Map<Double, String> scoreMap = new HashMap<Double, String>();
 		Set<Tuple> delSetTuple = jedis.zrangeWithScores(RedisConstant.AD_DEL_KEY, 0, -1);
 		
 		for(Tuple tuple : delSetTuple) {
 			adIdSet.add(tuple.getElement());
-			scoreMap.put(tuple.getScore(), tuple.getElement());
+			jedis.zadd(RedisConstant.AD_IDS_KEY, tuple.getScore(), tuple.getElement());
+			LoggerUtil.addTimeLog("==删除的广告=========" + tuple.getElement() + ";" + tuple.getScore());
 		}
-		
-		LoggerUtil.addTimeLog("======delScoreMap======" + scoreMap);
 		
 		Set<Tuple> adTuple = jedis.zrangeWithScores(RedisConstant.AD_IDS_KEY, 0, -1);
 		for(Tuple tuple : adTuple) {
 			adIdSet.add(tuple.getElement());
-			scoreMap.put(tuple.getScore(), tuple.getElement());
+			jedis.zadd(RedisConstant.AD_IDS_KEY, tuple.getScore(), tuple.getElement());
+			LoggerUtil.addTimeLog("==剩下的广告Id:======" + tuple.getElement() + ";" + tuple.getScore());
 		}
-		LoggerUtil.addTimeLog("======allScoreMap======" + scoreMap);
 		
 		AdControlUtil.setAdControlTimes(adIdSet);
 		jedis.del(RedisConstant.AD_DEL_KEY);
-		jedis.zadd(RedisConstant.AD_IDS_KEY, scoreMap);
 		jedisPools.closeJedis(jedis);
 		LoggerUtil.addTimeLog("======dsp定时调整广告频次======");
 	}
