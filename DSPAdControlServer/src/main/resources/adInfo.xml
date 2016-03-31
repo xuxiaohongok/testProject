@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ad-info>
+    <ad description="广告说明">
+        <adId>1</adId>
+        <name>散人</name>
+        <clickType>99</clickType>
+        <title>广告测试1</title>
+        <adCategory>1</adCategory>
+        <adAccountCost>3000</adAccountCost> 
+        <adDayBudget>500</adDayBudget>
+        <adPrice>2</adPrice>
+        <startDate>2016-03-31</startDate>
+        <endDate>2016-04-05</endDate>
+        <adSlot>
+        	<!--广告展示类型 悬浮  -->
+        	<adSlotType>1</adSlotType>
+        	<createId>1</createId>
+        	<landingPageId>1</landingPageId>
+        	<landingPage>http://d.zhidian3g.cn/zdy6/static/srsf/16022928000.html</landingPage>
+        	<adm>http://d.zhidian3g.cn/zhidian-smart/zpgame/640x100fly.jpg</adm>
+        </adSlot>
+        
+        <adSlot>
+        	<!--广告展示类型 banner -->
+        	<adSlotType>13</adSlotType>
+        	<createId>2</createId>
+        	<landingPageId>2</landingPageId>
+        	<landingPage>http://d.zhidian3g.cn/zdy6/static/srsf/16011556969.html</landingPage>
+        	<adm>http://d.zhidian3g.cn/zhidian-smart/zpgame/640x100banner.jpg</adm>
+        </adSlot>
+    </ad>
+    
+     <ad description="广告说明">
+        <adId>2</adId>
+        <name>开心消之旅</name>
+        <clickType>99</clickType>
+        <title>开心消之旅</title>
+        <adCategory>1</adCategory>
+        <adAccountCost>600</adAccountCost> 
+        <adDayBudget>300</adDayBudget>
+        <adPrice>0.8</adPrice>
+        <startDate>2016-03-31</startDate>
+        <endDate>2016-04-01</endDate>
+        <adSlot>
+        	<!--广告展示类型 悬浮  -->
+        	<adSlotType>1</adSlotType>
+        	<createId>3</createId>
+        	<landingPageId>3</landingPageId>
+        	<landingPage>http://s.llj.me/ttxzl/index.html</landingPage>
+        	<adm>http://d.zhidian3g.cn/zhidian-smart/cy/2/640x100.jpg</adm>
+        </adSlot>
+        
+        <adSlot>
+        	<!--广告展示类型 banner -->
+        	<adSlotType>13</adSlotType>
+        	<createId>4</createId>
+        	<landingPageId>4</landingPageId>
+        	<landingPage>http://s.llj.me/ttxzl/index.html</landingPage>
+        	<adm>http://d.zhidian3g.cn/zhidian-smart/cy/2/640x100.jpg</adm>
+        </adSlot>
+    </ad>
+    
+</ad-info>

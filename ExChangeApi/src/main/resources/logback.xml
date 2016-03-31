@@ -1,0 +1,186 @@
+<!-- DEBUG < INFO < WARN < ERROR < FATAL -->
+<configuration debug="false">
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<!-- encoder 默认配置为PatternLayoutEncoder -->
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
+			</pattern>
+		</encoder>
+	</appender>
+
+	<!-- 出错日志 appender -->
+	<appender name="ERROR"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!-- 按天回滚 daily -->
+			<!-- log.dir 在maven profile里配置 -->
+			<fileNamePattern>/var/log/resin/ExChangeApi/err/exception-%d{yyyy-MM-dd}.log
+			</fileNamePattern>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger - %msg%n
+			</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="ERRORREQUSET"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!-- 按天回滚 daily -->
+			<!-- log.dir 在maven profile里配置 -->
+			<fileNamePattern>/var/log/resin/ExChangeApi/errRequest/errRequest-%d{yyyy-MM-dd}.log
+			</fileNamePattern>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger - %msg%n
+			</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="requestAppender"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>/var/log/resin/ExChangeApi/cyRequestLog/cyRequestLog-01.log
+		</File>
+		<Append>true</Append>
+		<encoder>
+			<pattern>%m%n</pattern>
+		</encoder>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>/var/log/resin/ExChangeApi/cyRequestLog/cyRequestLog-01.log.%d{yyyy-MM-dd_HH}
+			</fileNamePattern>
+		</rollingPolicy>
+	</appender>
+
+	<appender name="pcAppender"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>/var/log/resin/ExChangeApi/pcLog/pcLog-01.log
+		</File>
+		<Append>true</Append>
+		<encoder>
+			<pattern>%m%n</pattern>
+		</encoder>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>/var/log/resin/ExChangeApi/pcLog/pcLog-01.log.%d{yyyy-MM-dd_HH}
+			</fileNamePattern>
+		</rollingPolicy>
+	</appender>
+
+	<appender name="cyWinAppender"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>/var/log/resin/ExChangeApi/cyWinLog/cyWinLog-01.log</File>
+		<Append>true</Append>
+		<encoder>
+			<pattern>%m%n</pattern>
+		</encoder>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>/var/log/resin/ExChangeApi/cyWinLog/cyWinLog-01.log.%d{yyyy-MM-dd_HH}
+			</fileNamePattern>
+		</rollingPolicy>
+	</appender>
+
+	<appender name="cyClickAppender"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>/var/log/resin/ExChangeApi/cyClickLog/cyClickLog-01.log</File>
+		<Append>true</Append>
+		<encoder>
+			<pattern>%m%n</pattern>
+		</encoder>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>/var/log/resin/ExChangeApi/cyClickLog/cyClickLog-01.log.%d{yyyy-MM-dd_HH}
+			</fileNamePattern>
+		</rollingPolicy>
+	</appender>
+	
+	<appender name="cyShowAppender"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>/var/log/resin/ExChangeApi/cyShowLog/cyShowLog-01.log</File>
+		<Append>true</Append>
+		<encoder>
+			<pattern>%m%n</pattern>
+		</encoder>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>/var/log/resin/ExChangeApi/cyShowLog/cyShowLog-01.log.%d{yyyy-MM-dd_HH}
+			</fileNamePattern>
+		</rollingPolicy>
+	</appender>
+
+	<appender name="cyBillingAppender"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>/var/log/resin/ExChangeApi/billingLog/billingLog-01.log</File>
+		<Append>true</Append>
+		<encoder>
+			<pattern>%m%n</pattern>
+		</encoder>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>/var/log/resin/ExChangeApi/billingLog/billingLog-01.log.%d{yyyy-MM-dd_HH}
+			</fileNamePattern>
+		</rollingPolicy>
+	</appender>
+
+	<!-- ********************************************** -->
+	<!--logback.LogbackDemo：类的全路径 -->
+	<logger name="cyRequestLog" level="INFO" additivity="true">
+		<appender-ref ref="requestAppender" />
+	</logger>
+
+	<logger name="pcLog" level="INFO" additivity="true">
+		<appender-ref ref="pcAppender" />
+	</logger>
+
+
+	<logger name="cyWinLog" level="INFO" additivity="true">
+		<appender-ref ref="cyWinAppender" />
+	</logger>
+
+	<logger name="cyClickLog" level="INFO" additivity="true">
+		<appender-ref ref="cyClickAppender" />
+	</logger>
+	
+	<appender name="cyDownloadPostBackAppender"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>/var/log/resin/ExChangeApi/cyDownloadPostBackLog/cyDownloadPostBackLog-01.log</File>
+		<Append>true</Append>
+		<encoder>
+			<pattern>%m%n</pattern>
+		</encoder>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>/var/log/resin/ExChangeApi/cyDownloadPostBackLog/cyDownloadPostBackLog-01.log.%d{yyyy-MM-dd_HH}
+			</fileNamePattern>
+		</rollingPolicy>
+	</appender>
+	
+	<logger name="cyDownloadPostBackLog" level="INFO" additivity="true">
+		<appender-ref ref="cyDownloadPostBackAppender" />
+	</logger>
+	
+	
+	<logger name="cyShowLog" level="INFO" additivity="true">
+		<appender-ref ref="cyShowAppender" />
+	</logger>
+
+	<logger name="billingLog" level="INFO" additivity="true">
+		<appender-ref ref="cyBillingAppender" />
+	</logger>
+	
+
+	<!--错误日志 -->
+	<logger name="exceptionLog" level="info">
+		<appender-ref ref="ERROR" />
+	</logger>
+
+	<!--错误请求日志 -->
+	<logger name="errRequestLog" level="info">
+		<appender-ref ref="ERRORREQUSET" />
+	</logger>
+
+	<!-- spring日志级别设置 -->
+	<logger name="org.springframework" level="WARN" />
+	<logger name="org.apache.ibatis" level="WARN" />
+
+	<root level="baseLog">
+		<appender-ref ref="STDOUT" />
+	</root>
+	
+	
+
+</configuration>

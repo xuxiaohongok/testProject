@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jaxws="http://cxf.apache.org/jaxws"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans  
+		http://www.springframework.org/schema/beans/spring-beans-3.2.xsd  
+		http://www.springframework.org/schema/context  
+		http://www.springframework.org/schema/context/spring-context-3.2.xsd  
+		http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
+
+	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE" />
+		<property name="ignoreResourceNotFound" value="true" />
+		<property name="locations">
+			<list>
+				<value>classpath*:application.properties</value>
+			</list>
+		</property>
+	</bean>
+
+	<!-- activates annotations (@Service, @Component, @Autowired) -->
+	<context:component-scan base-package="com.zhidian3g.nextad.webservice, com.zhidian3g.nextad.service,com.zhidian3g.cx.webservice,com.zhidian3g.cx.service" />
+	<import resource="classpath:application-mybatis.xml"/>
+	<!-- nextAd发布webservice服务 -->
+	<jaxws:endpoint id="adControlAdMarketServerServiceWS" implementor="#adControlAdMarketServerService" address="/adControlAdMarketServerService"/>
+	<jaxws:endpoint id="adControlAdCenterServerServiceWS" implementor="#adControlAdCenterServerService" address="/adControlAdCenterServerService"/>
+	
+	<!-- cx发布webservice服务 -->
+	<jaxws:endpoint id="cxNextadAdControlServiceWS" implementor="#cxNextadAdControlService" address="/cxNextadAdControlService"/>
+	
+	<!-- webservice客户端 -->
+	<!-- nextAd计费系统远程服务接口  -->
+	<jaxws:client id="billingServiceClient"
+              serviceClass="com.zhidian3g.nextad.webservice.billing.AdControlServerBillingService"
+              address="http://192.168.0.78:8088/Nextad_AdBillingServer/adControlServerBillingService?wsdl" />
+              <!-- address="http://adbilling.nextadingtest.com/adControlServerBillingService?wsdl" /> --> 
+              <!-- address="http://adbillingtest.nextading.com:888/adControlServerBillingService?wsdl" /> -->
+              
+              
+     <!-- nextAd适配器系统远程服务接口 -->
+    <jaxws:client id="adMatchingServiceClient"
+    	serviceClass="com.zhidian3g.nextad.webservice.admatching.AdMatchingDMIService"
+    	address="http://192.168.0.78:8088/Nextad_AdMatchingServer/adMatchingDMIService?wsdl"/>
+     	<!-- address="http://admatching.nextadingtest.com/adMatchingDMIService?wsdl"/> -->
+    	
+    <!-- cx计费系统远程服务接口  -->
+	 <jaxws:client id="cxbillingServiceClient"
+    	serviceClass="com.zhidian3g.cx.webservice.billing.CXAdControlServerBillingService"
+     	address="http://192.168.0.78:8088/Nextad_AdBillingServer/cxAdControlServerBillingService?wsdl"/>
+     	
+     <!-- nextAd适配器系统远程服务接口 -->
+   	 <jaxws:client id="cxAdMatchingDMIServiceClient"
+    	serviceClass="com.zhidian3g.cx.webservice.admatching.CXAdMatchingDMIService"
+     	address="http://192.168.0.78:8088/Nextad_AdMatchingServer/cxAdMatchingDMIService?wsdl"/>
+     	
+     	 <!-- nextAdCxApi系统远程服务接口 -->
+   	 <jaxws:client id="cxApiControlServiceClient"
+    	serviceClass="com.zhidian3g.cx.webservice.nextadcxapi.CXApiControlService"
+     	address="http://192.168.2.225:8080/ws/cxApiControlService?wsdl"/>
+     	
+</beans>
