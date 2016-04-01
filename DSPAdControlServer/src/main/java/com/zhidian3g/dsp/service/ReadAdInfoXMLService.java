@@ -90,11 +90,11 @@ public class ReadAdInfoXMLService{
 				if(DateUtil.compareDate(nowDateString, startDate)){
 					LoggerUtil.addTimeLog("广告adId=" + adId + "  " + startDate + " 开启时间还没到");
 					jedisPools.closeJedis(jedis);
-	    			return;
+					continue;
 				} else if (DateUtil.compareDate(endDate, nowDateString)) {
 					LoggerUtil.addTimeLog("广告adId=" + adId + "  " + startDate + " 开启时间已经过期");
 					jedisPools.closeJedis(jedis);
-	    			return;
+					continue;
 				}
 			    
 			    Integer clickType = Integer.valueOf(e.getChildText("clickType"));

@@ -1,7 +1,10 @@
 package com.zhidian3g.test;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.junit.Test;
@@ -9,9 +12,13 @@ import org.junit.Test;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Pipeline;
 import redis.clients.jedis.Response;
+import redis.clients.jedis.Tuple;
 
 import com.zhidian3g.common.constant.RedisConstant;
 import com.zhidian3g.dsp.redisClient.JedisPools;
+import com.zhidian3g.dsp.util.AdControlUtil;
+import com.zhidian3g.dsp.util.DateUtil;
+import com.zhidian3g.dsp.util.LoggerUtil;
 
 public class BaseTest {
 	
@@ -42,6 +49,14 @@ public class BaseTest {
 		System.out.println("当前广告有：[" + adSortSet + "] =需要停止投放的广告有=" + stopAdSet);
 		System.out.println("过滤掉的广告剩下广告：" + adSortSet);
 //		AdControlUtil.setAdControlTimes(adIdSet);
+		
+		
+		Map<Double, String> scoreMap = new HashMap<Double, String>();
+		scoreMap.put(800.0, "12");
+		scoreMap.put(800.0, "13");
+		jedis.zadd("test" ,scoreMap);
+		
+		
 		jedisPools.closeJedis(jedis);
 	}
 	

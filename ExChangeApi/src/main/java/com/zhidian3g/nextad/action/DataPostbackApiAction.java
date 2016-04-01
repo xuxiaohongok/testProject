@@ -99,6 +99,8 @@ public class DataPostbackApiAction {
 			//说明费用已经用光
 			jedis.lpush(RedisConstant.DEL_ADID,  adId);
 			LoggerUtil.addBillingLog("===" + DateUtil.getDateTime() + "==广告id=" +adId+ "=费用已经用光======");
+		} else if(statusCode == -1) {
+			LoggerUtil.addBillingLog(DateUtil.getDateTime() + "==不存在的广告=id=" +adId);
 		}
 		
 		jedisPools.closeJedis(jedis);

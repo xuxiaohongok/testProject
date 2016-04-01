@@ -17,27 +17,32 @@ public class DSPAdBillingService {
 		Jedis jedis = null;
 		try {
 			jedis = jedisPools.getJedis();
-			String date = DateUtil.getDate();
+			String date = DateUtil.getDateTime();
 			if(jedis != null) {
-//				long count = jedis.decr(adBudegetKey);
-				long adPrice = price.longValue()/1000;
-				long count = jedis.decrBy(adBudegetKey, adPrice);
-				LoggerUtil.addBillingLog(date + " 广告adId" + adId + "扣取费用:" + adPrice + ";剩下日预算为======="+ count);
-				if(count < 0) {
-					//失败
-					statusCode = 0;
-					long lastCount = jedis.incrBy(adBudegetKey, adPrice);
-					LoggerUtil.addBillingLog(date + " 广告adId" + adId + " 日预算已经用关======count="+(count+1)+"==lastCount=" + lastCount + "==");
-				} else if(count == 0) {
-					statusCode = 2;
-					LoggerUtil.addBillingLog(DateUtil.getDateTime() + "  广告adId" + adId + " 日预算刚好用关");
+				if(!jedis.exists(adBudegetKey)) {
+					//不存在的广告
+					statusCode = -1;
+					LoggerUtil.addBillingLog("=====不存在广告===:" + adId);
 				} else {
-					//成功扣取
-					statusCode = 1;
+					//存在广告的日预算处理
+					long adPrice = price.longValue()/1000;
+					long count = jedis.decrBy(adBudegetKey, adPrice);
+					LoggerUtil.addBillingLog(date + " 广告adId" + adId + "扣取费用:" + adPrice + ";剩下日预算为======="+ count);
+					if(count < 0) {
+						//日预算已经用关
+						statusCode = 0;
+						LoggerUtil.addBillingLog(date + " 广告adId" + adId + " 日预算已经用关======count="+ (count+1));
+					} else if(count == 0) {
+						statusCode = 2;
+						LoggerUtil.addBillingLog(DateUtil.getDateTime() + "  广告adId" + adId + " 日预算刚好用关");
+					} else {
+						//成功扣取
+						statusCode = 1;
+					}
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			LoggerUtil.addExceptionLog(e);
 			statusCode = 5;
 			jedisPools.exceptionBroken(jedis);
 		} finally {

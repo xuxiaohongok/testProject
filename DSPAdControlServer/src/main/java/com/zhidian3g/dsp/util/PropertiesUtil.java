@@ -34,7 +34,6 @@ public final class PropertiesUtil {
 			value = rb.getString(key);
 			value=new String(value.getBytes("ISO-8859-1"),"utf-8");
 		} catch (MissingResourceException e) {
-//			e.printStackTrace();
 			value = "";
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();

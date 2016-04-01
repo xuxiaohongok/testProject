@@ -119,7 +119,7 @@
 
 	<!-- ********************************************** -->
 	<!--logback.LogbackDemo：类的全路径 -->
-	<logger name="cyRequestLog" level="INFO" additivity="true">
+	<logger name="cyRequestLog" level="INFO" additivity="false">
 		<appender-ref ref="requestAppender" />
 	</logger>
 
@@ -154,7 +154,7 @@
 	</logger>
 	
 	
-	<logger name="cyShowLog" level="INFO" additivity="true">
+	<logger name="cyShowLog" level="INFO" additivity="false">
 		<appender-ref ref="cyShowAppender" />
 	</logger>
 
@@ -177,10 +177,8 @@
 	<logger name="org.springframework" level="WARN" />
 	<logger name="org.apache.ibatis" level="WARN" />
 
-	<root level="baseLog">
+	<root name="baseLog" level="WARN">
 		<appender-ref ref="STDOUT" />
 	</root>
 	
-	
-
 </configuration>

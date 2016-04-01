@@ -26,6 +26,7 @@ import com.alibaba.fastjson.JSON;
 import com.sohu.advert.rtb.proto.ChangyanRtb.BidRequest;
 import com.sohu.advert.rtb.proto.ChangyanRtb.BidRequest.AdSlot;
 import com.sohu.advert.rtb.proto.ChangyanRtb.BidRequest.AdSlot.Position;
+import com.sohu.advert.rtb.proto.ChangyanRtb.BidRequest.Mobile;
 import com.sohu.advert.rtb.proto.ChangyanRtb.BidResponse;
 import com.sohu.advert.rtb.proto.ChangyanRtb.BidResponse.Ad;
 import com.sohu.advert.rtb.proto.ChangyanRtb.BidResponse.Ad.ExposureUrl;
@@ -63,8 +64,8 @@ public class CYRquestAction {
 			//dsp保存的对应畅言用户id
 			
 			String cyUserId = bidRequest.getChangyanId().getChangyanUserId();;//bidRequest.getCyUserId();
-			System.out.println("cyUserId=" + cyUserId);
-			System.out.println("bidRequest=" + bidRequest);
+//			System.out.println("cyUserId=" + cyUserId);
+//			System.out.println("bidRequest=" + bidRequest);
 			
 			//判断是否是pc端,直接过滤
 			if(!isMobile) {
@@ -72,6 +73,13 @@ public class CYRquestAction {
 				return;
 				//移动端
 			} else {
+				int number = bidRequest.getMobile().getPlatform().getNumber();
+				if(number != 2) {
+					//过滤掉不是安卓平台的
+					System.out.println("=====不是安卓平台========" + number);
+					return;
+				} 
+				
 				List<AdSlot> adSlotList = bidRequest.getAdslotList();
 				//获取广告位信息
 				Integer adSlotType = null;

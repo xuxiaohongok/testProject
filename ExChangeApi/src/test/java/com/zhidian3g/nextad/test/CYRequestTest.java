@@ -23,7 +23,7 @@ public class CYRequestTest {
 	@Test
 	public void testCYAPI() {
 		try {
-			for(int i=0; i<10; i++) {
+			for(int i=0; i<1; i++) {
 				upload("testiiiifhs2" + i);
 //				Thread.sleep(10);
 //				upload("testiiii2" + i);
@@ -43,9 +43,9 @@ public class CYRequestTest {
 	
 	private int count = 0;
 	private void upload(String cyRequestId) throws IOException {  
-		String url = "http://bjdsp.zhidian3g.cn/cyDspTest.shtml";
+//		String url = "http://bjdsp.zhidian3g.cn/cyDspTest.shtml";
 //		String url = "http://dsp.zhidian3g.cn/cyDspTest.shtml";
-//		String url = "http://192.168.2.78:8089/ExChangeApi/cyDspTest.shtml";
+		String url = "http://192.168.2.78:8089/ExChangeApi/cyDspTest.shtml";
 //		String url = "http://zdsp.nextading.com/cyDspTest.shtml";
 //		String url = "http://192.168.2.78:8089/ExChangeApi/addpb.shtml";
 //		String url = "http://localhost:8089/ExChangeApi/cyDspTest.shtml";
@@ -122,10 +122,10 @@ public class CYRequestTest {
         outputStream.flush();  
         outputStream.close();  
        
-        download(winUrl);
-        download(showUrl);
-        download(clickUrl);
-        download(clickUrl1);
+//        download(winUrl);
+//        download(showUrl);
+//        download(clickUrl);
+//        download(clickUrl1);
         
         System.out.println(requestId + "=====end");
     }  

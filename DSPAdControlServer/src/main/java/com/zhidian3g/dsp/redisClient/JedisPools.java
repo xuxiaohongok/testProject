@@ -1,14 +1,11 @@
 package com.zhidian3g.dsp.redisClient;
 
-import java.net.Inet6Address;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
-import java.util.Enumeration;
 import org.apache.commons.lang.StringUtils;
+
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
+
 import com.zhidian3g.dsp.mail.MailService;
 import com.zhidian3g.dsp.util.LoggerUtil;
 import com.zhidian3g.dsp.util.PropertiesUtil;
