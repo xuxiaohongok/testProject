@@ -7,10 +7,16 @@
         <title>广告测试1</title>
         <adCategory>1</adCategory>
         <adAccountCost>3000</adAccountCost> 
-        <adDayBudget>500</adDayBudget>
         <adPrice>0.8</adPrice>
-        <startDate>2016-03-31</startDate>
-        <endDate>2016-04-05</endDate>
+        
+        <dates>
+        	<date dateString="2016-04-07" budget="600"/>
+        	<date dateString="2016-04-08" budget="700"/>
+        	<date dateString="2016-04-09" budget="800"/>
+        	<date dateString="2016-04-10" budget="500"/>
+        	<date dateString="2016-04-11" budget="500"/>
+        </dates>
+        
         <adSlot>
         	<!--广告展示类型 悬浮  -->
         	<adSlotType>1</adSlotType>
@@ -37,10 +43,16 @@
         <title>开心消之旅</title>
         <adCategory>1</adCategory>
         <adAccountCost>600</adAccountCost> 
-        <adDayBudget>300</adDayBudget>
         <adPrice>0.8</adPrice>
-        <startDate>2016-03-31</startDate>
-        <endDate>2016-04-01</endDate>
+        
+        <dates>
+        	<date dateString="2016-04-07" budget="500"/>
+        	<date dateString="2016-04-08" budget="600"/>
+        	<date dateString="2016-04-09" budget="700"/>
+        	<date dateString="2016-04-10" budget="500"/>
+        	<date dateString="2016-04-11" budget="500"/>
+        </dates>
+        
         <adSlot>
         	<!--广告展示类型 悬浮  -->
         	<adSlotType>1</adSlotType>

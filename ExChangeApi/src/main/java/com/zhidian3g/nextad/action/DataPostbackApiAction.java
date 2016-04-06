@@ -72,9 +72,15 @@ public class DataPostbackApiAction {
 		Integer adSlotType = adPostBackMessage.getAdSlotType();
 		
 		Jedis jedis = jedisPools.getJedis();
+		if(!jedis.hexists(RedisConstant.AD_ID_CONTROL_COUNT, adId)) {
+			jedisPools.closeJedis(jedis);
+			response.setStatus(200);
+			LoggerUtil.addBillingLog("adId=" + adId + "==========不存在======");
+			return;
+		}
+		
 		//说明已经达到控制的广告量
 		Long adControlCount = jedis.hincrBy(RedisConstant.AD_ID_CONTROL_COUNT, adId, -1);
-		
 		if(adControlCount <=0) {
 			//设置成过滤的广告
 			jedis.sadd(RedisConstant.AD_STOP_IDS, adId);
@@ -98,10 +104,8 @@ public class DataPostbackApiAction {
 		if(statusCode == 0 || statusCode == 2) {
 			//说明费用已经用光
 			jedis.lpush(RedisConstant.DEL_ADID,  adId);
-			LoggerUtil.addBillingLog("===" + DateUtil.getDateTime() + "==广告id=" +adId+ "=费用已经用光======");
-		} else if(statusCode == -1) {
-			LoggerUtil.addBillingLog(DateUtil.getDateTime() + "==不存在的广告=id=" +adId);
-		}
+			LoggerUtil.addBillingLog("===" + DateUtil.getDateTime() + "==广告id=" +adId+ "=费用已经用光=====price=" + price);
+		} 
 		
 		jedisPools.closeJedis(jedis);
 		LoggerUtil.addShowLogegerMessage(adPostBackMessage);

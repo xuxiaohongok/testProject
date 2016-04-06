@@ -23,6 +23,7 @@ public class AdControlUtil {
 		
 		JedisPools jedisPools = JedisPools.getInstance();
 		Jedis jedis = jedisPools.getJedis();
+		jedis.del(RedisConstant.AD_ID_CONTROL_COUNT);
 		//获取当前的广告id
 		for(String adId : adIdSet) {
 			//获取每个广告当前的日预算
@@ -37,7 +38,7 @@ public class AdControlUtil {
 				Long count = (adDayBuget*1000)/(price*subTimes);//千次展示
 				//广告频次次数key
 				jedis.hset(RedisConstant.AD_ID_CONTROL_COUNT, adId, count + "");
-				LoggerUtil.addTimeLog("==这次时间限制的次数=" + count);
+				LoggerUtil.addTimeLog("adId=" + adId + "在" + DateUtil.getDateTime() + "时间限制的次数=" + count);
 			} catch (Exception e) {
 				jedisPools.exceptionBroken(jedis);
 				LoggerUtil.addExceptionLog(e);

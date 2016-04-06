@@ -62,7 +62,6 @@ public class ReadAdInfoXMLService{
 			} else {
 				LoggerUtil.addTimeLog("==读取广告配置文件广告重新调整投放===========");
 				jedis.del(RedisConstant.AD_IDS_KEY);
-				adSortSet = jedis.zrevrange(RedisConstant.AD_IDS_KEY, 0, -1);
 			}
 			
 			//获取广告配置文件
@@ -71,36 +70,43 @@ public class ReadAdInfoXMLService{
 			Document read_doc = builder.build(filePath);
 			Element adInfo = read_doc.getRootElement();
 			List<Element> list = adInfo.getChildren("ad");
-			String nowDateString = DateUtil.getDateTime();
+			String nowDateString = DateUtil.getDate();
 			Map<String, Long> adPriceMap = new HashMap<String, Long>();
 			for(int i = 0;i < list.size();i++) {
-			    Element e = list.get(i);
-			    String adId = e.getChildText("adId");
+				Element e = list.get(i);
+				String adId = e.getChildText("adId");
+				
+				String budget = null;
+				
+				Element element = e.getChild("dates");
+			    //添加素材
+			    List<Element> listDates =  element.getChildren("date");
+			    for(Element date : listDates) {
+			    	String dateString = date.getAttributeValue("dateString");
+			    	if(nowDateString.equals(dateString)) {
+			    		budget = date.getAttributeValue("budget");
+			    		LoggerUtil.addTimeLog("广告adId=" + adId + ";在" + dateString + " 日预算为=" + budget);
+			    		break;
+			    	} else {
+			    		LoggerUtil.addTimeLog("=获取到的dateString=" + dateString + "=====与==nowDateStringdateString=" + nowDateString + "===不是相同日期===");
+			    		continue;
+			    	}
+			    }
+			    
+			    if(budget == null){
+					LoggerUtil.addTimeLog("广告adId=" + adId + "  " + nowDateString + " 当天没有日预算====");
+					jedisPools.closeJedis(jedis);
+					continue;
+				} 
+			    
 			    String name = e.getChildText("name");
 			    String title = e.getChildText("title");
-			    String startDate = e.getChildText("startDate");
-			    String endDate = e.getChildText("endDate");
 			    
-				/**
-				 * 广告开始时间未到，不生成
-				 * 大于开始时间，或都等于
-				 */
-			    startDate = startDate + " 00:00:00";
-			    endDate = endDate + " 23:59:59";
-				if(DateUtil.compareDate(nowDateString, startDate)){
-					LoggerUtil.addTimeLog("广告adId=" + adId + "  " + startDate + " 开启时间还没到");
-					jedisPools.closeJedis(jedis);
-					continue;
-				} else if (DateUtil.compareDate(endDate, nowDateString)) {
-					LoggerUtil.addTimeLog("广告adId=" + adId + "  " + startDate + " 开启时间已经过期");
-					jedisPools.closeJedis(jedis);
-					continue;
-				}
-			    
+//			    long adDayBudget = Long.valueOf(e.getChildText("adDayBudget")) * AdConstant.AD_MONEY_UNIT;
+			    long adDayBudget = Long.valueOf(budget) * AdConstant.AD_MONEY_UNIT;
 			    Integer clickType = Integer.valueOf(e.getChildText("clickType"));
 			    Integer adCategory = Integer.valueOf(e.getChildText("adCategory"));
 			    Long adAcountCost = Long.valueOf(e.getChildText("adAccountCost")) * AdConstant.AD_MONEY_UNIT;
-			    long adDayBudget = Long.valueOf(e.getChildText("adDayBudget")) * AdConstant.AD_MONEY_UNIT;
 			    Long adPrice = (long) (Double.valueOf(e.getChildText("adPrice")) * AdConstant.AD_MONEY_UNIT);
 			    //保存对应广告的价格
 			    adPriceMap.put(adId, adPrice);

@@ -14,6 +14,7 @@ import com.sohu.advert.rtb.proto.ChangyanRtb.BidRequest.AdSlot.Position;
 import com.sohu.advert.rtb.proto.ChangyanRtb.BidRequest.ChangyanId;
 import com.sohu.advert.rtb.proto.ChangyanRtb.BidRequest.Gender;
 import com.sohu.advert.rtb.proto.ChangyanRtb.BidRequest.Mobile;
+import com.sohu.advert.rtb.proto.ChangyanRtb.BidRequest.Mobile.OS;
 import com.sohu.advert.rtb.proto.ChangyanRtb.BidResponse;
 import com.sohu.advert.rtb.proto.ChangyanRtb.BidResponse.Ad;
 
@@ -23,9 +24,14 @@ public class CYRequestTest {
 	@Test
 	public void testCYAPI() {
 		try {
+			download("http://192.168.2.78:8089/ExChangeApi/adShow.shtml?mediaId=D41D8CD98F00B204E9800998ECF8427E&userId=testiiiifhs2" +
+					"&requestId=testiiiifhs2&adId=6&adBlockKey=0&adSlotType=13&createId=4&landingPageId=4&height=320" +
+					"&width=50&requestAdDateTime=2016-04-06_16:28:55&price=4000&cyRId=testiiiifhs2");
+//			for(; ; ) {
 			for(int i=0; i<1; i++) {
-				upload("testiiiifhs2" + i);
-//				Thread.sleep(10);
+//				upload("testiiiifhs2");
+				
+				Thread.sleep(1000);
 //				upload("testiiii2" + i);
 //				Thread.sleep(10);
 //				upload("testiiii2" + i);
@@ -43,9 +49,9 @@ public class CYRequestTest {
 	
 	private int count = 0;
 	private void upload(String cyRequestId) throws IOException {  
-//		String url = "http://bjdsp.zhidian3g.cn/cyDspTest.shtml";
+		String url = "http://bjdsp.zhidian3g.cn/cyDspTest.shtml";
 //		String url = "http://dsp.zhidian3g.cn/cyDspTest.shtml";
-		String url = "http://192.168.2.78:8089/ExChangeApi/cyDspTest.shtml";
+//		String url = "http://192.168.2.78:8089/ExChangeApi/cyDspTest.shtml";
 //		String url = "http://zdsp.nextading.com/cyDspTest.shtml";
 //		String url = "http://192.168.2.78:8089/ExChangeApi/addpb.shtml";
 //		String url = "http://localhost:8089/ExChangeApi/cyDspTest.shtml";
@@ -72,7 +78,10 @@ public class CYRequestTest {
 						.addCreativeType(0)
 						.build();
 		
-	   Mobile mobile = Mobile.newBuilder().setDeviceId("asdg").build();
+	   Mobile mobile = Mobile.newBuilder()
+			   			.setDeviceId("asdg")
+			   			.setPlatform(OS.ANDROID)
+			   			.build();
 		
        BidRequest bidRequest = BidRequest.newBuilder()
 				    		   .setId(cyRequestId)
@@ -111,13 +120,13 @@ public class CYRequestTest {
        
         Ad  ad = bidResponse.getAd(0);
         String landingPage = ad.getLandingPage();
-        System.out.println("landingPage=" + landingPage);
+//        System.out.println("landingPage=" + landingPage);
         String winUrl = ad.getNurl().replace("%%PRICE%%", "4000").replace("%%ID%%", requestId);
         String showUrl = ad.getExposureUrls(0).getExposureUrl(0).replace("%%PRICE%%", "4000").replace("%%ID%%", requestId);
         String clickUrl = ad.getClickUrls(0);
         String clickUrl1 = ad.getClickUrls(1);
         System.out.println("showUrl=" + showUrl);
-        System.out.println("clickUrl1=" + clickUrl1);
+//        System.out.println("clickUrl1=" + clickUrl1);
         inStream.close();  
         outputStream.flush();  
         outputStream.close();  

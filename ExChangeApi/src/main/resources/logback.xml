@@ -177,7 +177,7 @@
 	<logger name="org.springframework" level="WARN" />
 	<logger name="org.apache.ibatis" level="WARN" />
 
-	<root name="baseLog" level="WARN">
+	<root name="baseLog" level="info">
 		<appender-ref ref="STDOUT" />
 	</root>
 	

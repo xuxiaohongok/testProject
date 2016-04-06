@@ -20,6 +20,7 @@ import com.zhidian3g.common.utils.JsonUtil;
 import com.zhidian3g.common.utils.LoggerUtil;
 import com.zhidian3g.common.utils.ZipUtils;
 import com.zhidian3g.nextad.domain.AdMessage;
+import com.zhidian3g.nextad.redisClient.JedisPools;
 
 public class BaseTest {
 	
@@ -56,18 +57,20 @@ public class BaseTest {
 		System.out.println("price=%%PRICE%%&cyRId=%%ID%%".replace("%%PRICE%%&", "4000").replace("%%ID%%", "123"));
 	}
 	
-//	@Test
-//	public void getCount() {
-//		JedisPools jedisPools = JedisPools.getInstance();
-//		String adId = "001";
-//		Jedis jedis = jedisPools.getJedis();
+	@Test
+	public void getCount() {
+		JedisPools jedisPools = JedisPools.getInstance();
+		String adId = "2";
+		Jedis jedis = jedisPools.getJedis();
 //		jedis.sadd(RedisConstant.AD_STOP_IDS, adId);
 //		jedis.hset(RedisConstant.AD_ID_CONTROL_COUNT, adId, "0");
 //		//说明已经达到控制的广告量
 //		Long adControlCount = jedis.hincrBy(RedisConstant.AD_ID_CONTROL_COUNT, adId, -2);
 //		System.out.println("adControlCount=" + adControlCount);
-//		jedisPools.closeJedis(jedis);
-//	}
+//		jedis.lpush(RedisConstant.DEL_ADID,  adId);
+		jedis.sadd(RedisConstant.AD_STOP_IDS, adId);
+		jedisPools.closeJedis(jedis);
+	}
 	
 	@Test
 	public void testLog() {

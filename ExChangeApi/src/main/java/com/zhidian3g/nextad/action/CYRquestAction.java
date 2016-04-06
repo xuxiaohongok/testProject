@@ -3,9 +3,8 @@ package com.zhidian3g.nextad.action;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -13,7 +12,6 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -26,7 +24,6 @@ import com.alibaba.fastjson.JSON;
 import com.sohu.advert.rtb.proto.ChangyanRtb.BidRequest;
 import com.sohu.advert.rtb.proto.ChangyanRtb.BidRequest.AdSlot;
 import com.sohu.advert.rtb.proto.ChangyanRtb.BidRequest.AdSlot.Position;
-import com.sohu.advert.rtb.proto.ChangyanRtb.BidRequest.Mobile;
 import com.sohu.advert.rtb.proto.ChangyanRtb.BidResponse;
 import com.sohu.advert.rtb.proto.ChangyanRtb.BidResponse.Ad;
 import com.sohu.advert.rtb.proto.ChangyanRtb.BidResponse.Ad.ExposureUrl;
@@ -69,13 +66,14 @@ public class CYRquestAction {
 			
 			//判断是否是pc端,直接过滤
 			if(!isMobile) {
-				pcLog(response, inputStream, cyUserId, id);
+				fiterLog(response, inputStream, cyUserId, id, "pc端广告过滤");
 				return;
 				//移动端
 			} else {
 				int number = bidRequest.getMobile().getPlatform().getNumber();
 				if(number != 2) {
 					//过滤掉不是安卓平台的
+					fiterLog(response, inputStream, cyUserId, id, "不是安卓平台" + number);
 					System.out.println("=====不是安卓平台========" + number);
 					return;
 				} 
@@ -212,7 +210,7 @@ public class CYRquestAction {
 				response.setContentType("application/x-protobuf");
 				OutputStream outputStream = response.getOutputStream();  
 				bidResponse.writeTo(outputStream); 
-				System.out.println("bidResponse=" + bidResponse);  
+//				System.out.println("bidResponse=" + bidResponse);  
 				outputStream.flush();  
 				outputStream.close();
 				inputStream.close();
@@ -251,23 +249,26 @@ public class CYRquestAction {
 			return adAllMessage;
 		}
 		
-		Set<String> redisAdIds = null;
-		String receiveAdId = null;
-		if(StringUtils.isBlank(valueString)) {
-			receiveAdId = adSortSet.iterator().next();
-			LoggerUtil.addBaseLog("广告位adSlotType=" + adSlotType + ";第一次投放的广告为：" + receiveAdId);
-		} else {
-			String[] adIds = valueString.split(",");
-			redisAdIds = new HashSet<String>(Arrays.asList(adIds));
-			adSortSet.removeAll(redisAdIds);
-			LoggerUtil.addBaseLog("用户" + userId+ "在广告位:" + adSlotType + "展示的广告[" + redisAdIds + "]; 剩下的广告=" + adSortSet);
-			if(adSortSet.size()>0) {
-				receiveAdId = adSortSet.iterator().next();
-				LoggerUtil.addBaseLog("获取到的广告id=" + receiveAdId);
-			} else {
-				LoggerUtil.addBaseLog("已经没有合适的广告");
-			}
-		}
+//		Set<String> redisAdIds = null;
+		
+		LinkedList<String> list = new LinkedList<String>(adSortSet);
+		String receiveAdId = list.get(getIndex(adSortSet.size()));
+//		LoggerUtil.addBaseLog(list + "获取到的广告id=" + receiveAdId);
+//		if(StringUtils.isBlank(valueString)) {
+//			receiveAdId = adSortSet.iterator().next();
+//			LoggerUtil.addBaseLog("广告位adSlotType=" + adSlotType + ";第一次投放的广告为：" + receiveAdId);
+//		} else {
+//			String[] adIds = valueString.split(",");
+//			redisAdIds = new HashSet<String>(Arrays.asList(adIds));
+//			adSortSet.removeAll(redisAdIds);
+//			LoggerUtil.addBaseLog("用户" + userId+ "在广告位:" + adSlotType + "展示的广告[" + redisAdIds + "]; 剩下的广告=" + adSortSet);
+//			if(adSortSet.size()>0) {
+//				receiveAdId = adSortSet.iterator().next();
+//				LoggerUtil.addBaseLog("获取到的广告id=" + receiveAdId);
+//			} else {
+//				LoggerUtil.addBaseLog("已经没有合适的广告");
+//			}
+//		}
 		
 		
 		//获取具体的广告信息
@@ -298,8 +299,14 @@ public class CYRquestAction {
 	}
 
 	
-	private void pcLog(HttpServletResponse response,
-			InputStream inputStream, String cyUserId, String id) throws IOException {
+	private int currentIndex = -1;// 上一次选择的服务器
+	private int getIndex(int size) {
+		 currentIndex = (currentIndex + 1) % size;
+		 return currentIndex;
+	 }
+	
+	private void fiterLog(HttpServletResponse response,
+			InputStream inputStream, String cyUserId, String id, String message) throws IOException {
 		BidResponse bidResponse = BidResponse.newBuilder()
 				.setId(id)
 				.setProcessingTimeMs(2)//检索广告时间为10ms
@@ -310,6 +317,7 @@ public class CYRquestAction {
 		map.put("id", id);
 		map.put("requestTime", DateUtil.getDateTime());
 		map.put("message", "pc端广告过滤");
+		map.put("message", message);
 		LoggerUtil.addPcLog(map);
 		response.setContentType("application/x-protobuf");
 		OutputStream outputStream = response.getOutputStream();  
