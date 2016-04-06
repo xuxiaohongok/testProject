@@ -2,6 +2,9 @@ package com.zhidian3g.dsp.service;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
+
 import redis.clients.jedis.Jedis;
 import com.zhidian3g.common.constant.RedisConstant;
 import com.zhidian3g.dsp.redisClient.JedisPools;
@@ -35,7 +38,7 @@ public class DSPAdControlServerBillingService {
 		String adIdBugetStringValue = jedis.get(adIdBugetKey);
 		
 		//如果是空说明是第一次初始化
-		if(adIdBugetStringValue == null) {
+		if(StringUtils.isBlank(adIdBugetStringValue)) {
 			jedis.setex(adIdBugetKey, DateUtil.getDifferentTimeMillis(),dayBudget + "");
 			boolean isExists = jedis.exists(allAdInitBudgetKey);
 			
@@ -66,6 +69,8 @@ public class DSPAdControlServerBillingService {
 				}
 			} else {
 				LoggerUtil.addBillingLog("=====广告添加异常出现没有保存初始化广告日预算量 adId为：" + adId);
+//				jedis.hset(allAdInitBudgetKey, adId, dayBudget + "");
+//				jedis.setex(adIdBugetKey, DateUtil.getDifferentTimeMillis(),dayBudget + "");
 				addStatus.put(AD_OPTION_FAIL_STATUS, "广告添加异常出现没有保存初始化广告日预算量 adId为：" + adId);
 				cxJedisPools.closeJedis(jedis);
 				return JsonUtil.toJson(addStatus);

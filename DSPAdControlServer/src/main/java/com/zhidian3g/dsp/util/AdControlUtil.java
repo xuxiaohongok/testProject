@@ -23,7 +23,6 @@ public class AdControlUtil {
 		
 		JedisPools jedisPools = JedisPools.getInstance();
 		Jedis jedis = jedisPools.getJedis();
-		jedis.del(RedisConstant.AD_ID_CONTROL_COUNT);
 		//获取当前的广告id
 		for(String adId : adIdSet) {
 			//获取每个广告当前的日预算

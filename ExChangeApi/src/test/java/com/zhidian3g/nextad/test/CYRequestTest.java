@@ -24,14 +24,40 @@ public class CYRequestTest {
 	@Test
 	public void testCYAPI() {
 		try {
-			download("http://192.168.2.78:8089/ExChangeApi/adShow.shtml?mediaId=D41D8CD98F00B204E9800998ECF8427E&userId=testiiiifhs2" +
-					"&requestId=testiiiifhs2&adId=6&adBlockKey=0&adSlotType=13&createId=4&landingPageId=4&height=320" +
-					"&width=50&requestAdDateTime=2016-04-06_16:28:55&price=4000&cyRId=testiiiifhs2");
+//			download("http://192.168.2.78:8089/ExChangeApi/adShow.shtml?mediaId=D41D8CD98F00B204E9800998ECF8427E&userId=testiiiifhs2" +
+//					"&requestId=testiiiifhs2&adId=6&adBlockKey=0&adSlotType=13&createId=4&landingPageId=4&height=320" +
+//					"&width=50&requestAdDateTime=2016-04-06_16:28:55&price=4000&cyRId=testiiiifhs2");
+//			for(int i=0; i<20;i++) {
+//				new Thread(new Runnable() {
+//					@Override
+//					public void run() {
+//						for(; ; ) {
+////							for(int i=0; i<1; i++) {
+//								try {
+//									upload("testiiiifhs2");
+//									Thread.sleep(1);
+//								} catch (IOException e) {
+//									e.printStackTrace();
+//								} catch (InterruptedException e) {
+//									e.printStackTrace();
+//								}
+////								upload("testiiii2" + i);
+////								Thread.sleep(10);
+////								upload("testiiii2" + i);
+////								Thread.sleep(10);
+////								upload("testiiii2" + i);
+////								Thread.sleep(10);
+////								upload("testiiii2" + i);
+////								Thread.sleep(10);
+//							}
+//					}
+//				}).start();
+//			}
+			
 //			for(; ; ) {
 			for(int i=0; i<1; i++) {
-//				upload("testiiiifhs2");
-				
-				Thread.sleep(1000);
+				upload("testiiiifhs2");
+				Thread.sleep(1);
 //				upload("testiiii2" + i);
 //				Thread.sleep(10);
 //				upload("testiiii2" + i);
@@ -51,7 +77,7 @@ public class CYRequestTest {
 	private void upload(String cyRequestId) throws IOException {  
 		String url = "http://bjdsp.zhidian3g.cn/cyDspTest.shtml";
 //		String url = "http://dsp.zhidian3g.cn/cyDspTest.shtml";
-//		String url = "http://192.168.2.78:8089/ExChangeApi/cyDspTest.shtml";
+//		String url = "http://localhost:8023/ExChangeApi/cyDspTest.shtml";
 //		String url = "http://zdsp.nextading.com/cyDspTest.shtml";
 //		String url = "http://192.168.2.78:8089/ExChangeApi/addpb.shtml";
 //		String url = "http://localhost:8089/ExChangeApi/cyDspTest.shtml";
@@ -132,7 +158,7 @@ public class CYRequestTest {
         outputStream.close();  
        
 //        download(winUrl);
-//        download(showUrl);
+        download(showUrl);
 //        download(clickUrl);
 //        download(clickUrl1);
         

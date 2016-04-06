@@ -72,7 +72,8 @@ public class DataPostbackApiAction {
 		Integer adSlotType = adPostBackMessage.getAdSlotType();
 		
 		Jedis jedis = jedisPools.getJedis();
-		if(!jedis.hexists(RedisConstant.AD_ID_CONTROL_COUNT, adId)) {
+		//判断广告是否是存在的
+		if(jedis.zrank(RedisConstant.AD_IDS_KEY, adId) == null) {
 			jedisPools.closeJedis(jedis);
 			response.setStatus(200);
 			LoggerUtil.addBillingLog("adId=" + adId + "==========不存在======");

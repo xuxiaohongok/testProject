@@ -60,6 +60,19 @@ public class BaseTest {
 		jedisPools.closeJedis(jedis);
 	}
 	
+	@Test
+	public void testAdControlUtil12() {
+		JedisPools jedisPools = JedisPools.getInstance();
+		Jedis jedis = jedisPools.getJedis();
+		if(jedis.zrank(RedisConstant.AD_IDS_KEY, "2") == null) {
+			System.out.println("空值");
+		} else {
+			System.out.println("存在");
+		}
+//		boolean ok123 = jedis.sismember(RedisConstant.AD_IDS_KEY, "2");
+		jedisPools.closeJedis(jedis);
+	}
+	
 	
 	@Test
 	public void testSystem() {

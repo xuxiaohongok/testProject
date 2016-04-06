@@ -31,7 +31,7 @@ public class DSPAdBillingService {
 					if(count < 0) {
 						//日预算已经用关
 						statusCode = 0;
-						LoggerUtil.addBillingLog(date + " 广告adId" + adId + " 日预算已经用关======count="+ (count+1));
+						LoggerUtil.addBillingLog(date + " 广告adId" + adId + " 日预算已经用关======count="+ (count+adPrice));
 					} else if(count == 0) {
 						statusCode = 2;
 						LoggerUtil.addBillingLog(DateUtil.getDateTime() + "  广告adId" + adId + " 日预算刚好用关");

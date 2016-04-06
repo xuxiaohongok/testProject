@@ -27,7 +27,7 @@ import com.zhidian3g.dsp.util.LoggerUtil;
 public class ReadAdInfoXMLService{
 	
     public static void main(String[] args) throws Exception {
-    	getAllAdInfo(true); 
+    	getAllAdInfo(false); 
    }
     /**
      * 获取广告信息
@@ -43,7 +43,6 @@ public class ReadAdInfoXMLService{
 			//先删除掉所有投放中的广告
 			
 			//获取所有广告id
-			Set<String> adSortSet = null;//
 			Set<String> lastDayAdIdSet = jedis.hkeys(RedisConstant.INIT_AD_DAYBUDGET);
 			
 			if(reflushAllAd) {
@@ -88,14 +87,13 @@ public class ReadAdInfoXMLService{
 			    		LoggerUtil.addTimeLog("广告adId=" + adId + ";在" + dateString + " 日预算为=" + budget);
 			    		break;
 			    	} else {
-			    		LoggerUtil.addTimeLog("=获取到的dateString=" + dateString + "=====与==nowDateStringdateString=" + nowDateString + "===不是相同日期===");
+			    		LoggerUtil.addTimeLog("=获取到的dateString=" + dateString + "=====与==nowDateString=" + nowDateString + "===不是相同日期===");
 			    		continue;
 			    	}
 			    }
 			    
 			    if(budget == null){
 					LoggerUtil.addTimeLog("广告adId=" + adId + "  " + nowDateString + " 当天没有日预算====");
-					jedisPools.closeJedis(jedis);
 					continue;
 				} 
 			    
@@ -109,11 +107,16 @@ public class ReadAdInfoXMLService{
 			    Long adAcountCost = Long.valueOf(e.getChildText("adAccountCost")) * AdConstant.AD_MONEY_UNIT;
 			    Long adPrice = (long) (Double.valueOf(e.getChildText("adPrice")) * AdConstant.AD_MONEY_UNIT);
 			    //保存对应广告的价格
-			    adPriceMap.put(adId, adPrice);
 			    
 			    //添加刷新广告费用
-			    DSPAdControlServerBillingService.addAdOrRefreshBudget(adId, adDayBudget);
+			    String statusData = DSPAdControlServerBillingService.addAdOrRefreshBudget(adId, adDayBudget);
+			    Map<String, Object> mapStatus = JsonUtil.fromJson(statusData, Map.class);
+			    if(mapStatus.get("0") != null) {
+			    	LoggerUtil.addTimeLog("广告添加失败=mapStatus=" + mapStatus);
+			    	continue;
+			    }
 			    
+			    adPriceMap.put(adId, adPrice);
 			    //设置广告信息
 			    AdMessage adMessage = new AdMessage();
 			    adMessage.setAdId(adId);
@@ -145,26 +148,11 @@ public class ReadAdInfoXMLService{
 			    
 			    LoggerUtil.addTimeLog("广告adId=" + adId + " 基本信息初始化完毕");
 			    
-			    //保留配置文件的广告
-			    if(adSortSet != null) {
-			    	adSortSet.remove(adId);
-			    }
+			   
 			}
-			
-			if(adSortSet != null && adSortSet.size() != 0) {
-				jedis.zrem(RedisConstant.AD_IDS_KEY, adSortSet.toArray(new String[0]));
-				Set<String> adSetString = new HashSet<String>();
-				for(String adId : adSortSet) {
-					adSetString.addAll(delAdMessage(adId));
-				}
-				jedis.del(adSetString.toArray(new String[0]));
-				LoggerUtil.addTimeLog("删除的广告信息为：" + adSetString);
-			}
-			
 			
 			//广告频次设置
 			AdControlUtil.setAdControlTimes(adPriceMap.keySet());
-			
 			for(Entry<String, Long> adPriceEntry : adPriceMap.entrySet()) {
 				jedis.zadd(RedisConstant.AD_IDS_KEY, adPriceEntry.getValue(), adPriceEntry.getKey());
 			}
