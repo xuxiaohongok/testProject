@@ -18,8 +18,7 @@ import akka.actor.Props;
 public class LoggerUtil {
 	
 	private static final String ERRREQUESTLOG = "errRequestLog";
-	private static final String EXCEPTIONLOG = "exceptionLog";
-	
+	private static final Logger exLogger = LoggerFactory.getLogger("exceptionLog");
 	private static final Logger billingLog = LoggerFactory.getLogger("billingLog");
 	/**
 	 * 
@@ -63,8 +62,14 @@ public class LoggerUtil {
 		PrintWriter writer = new PrintWriter(stringWriter);
 		e.printStackTrace(writer);
 		StringBuffer buffer = stringWriter.getBuffer();
-		Logger logger = LoggerFactory.getLogger(EXCEPTIONLOG);
-		logger.info(buffer.toString());
+		exLogger.info(buffer.toString());
+	}
+	
+	/**
+	 * 保存异常日志
+	 */
+	public static void addExceptionLog(String message) {
+		exLogger.info(message);
 	}
 	
 	/**

@@ -34,6 +34,8 @@ public class AdPostBackMessage {
 	
 	private String zd_userId;
 	
+	private Integer osType;
+	
 	public String getRequestId() {
 		return requestId;
 	}
@@ -161,4 +163,13 @@ public class AdPostBackMessage {
 	public void setZd_userId(String zd_userId) {
 		this.zd_userId = zd_userId;
 	}
+
+	public Integer getOsType() {
+		return osType;
+	}
+
+	public void setOsType(Integer osType) {
+		this.osType = osType;
+	}
+	
 }

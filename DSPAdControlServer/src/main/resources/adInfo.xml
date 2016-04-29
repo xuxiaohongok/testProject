@@ -1,75 +1,281 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ad-info>
-    <ad description="广告说明">
-        <adId>1</adId>
-        <name>散人</name>
-        <clickType>99</clickType>
-        <title>广告测试1</title>
-        <adCategory>1</adCategory>
-        <adAccountCost>3000</adAccountCost> 
-        <adPrice>0.8</adPrice>
-        
-        <dates>
-        	<date dateString="2016-04-07" budget="600"/>
-        	<date dateString="2016-04-08" budget="700"/>
-        	<date dateString="2016-04-09" budget="800"/>
-        	<date dateString="2016-04-10" budget="500"/>
-        	<date dateString="2016-04-11" budget="500"/>
-        </dates>
-        
-        <adSlot>
-        	<!--广告展示类型 悬浮  -->
-        	<adSlotType>1</adSlotType>
-        	<createId>1</createId>
-        	<landingPageId>1</landingPageId>
-        	<landingPage>http://d.zhidian3g.cn/zdy6/static/srsf/16022928000.html</landingPage>
-        	<adm>http://d.zhidian3g.cn/zhidian-smart/zpgame/640x100fly.jpg</adm>
-        </adSlot>
-        
-        <adSlot>
-        	<!--广告展示类型 banner -->
-        	<adSlotType>13</adSlotType>
-        	<createId>2</createId>
-        	<landingPageId>2</landingPageId>
-        	<landingPage>http://d.zhidian3g.cn/zdy6/static/srsf/16011556969.html</landingPage>
-        	<adm>http://d.zhidian3g.cn/zhidian-smart/zpgame/640x100banner.jpg</adm>
-        </adSlot>
-    </ad>
-    
-     <ad description="广告说明">
-        <adId>2</adId>
-        <name>开心消之旅</name>
-        <clickType>99</clickType>
-        <title>开心消之旅</title>
-        <adCategory>1</adCategory>
-        <adAccountCost>600</adAccountCost> 
-        <adPrice>0.8</adPrice>
-        
-        <dates>
-        	<date dateString="2016-04-06" budget="700"/>
-        	<date dateString="2016-04-08" budget="600"/>
-        	<date dateString="2016-04-09" budget="700"/>
-        	<date dateString="2016-04-10" budget="500"/>
-        	<date dateString="2016-04-11" budget="500"/>
-        </dates>
-        
-        <adSlot>
-        	<!--广告展示类型 悬浮  -->
-        	<adSlotType>1</adSlotType>
-        	<createId>3</createId>
-        	<landingPageId>3</landingPageId>
-        	<landingPage>http://s.llj.me/ttxzl/index.html</landingPage>
-        	<adm>http://d.zhidian3g.cn/zhidian-smart/cy/2/640x100.jpg</adm>
-        </adSlot>
-        
-        <adSlot>
-        	<!--广告展示类型 banner -->
-        	<adSlotType>13</adSlotType>
-        	<createId>4</createId>
-        	<landingPageId>4</landingPageId>
-        	<landingPage>http://s.llj.me/ttxzl/index.html</landingPage>
-        	<adm>http://d.zhidian3g.cn/zhidian-smart/cy/2/640x100.jpg</adm>
-        </adSlot>
-    </ad>
-    
-</ad-info>
+	<ad description="广告说明">
+		<adId>1</adId>
+		<name>散人</name>
+		<OS>Android</OS>
+		<clickType>99</clickType>
+		<title>广告测试1</title>
+		<adCategory>1</adCategory>
+		<adAccountCost>3000</adAccountCost>
+		<adPrice>0.8</adPrice>
+
+		<dates>
+			<date dateString="2016-04-07" budget="600" />
+			<date dateString="2016-04-08" budget="700" />
+			<date dateString="2016-04-09" budget="500" />
+		</dates>
+
+		<adSlot>
+			<!--广告展示类型 悬浮 -->
+			<adSlotType>1</adSlotType>
+			<createId>1</createId>
+			<landingPageId>1</landingPageId>
+			<landingPage>http://d.zhidian3g.cn/zdy6/static/srsf/16022928000.html
+			</landingPage>
+			<adm>http://smart.nextading.com/zpgame/640x100fly.jpg</adm>
+		</adSlot>
+
+		<adSlot>
+			<!--广告展示类型 banner -->
+			<adSlotType>13</adSlotType>
+			<createId>2</createId>
+			<landingPageId>2</landingPageId>
+			<landingPage>http://d.zhidian3g.cn/zdy6/static/srsf/16011556969.html
+			</landingPage>
+			<adm>http://smart.nextading.com/zpgame/640x100banner.jpg</adm>
+		</adSlot>
+	</ad>
+
+	<ad description="广告说明">
+		<adId>2</adId>
+		<name>开心消之旅</name>
+		<OS>Android</OS>
+		<clickType>99</clickType>
+		<title>开心消之旅</title>
+		<adCategory>1</adCategory>
+		<adAccountCost>600</adAccountCost>
+		<adPrice>0.8</adPrice>
+
+		<dates>
+			<date dateString="2016-04-07" budget="800" />
+		</dates>
+
+		<adSlot>
+			<!--广告展示类型 悬浮 -->
+			<adSlotType>1</adSlotType>
+			<createId>3</createId>
+			<landingPageId>3</landingPageId>
+			<landingPage>http://s.llj.me/ttxzl/index.html</landingPage>
+			<adm>http://smart.nextading.com/cy/2/640x100.jpg</adm>
+		</adSlot>
+
+		<adSlot>
+			<!--广告展示类型 banner -->
+			<adSlotType>13</adSlotType>
+			<createId>4</createId>
+			<landingPageId>4</landingPageId>
+			<landingPage>http://s.llj.me/ttxzl/index.html</landingPage>
+			<adm>http://smart.nextading.com/cy/2/640x100.jpg</adm>
+		</adSlot>
+	</ad>
+
+	<ad description="广告说明">
+		<adId>3</adId>
+		<name>开心乐消消</name>
+		<OS>Android</OS>
+		<clickType>99</clickType>
+		<title>开心乐消消</title>
+		<adCategory>1</adCategory>
+		<adAccountCost>500</adAccountCost>
+		<adPrice>0.8</adPrice>
+
+		<dates>
+			<date dateString="2016-04-08" budget="500" />
+			<date dateString="2016-04-09" budget="500" />
+		</dates>
+
+		<adSlot>
+			<!--广告展示类型 悬浮 -->
+			<adSlotType>1</adSlotType>
+			<createId>5</createId>
+			<landingPageId>5</landingPageId>
+			<landingPage>http://112.17.250.195:81/kxlxx.html</landingPage>
+			<adm>http://smart.nextading.com/cy/3/640x100.jpg</adm>
+		</adSlot>
+
+		<adSlot>
+			<!--广告展示类型 banner -->
+			<adSlotType>13</adSlotType>
+			<createId>6</createId>
+			<landingPageId>6</landingPageId>
+			<landingPage>http://112.17.250.195:81/kxlxx.html</landingPage>
+			<adm>http://smart.nextading.com/cy/3/640x100.jpg</adm>
+		</adSlot>
+	</ad>
+
+	<ad description="广告说明">
+		<adId>4</adId>
+		<name>人在三国</name>
+		<OS>Android</OS>
+		<clickType>99</clickType>
+		<title>人在三国</title>
+		<adCategory>1</adCategory>
+		<adAccountCost>500</adAccountCost>
+		<adPrice>0.8</adPrice>
+
+		<dates>
+			<date dateString="2016-04-08" budget="500" />
+			<date dateString="2016-04-09" budget="500" />
+		</dates>
+
+		<adSlot>
+			<!--广告展示类型 悬浮 -->
+			<adSlotType>1</adSlotType>
+			<createId>7</createId>
+			<landingPageId>7</landingPageId>
+			<landingPage>http://egret.ttfm.shengyouxi.com/index.html?td_channelid=ttfm_zhidian_zdcm001
+			</landingPage>
+			<adm>http://smart.nextading.com/cy/4/640x100.jpg</adm>
+		</adSlot>
+
+		<adSlot>
+			<!--广告展示类型 banner -->
+			<adSlotType>13</adSlotType>
+			<createId>8</createId>
+			<landingPageId>8</landingPageId>
+			<landingPage>http://egret.ttfm.shengyouxi.com/index.html?td_channelid=ttfm_zhidian_zdcm002
+			</landingPage>
+			<adm>http://smart.nextading.com/cy/4/640x100-2.jpg</adm>
+		</adSlot>
+	</ad>
+
+	<ad description="广告说明">
+		<adId>4</adId>
+		<name>人在三国</name>
+		<OS>Android</OS>
+		<clickType>99</clickType>
+		<title>人在三国</title>
+		<adCategory>1</adCategory>
+		<adAccountCost>500</adAccountCost>
+		<adPrice>0.8</adPrice>
+
+		<dates>
+			<date dateString="2016-04-08" budget="500" />
+			<date dateString="2016-04-09" budget="500" />
+		</dates>
+
+		<adSlot>
+			<!--广告展示类型 悬浮 -->
+			<adSlotType>1</adSlotType>
+			<createId>7</createId>
+			<landingPageId>7</landingPageId>
+			<landingPage>http://egret.ttfm.shengyouxi.com/index.html?td_channelid=ttfm_zhidian_zdcm001
+			</landingPage>
+			<adm>http://smart.nextading.com/cy/4/640x100.jpg</adm>
+		</adSlot>
+
+		<adSlot>
+			<!--广告展示类型 banner -->
+			<adSlotType>13</adSlotType>
+			<createId>8</createId>
+			<landingPageId>8</landingPageId>
+			<landingPage>http://egret.ttfm.shengyouxi.com/index.html?td_channelid=ttfm_zhidian_zdcm002
+			</landingPage>
+			<adm>http://smart.nextading.com/cy/4/640x100-2.jpg</adm>
+		</adSlot>
+	</ad>
+
+	<ad description="广告说明">
+		<adId>5</adId>
+		<name>乱斗西游2</name>
+		<OS>IOS</OS>
+		<clickType>99</clickType>
+		<title>乱斗西游2</title>
+		<adCategory>1</adCategory>
+		<adAccountCost>500</adAccountCost>
+		<adPrice>0.8</adPrice>
+
+		<dates>
+			<date dateString="2016-04-13" budget="500" />
+		</dates>
+
+		<adSlot>
+			<!--广告展示类型 悬浮 -->
+			<adSlotType>1</adSlotType>
+			<createId>9</createId>
+			<landingPageId>9</landingPageId>
+			<landingPage>http://gad.netease.com/mmad/click?s=DRkKqxSJ2HvIMVo5xNZsnvUNz%2F4%3D&amp;project_id=11283953&amp;monitor_type=4
+			</landingPage>
+			<adm>http://smart.nextading.com/cy/5/640x100.jpg</adm>
+		</adSlot>
+
+		<adSlot>
+			<!--广告展示类型 banner -->
+			<adSlotType>13</adSlotType>
+			<createId>10</createId>
+			<landingPageId>10</landingPageId>
+			<landingPage>http://gad.netease.com/mmad/click?s=DRkKqxSJ2HvIMVo5xNZsnvUNz%2F4%3D&amp;project_id=11283953&amp;monitor_type=4
+			</landingPage>
+			<adm>http://smart.nextading.com/cy/5/640x100.jpg</adm>
+		</adSlot>
+	</ad>
+	
+	<ad description="广告说明">
+		<adId>6</adId>
+		<name>瑞士手表</name>
+		<OS>Android</OS>
+		<clickType>99</clickType>
+		<title>瑞士手表</title>
+		<adCategory>1</adCategory>
+		<adAccountCost>1000</adAccountCost>
+		<adPrice>0.8</adPrice>
+
+		<dates>
+			<date dateString="2016-04-13" budget="1000" />
+		</dates>
+
+		<adSlot>
+			<!--广告展示类型 悬浮 -->
+			<adSlotType>1</adSlotType>
+			<createId>11</createId>
+			<landingPageId>11</landingPageId>
+			<landingPage>http://wap.fsgjl.cn/?code=412</landingPage>
+			<adm>http://smart.nextading.com/cy/6/640x100.jpg</adm>
+		</adSlot>
+
+		<adSlot>
+			<!--广告展示类型 banner -->
+			<adSlotType>13</adSlotType>
+			<createId>12</createId>
+			<landingPageId>12</landingPageId>
+			<landingPage>http://wap.fsgjl.cn/?code=412</landingPage>
+			<adm>http://smart.nextading.com/cy/6/640x100.jpg</adm>
+		</adSlot>
+	</ad>
+
+	<ad description="广告说明">
+		<adId>7</adId>
+		<name>西游网</name>
+		<OS>PC</OS>
+		<clickType>99</clickType>
+		<title>西游网</title>
+		<adCategory>1</adCategory>
+		<adAccountCost>800</adAccountCost>
+		<adPrice>0.8</adPrice>
+
+		<dates>
+			<date dateString="2016-04-29" budget="800" />
+			<date dateString="2016-04-30" budget="800" />
+		</dates>
+
+		<adSlot>
+			<!--广告展示类型 悬浮 -->
+			<adSlotType>1</adSlotType>
+			<createId>13</createId>
+			<landingPageId>13</landingPageId>
+			<landingPage>http://1.yhpkh.com/hb/2176/0/10365/1.html</landingPage>
+			<adm>http://smart.nextading.com/zdapk/201604/jzwl.jpg</adm>
+		</adSlot>
+
+		<adSlot>
+			<!--广告展示类型 banner -->
+			<adSlotType>13</adSlotType>
+			<createId>14</createId>
+			<landingPageId>14</landingPageId>
+			<landingPage>http://1.yhpkh.com/hb/2176/0/10367/1.html</landingPage>
+			<adm>http://smart.nextading.com/zdapk/201604/jzwl-1.jpg</adm>
+		</adSlot>
+	</ad>
+
+	</ad-info>

@@ -32,11 +32,24 @@ public class BaseTest {
 	}
 	
 	@Test
+	public void testNum() {
+		int hour = DateUtil.getHour();
+		for(int i=0; i<24;i++) {
+			hour = i;
+			if(hour<=1 || hour>=10) {
+				System.out.println(hour + "符合投放时间");
+			} else {
+				System.out.println(hour + "不符合投放时间");
+			}
+		}
+	}
+	
+	@Test
 	public void testAdControlUtil() {
 		JedisPools jedisPools = JedisPools.getInstance();
 		Jedis jedis = jedisPools.getJedis();
 		Pipeline pipeline = jedis.pipelined();
-		Response<Set<String>> adSortSetResponse = pipeline.zrevrange(RedisConstant.AD_IDS_KEY, 0, -1);
+		Response<Set<String>> adSortSetResponse = pipeline.zrevrange(RedisConstant.AD_ANDROID_IDS, 0, -1);
 		Response<Set<String>> stopAdSetResponse = pipeline.smembers(RedisConstant.AD_STOP_IDS);
 		pipeline.sync();
 		
@@ -64,7 +77,7 @@ public class BaseTest {
 	public void testAdControlUtil12() {
 		JedisPools jedisPools = JedisPools.getInstance();
 		Jedis jedis = jedisPools.getJedis();
-		if(jedis.zrank(RedisConstant.AD_IDS_KEY, "2") == null) {
+		if(jedis.zrank(RedisConstant.AD_ANDROID_IDS, "2") == null) {
 			System.out.println("空值");
 		} else {
 			System.out.println("存在");

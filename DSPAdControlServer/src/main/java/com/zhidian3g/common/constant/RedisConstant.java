@@ -2,7 +2,11 @@ package com.zhidian3g.common.constant;
 
 public class RedisConstant {
 	/******广告id的排序集合*********/
-	public static String AD_IDS_KEY = "ad_ids_key";
+	public static String AD_IOS_IDS = "ad_ios_ids";
+	
+	public static String AD_ANDROID_IDS = "ad_android_ids";
+	
+	public static final String AD_PC_IDS = "ad_pc_ids";
 	
 	/******广告的基本信息key value 前缀*********/
 	public static String AD_BASE = "ad_base_";
@@ -23,8 +27,8 @@ public class RedisConstant {
 	public static final String INIT_AD_DAYBUDGET = "init_ad_daybudget";
 	
 	/**删除队列**********************/
-	public static final String DEL_ADID = "del_adid";
-	public static final String BACKUP_DEL_ADID = "backup_del_adid";
+	public static final String DEL_ADID = "dsp_del_adid";
+	public static final String BACKUP_DEL_ADID = "backup_dsp_del_adid";
 	
 	/**hash*****/
 	public static final String AD_ID_CONTROL_COUNT = "ad_id_control_count";

@@ -6,7 +6,7 @@ import com.zhidian3g.common.constant.RedisConstant;
 import com.zhidian3g.common.utils.DateUtil;
 import com.zhidian3g.common.utils.LoggerUtil;
 import com.zhidian3g.nextad.redisClient.JedisPools;
-
+   
 @Service(value="dspAdBillingService")
 public class DSPAdBillingService {
 	private JedisPools jedisPools = JedisPools.getInstance();
@@ -28,13 +28,16 @@ public class DSPAdBillingService {
 					long adPrice = price.longValue()/1000;
 					long count = jedis.decrBy(adBudegetKey, adPrice);
 					LoggerUtil.addBillingLog(date + " 广告adId" + adId + "扣取费用:" + adPrice + ";剩下日预算为======="+ count);
-					if(count < 0) {
-						//日预算已经用关
-						statusCode = 0;
-						LoggerUtil.addBillingLog(date + " 广告adId" + adId + " 日预算已经用关======count="+ (count+adPrice));
-					} else if(count == 0) {
-						statusCode = 2;
-						LoggerUtil.addBillingLog(DateUtil.getDateTime() + "  广告adId" + adId + " 日预算刚好用关");
+					if(count <= 0) {
+						count = count + adPrice;
+						if(count > 0) {
+							//日预算已经用关
+							statusCode = 0;
+							LoggerUtil.addBillingLog(DateUtil.getDateTime() + "  广告adId" + adId + " 日预算刚好用关");
+						} else {
+							statusCode = 2;
+							LoggerUtil.addBillingLog(date + " 广告adId" + adId + " 日预算已经用关======count="+ (count));
+						}
 					} else {
 						//成功扣取
 						statusCode = 1;

@@ -23,6 +23,19 @@ public class AdControlUtil {
 		
 		JedisPools jedisPools = JedisPools.getInstance();
 		Jedis jedis = jedisPools.getJedis();
+		
+//		int hour = DateUtil.getHour();
+//		if(hour<=1 || hour>=11) {
+//			LoggerUtil.addTimeLog(DateUtil.getDateTime() + "===============广告投放时间================" + hour);
+//		} else {
+//			for(String adId : adIdSet) {
+//				jedis.sadd(RedisConstant.AD_STOP_IDS, adId);
+//			}
+//			jedisPools.closeJedis(jedis);
+//			LoggerUtil.addTimeLog(DateUtil.getDateTime() + "===============广告暂停投放时间===========" + hour);
+//			return;
+//		}
+		
 		//获取当前的广告id
 		for(String adId : adIdSet) {
 			//获取每个广告当前的日预算

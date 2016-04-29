@@ -47,7 +47,7 @@ public class ReadAdInfoXMLService{
 			
 			if(reflushAllAd) {
 				LoggerUtil.addTimeLog("==凌晨删除所有广告信息===========");
-				jedis.del(RedisConstant.AD_IDS_KEY);
+				jedis.del(RedisConstant.AD_IOS_IDS, RedisConstant.AD_ANDROID_IDS, RedisConstant.AD_PC_IDS);
 				Set<String> delAdKey = new HashSet<String>();
 				for(String adId : lastDayAdIdSet) {
 					delAdKey.addAll(delAdMessage(adId));
@@ -57,10 +57,9 @@ public class ReadAdInfoXMLService{
 				delAdKey.add(RedisConstant.INIT_AD_DAYBUDGET);
 				jedis.del(delAdKey.toArray(new String[0]));
 				LoggerUtil.addTimeLog("==凌晨删除所有广告信息=========" + delAdKey);
-				
 			} else {
 				LoggerUtil.addTimeLog("==读取广告配置文件广告重新调整投放===========");
-				jedis.del(RedisConstant.AD_IDS_KEY);
+				jedis.del(RedisConstant.AD_IOS_IDS, RedisConstant.AD_ANDROID_IDS, RedisConstant.AD_PC_IDS);
 			}
 			
 			//获取广告配置文件
@@ -71,9 +70,12 @@ public class ReadAdInfoXMLService{
 			List<Element> list = adInfo.getChildren("ad");
 			String nowDateString = DateUtil.getDate();
 			Map<String, Long> adPriceMap = new HashMap<String, Long>();
+			Set<String> adIdsSet = new HashSet<String>(); 
 			for(int i = 0;i < list.size();i++) {
 				Element e = list.get(i);
 				String adId = e.getChildText("adId");
+				String OSTypeAdId = e.getChildText("OS") + "_" + adId;
+				//获取系统平台
 				
 				String budget = null;
 				
@@ -100,7 +102,6 @@ public class ReadAdInfoXMLService{
 			    String name = e.getChildText("name");
 			    String title = e.getChildText("title");
 			    
-//			    long adDayBudget = Long.valueOf(e.getChildText("adDayBudget")) * AdConstant.AD_MONEY_UNIT;
 			    long adDayBudget = Long.valueOf(budget) * AdConstant.AD_MONEY_UNIT;
 			    Integer clickType = Integer.valueOf(e.getChildText("clickType"));
 			    Integer adCategory = Integer.valueOf(e.getChildText("adCategory"));
@@ -116,7 +117,6 @@ public class ReadAdInfoXMLService{
 			    	continue;
 			    }
 			    
-			    adPriceMap.put(adId, adPrice);
 			    //设置广告信息
 			    AdMessage adMessage = new AdMessage();
 			    adMessage.setAdId(adId);
@@ -127,8 +127,7 @@ public class ReadAdInfoXMLService{
 			    adMessage.setClickType(clickType);
 			    adMessage.setName(name);
 			    adMessage.setTitle(title);
-			    jedis.set(RedisConstant.AD_BASE + adId, JsonUtil.toJson(adMessage));
-			    
+			    jedis.setex(RedisConstant.AD_BASE + adId, DateUtil.getDifferentTimeMillis(), JsonUtil.toJson(adMessage));
 			    //添加素材
 			    List<Element> listAdMaterial =  e.getChildren("adSlot");
 			    for(Element adMaterElement : listAdMaterial) {
@@ -143,20 +142,29 @@ public class ReadAdInfoXMLService{
 			    	adSlotMessage.setAdm(adm);
 			    	adSlotMessage.setLandingPage(landingPage);
 			    	adSlotMessage.setLandingPageId(landingPageId);
-			    	jedis.set(RedisConstant.AD_ADSLOT + adId + "_" + adSlotType, JsonUtil.toJson(adSlotMessage));
+			    	jedis.setex(RedisConstant.AD_ADSLOT + adId + "_" + adSlotType, DateUtil.getDifferentTimeMillis(), JsonUtil.toJson(adSlotMessage));
 			    }
 			    
-			    LoggerUtil.addTimeLog("广告adId=" + adId + " 基本信息初始化完毕");
+			    //添加广告id
+			    adIdsSet.add(adId);
+			    adPriceMap.put(OSTypeAdId, adPrice);
 			    
-			   
+			    LoggerUtil.addTimeLog("广告adId=" + adId + " 基本信息初始化完毕");
 			}
 			
 			//广告频次设置
-			AdControlUtil.setAdControlTimes(adPriceMap.keySet());
+			AdControlUtil.setAdControlTimes(adIdsSet);
 			for(Entry<String, Long> adPriceEntry : adPriceMap.entrySet()) {
-				jedis.zadd(RedisConstant.AD_IDS_KEY, adPriceEntry.getValue(), adPriceEntry.getKey());
+				String adKey = adPriceEntry.getKey();
+				String adId = adKey.split("_")[1];
+				if(adKey.contains("Android")) {
+					jedis.zadd(RedisConstant.AD_ANDROID_IDS, adPriceEntry.getValue(), adId);
+				} else if (adKey.contains("IOS")) {
+					jedis.zadd(RedisConstant.AD_IOS_IDS, adPriceEntry.getValue(), adId);
+				} else if (adKey.contains("PC")) {
+					jedis.zadd(RedisConstant.AD_PC_IDS, adPriceEntry.getValue(), adId);
+				}
 			}
-			
 		} catch (Exception e) {
 			jedisPools.exceptionBroken(jedis);
 			e.printStackTrace();

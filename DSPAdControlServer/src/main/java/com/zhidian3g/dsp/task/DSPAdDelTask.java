@@ -27,15 +27,30 @@ public class DSPAdDelTask implements Runnable {
   				if(StringUtils.isNotBlank(delAdId)) {
 					//从广告排序中移除
 //  					ZRANGEBYSCORE
-  					jedis.zrem(RedisConstant.AD_IDS_KEY, delAdId);
+  					String[] delAdIdValues = delAdId.split(":::");
+  					
+  					Integer osType = Integer.valueOf(delAdIdValues[0]);
+  					String adId = delAdIdValues[1];
+  					
+  					/**1 ios 2 安卓 **************/
+  					if(osType == 2) {
+  						jedis.zrem(RedisConstant.AD_ANDROID_IDS, adId);
+  						LoggerUtil.addTimeLog("===========删除的广告Id============delAdId=" + adId);
+  					} else if (osType == 1) {
+  						jedis.zrem(RedisConstant.AD_IOS_IDS, adId);
+  						LoggerUtil.addTimeLog("===========删除的广告Id============delAdId=" + adId);
+  					} else {
+  						jedis.zrem(RedisConstant.AD_PC_IDS, adId);
+  						LoggerUtil.addTimeLog("===========没有对应的类型广告Id============delAdId=" + adId);
+  					}
+  					
   					jedis.lrem(RedisConstant.BACKUP_DEL_ADID, 0, delAdId);
-  					LoggerUtil.addTimeLog("===========删除的广告Id============delAdId=" + delAdId);
 				} else {
-					LoggerUtil.addTimeLog("=======cx=====没有删除的广告Id=============");
+					LoggerUtil.addTimeLog("=======dsp=====没有删除的广告Id=============");
 				}
 			} catch (Exception e) {
 				jedisPools.exceptionBroken(jedis);
-				e.printStackTrace();
+				LoggerUtil.addExceptionLog(e);
 			} finally {
 				jedisPools.closeJedis(jedis);
 			}

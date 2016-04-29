@@ -62,58 +62,88 @@ public class DataPostbackApiAction {
 	 */
 	@RequestMapping(value = "/adShow.shtml", method=RequestMethod.GET)
 	public void adShowURL(HttpServletRequest request, HttpServletResponse response, AdPostBackMessage adPostBackMessage) {
+		System.out.println("adPostBackMessage=" + adPostBackMessage.getRequestAdDateTime());
 		String ip = IPUtil.getIpAddr(request);
 		adPostBackMessage.setIp(ip);
+		adPostBackMessage.setRequestAdDateTime(adPostBackMessage.getRequestAdDateTime().replace("_", " "));
+		
 		String userId = adPostBackMessage.getUserId();
-		System.out.println("===adShow==" + ip + "=userId==" + userId + ";ip2=" + IpUtil2.getIpAddr(request));
 		adPostBackMessage.setRequestTime(DateUtil.getDateTime());
 		Double price = Double.valueOf(adPostBackMessage.getPrice());
 		String adId = adPostBackMessage.getAdId();
 		Integer adSlotType = adPostBackMessage.getAdSlotType();
 		
 		Jedis jedis = jedisPools.getJedis();
-		//判断广告是否是存在的
-		if(jedis.zrank(RedisConstant.AD_IDS_KEY, adId) == null) {
-			jedisPools.closeJedis(jedis);
+		
+		if(jedis == null) {
+			LoggerUtil.addShowLogegerMessage(adPostBackMessage);
 			response.setStatus(200);
-			LoggerUtil.addBillingLog("adId=" + adId + "==========不存在======");
 			return;
 		}
 		
-		//说明已经达到控制的广告量
-		Long adControlCount = jedis.hincrBy(RedisConstant.AD_ID_CONTROL_COUNT, adId, -1);
-		if(adControlCount <=0) {
-			//设置成过滤的广告
-			jedis.sadd(RedisConstant.AD_STOP_IDS, adId);
-			LoggerUtil.addBillingLog("adId=" + adId + "已经达到设定的限定值,已经停止投放");
-		}
-		
-		String userAdKey = RedisConstant.USER_AD_ADSLOT + userId;
-		String adSlotTypeAdValue = jedis.hget(userAdKey, adSlotType + "");
-		if(adSlotTypeAdValue == null) {
-			adSlotTypeAdValue = adId;
-			jedis.hset(userAdKey, adSlotType + "", adSlotTypeAdValue);
-		} else {
-			if(!adSlotTypeAdValue.contains(adId)) {
-				adSlotTypeAdValue =  adSlotTypeAdValue + "," + adId;
-				jedis.hset(userAdKey, adSlotType + "", adSlotTypeAdValue);
+		try {
+			int osType = adPostBackMessage.getOsType();
+			String adIdsKey = getAdIdsKey(osType);
+			//判断广告是否是存在的
+			if(adIdsKey == null || jedis.zrank(adIdsKey, adId) == null) {
+				jedisPools.closeJedis(jedis);
+				response.setStatus(200);
+				LoggerUtil.addBillingLog("adIdsKey=" + adIdsKey + "; adId=" + adId + "==========不存在======");
+				return;
 			}
-		}
-		
-		//进行扣费
-		Integer statusCode = dspAdBillingService.rebate(adId, price);
-		if(statusCode == 0 || statusCode == 2) {
-			//说明费用已经用光
-			jedis.lpush(RedisConstant.DEL_ADID,  adId);
-			LoggerUtil.addBillingLog("===" + DateUtil.getDateTime() + "==广告id=" +adId+ "=费用已经用光=====price=" + price);
+			
+			//说明已经达到控制的广告量
+			Long adControlCount = jedis.hincrBy(RedisConstant.AD_ID_CONTROL_COUNT, adId, -1);
+			if(adControlCount <=0) {
+				//设置成过滤的广告
+				jedis.sadd(RedisConstant.AD_STOP_IDS, adId);
+				LoggerUtil.addBillingLog("adId=" + adId + "已经达到设定的限定值,已经停止投放");
+			}
+			
+			String userAdKey = RedisConstant.USER_AD_ADSLOT + userId;
+			String adSlotTypeAdValue = jedis.hget(userAdKey, adSlotType + "");
+			if(adSlotTypeAdValue == null) {
+				adSlotTypeAdValue = adId;
+				jedis.hset(userAdKey, adSlotType + "", adSlotTypeAdValue);
+			} else {
+				if(!adSlotTypeAdValue.contains(adId)) {
+					adSlotTypeAdValue =  adSlotTypeAdValue + "," + adId;
+					jedis.hset(userAdKey, adSlotType + "", adSlotTypeAdValue);
+				}
+			}
+			
+			//进行扣费
+			Integer statusCode = dspAdBillingService.rebate(adId, price);
+			if(statusCode == 0 || statusCode == 2) {
+				//说明费用已经用光
+				jedis.lpush(RedisConstant.DEL_ADID,  osType + ":::" + adId);
+				LoggerUtil.addBillingLog("==广告id=" +adId+ "=费用已经用光需要删除");
+			} 
+			jedisPools.closeJedis(jedis);
+		} catch (Exception e) {
+			LoggerUtil.addExceptionLog(e);
+			jedisPools.exceptionBroken(jedis);
+			jedisPools.closeJedis(jedis);
 		} 
-		
-		jedisPools.closeJedis(jedis);
 		LoggerUtil.addShowLogegerMessage(adPostBackMessage);
-		adPostBackMessage.setRequestAdDateTime(adPostBackMessage.getRequestAdDateTime().replace("_", " "));
 		response.setStatus(200);
 	}
 	
+	/**
+	 * 根据平台获取对应的广告key集合
+	 * @param osType
+	 * @return
+	 */
+	private String getAdIdsKey(Integer osType) {
+		if(osType == 2) {
+			return RedisConstant.AD_ANDROID_IDS;
+		} else if(osType == 1) {
+			return RedisConstant.AD_IOS_IDS;
+		} else {
+			return RedisConstant.AD_PC_IDS;
+		}
+	}
+
 	/**
 	 * 
 	 * 竞价成功回调地址

@@ -40,6 +40,25 @@ public class BaseTest {
 		}
 	}
 	
+	@Test
+	public void test1() {
+		for(int i=0;i<100;i++) {
+			System.out.println(getBannerIndex());
+		}
+	}
+	
+	private int flyIndex = -1;// 上一次选择的服务器
+	private int getFlyIndex() {
+		flyIndex = (flyIndex + 1) % 3;
+		 return flyIndex + 1;
+	 }
+	
+	private int bannerIndex = -1;// 上一次选择的服务器
+	private int getBannerIndex() {
+		bannerIndex = (bannerIndex + 1) % 3;
+		 return bannerIndex + 1;
+	 }
+	
 	
 	@Test
 	public void testLog1324() {
@@ -70,6 +89,20 @@ public class BaseTest {
 //		jedis.lpush(RedisConstant.DEL_ADID,  adId);
 		jedis.sadd(RedisConstant.AD_STOP_IDS, adId);
 		jedisPools.closeJedis(jedis);
+	}
+	
+	@Test
+	public void getCount1() {
+		try {
+			JedisPools jedisPools = JedisPools.getInstance();
+			Jedis jedis = jedisPools.getJedis();
+			jedis.lpush("del_adiddel_adid",  "asdgasdg");
+			jedis.lpush("asdgasdg",  "asdgasdg");
+			jedis.lpush("asdgasdg235",  "asdgasdg");
+			jedisPools.closeJedis(jedis);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	@Test

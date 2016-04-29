@@ -22,8 +22,12 @@ public class DSPAdControlCountTimer implements Job{
 		LoggerUtil.addTimeLog("======dsp定时调整广告频次======" + DateUtil.getDateTime());
 		JedisPools jedisPools = JedisPools.getInstance();
 		Jedis jedis = jedisPools.getJedis();
-		Set<String> adIdSet = jedis.zrevrange(RedisConstant.AD_IDS_KEY, 0, -1);
-		AdControlUtil.setAdControlTimes(adIdSet);
+		Set<String> pcAdIdSet = jedis.zrevrange(RedisConstant.AD_PC_IDS, 0, -1);
+		Set<String> androidAdIdSet = jedis.zrevrange(RedisConstant.AD_ANDROID_IDS, 0, -1);
+		Set<String> iosAdIdSet = jedis.zrevrange(RedisConstant.AD_IOS_IDS, 0, -1);
+		androidAdIdSet.addAll(pcAdIdSet);
+		androidAdIdSet.addAll(iosAdIdSet);
+		AdControlUtil.setAdControlTimes(androidAdIdSet);
 		jedisPools.closeJedis(jedis);
 		LoggerUtil.addTimeLog("======dsp定时调整广告频次======");
 	}

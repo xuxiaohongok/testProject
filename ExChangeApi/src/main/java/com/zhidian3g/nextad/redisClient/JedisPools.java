@@ -5,13 +5,9 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.Enumeration;
-
-import org.apache.commons.lang3.StringUtils;
-
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
-
 import com.zhidian3g.common.utils.LoggerUtil;
 
 /**
@@ -35,7 +31,6 @@ public class JedisPools {
 		try{  
         	if(jedisPool == null) {
         		JedisPoolConfig config = JedisComMessage.getJedisPoolConfig();
-                
                 /**
                  *如果你遇到 java.net.SocketTimeoutException: Read timed out exception的异常信息
                  *请尝试在构造JedisPool的时候设置自己的超时值. JedisPool默认的超时时间是2秒(单位毫秒)
@@ -101,19 +96,13 @@ public class JedisPools {
 			exceptionBroken(jedis);
 			closeJedis(jedis);
 			reConnectionTime++;
-			System.out.println("获取Jedis连接失败,开始尝试重置连接池!:" + reConnectionTime);
-			if (reConnectionTime % 10 == 0) {
+			LoggerUtil.addExceptionLog("获取Jedis连接失败,开始尝试重置连接池!:" + reConnectionTime);
+			if (reConnectionTime % 30 == 0) {
 //				MailService.send(getLocalIP() + " 媒体对接 redis连接池连接出现问题", "尝试重置连接池3次了,邮件通知! <br>" + LoggerUtil.getExceptionString(e));
 				// 产生异常,连接池重置.
 				jedisPoolReset();
 				return null;
-			} else {
-				/**
-				 * 继续尝试获取jedis连接
-				 */
-				jedis = getJedis();
-				reConnectionTime = 0;
-			}
+			} 
 		}
 		return jedis;
 	}
@@ -124,34 +113,6 @@ public class JedisPools {
 	 * @param dbNum redis数据库编号 
 	 * @return
 	 */
-	private Jedis getJedisByDB(int dbNum){
-		Jedis jedis = null;
-		// 捕捉异常
-		try {
-			jedis = jedisPool.getResource();
-			jedis.select(dbNum);
-		} catch (Exception e) {
-//			LoggerUtil.setExceptionLog(e);
-			exceptionBroken(jedis);
-			closeJedis(jedis);
-			reConnectionTime++;
-			System.out.println("获取Jedis连接失败,开始尝试重置连接池!:" + reConnectionTime);
-			if (reConnectionTime % 10 == 0) {
-//				MailService.send(getLocalIP() + " Next_AdReceiveServer广告接收系统redis连接池连接出现问题", "尝试重置连接池3次了,邮件通知! <br>" + LoggerUtil.getExceptionString(e));
-				// 产生异常,连接池重置.
-				jedisPoolReset();
-				return null;
-			} else {
-				/**
-				 * 继续尝试获取jedis连接
-				 */
-				jedis = getJedisByDB(dbNum);
-				reConnectionTime = 0;
-			}
-		}
-		
-		return jedis;
-	}
 
 	/**
 	 * jedis连接池重置
@@ -170,30 +131,4 @@ public class JedisPools {
 			e.printStackTrace();
 		}
 	}
-	
-	private String getLocalIP() {
-        String ip = "";
-        try {
-            Enumeration<?> e1 = (Enumeration<?>) NetworkInterface.getNetworkInterfaces();
-            while (e1.hasMoreElements()) {
-                NetworkInterface ni = (NetworkInterface) e1.nextElement();
-                if (!ni.getName().equals("eth0")) {
-                    continue;
-                } else {
-                    Enumeration<?> e2 = ni.getInetAddresses();
-                    while (e2.hasMoreElements()) {
-                        InetAddress ia = (InetAddress) e2.nextElement();
-                        if (ia instanceof Inet6Address)
-                            continue;
-                        ip = ia.getHostAddress();
-                    }
-                    break;
-                }
-            }
-        } catch (SocketException e) {
-        	e.printStackTrace();
-        }
-        return ip;
-    }
-
 }

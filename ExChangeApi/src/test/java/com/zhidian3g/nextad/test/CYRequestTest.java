@@ -28,6 +28,7 @@ public class CYRequestTest {
 //					"&requestId=testiiiifhs2&adId=6&adBlockKey=0&adSlotType=13&createId=4&landingPageId=4&height=320" +
 //					"&width=50&requestAdDateTime=2016-04-06_16:28:55&price=4000&cyRId=testiiiifhs2");
 //			for(int i=0; i<20;i++) {
+//			for(;;) {
 //				new Thread(new Runnable() {
 //					@Override
 //					public void run() {
@@ -35,37 +36,21 @@ public class CYRequestTest {
 ////							for(int i=0; i<1; i++) {
 //								try {
 //									upload("testiiiifhs2");
-//									Thread.sleep(1);
+//									Thread.sleep(10);
 //								} catch (IOException e) {
 //									e.printStackTrace();
 //								} catch (InterruptedException e) {
 //									e.printStackTrace();
 //								}
-////								upload("testiiii2" + i);
-////								Thread.sleep(10);
-////								upload("testiiii2" + i);
-////								Thread.sleep(10);
-////								upload("testiiii2" + i);
-////								Thread.sleep(10);
-////								upload("testiiii2" + i);
-////								Thread.sleep(10);
 //							}
 //					}
 //				}).start();
 //			}
 			
 //			for(; ; ) {
-			for(int i=0; i<1; i++) {
+			for(int i=0; i<3; i++) {
 				upload("testiiiifhs2");
-				Thread.sleep(1);
-//				upload("testiiii2" + i);
-//				Thread.sleep(10);
-//				upload("testiiii2" + i);
-//				Thread.sleep(10);
-//				upload("testiiii2" + i);
-//				Thread.sleep(10);
-//				upload("testiiii2" + i);
-//				Thread.sleep(10);
+				Thread.sleep(100);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -75,12 +60,12 @@ public class CYRequestTest {
 	
 	private int count = 0;
 	private void upload(String cyRequestId) throws IOException {  
-		String url = "http://bjdsp.zhidian3g.cn/cyDspTest.shtml";
+//		String url = "http://bjdsp.zhidian3g.cn/cyDspTest.shtml";
 //		String url = "http://dsp.zhidian3g.cn/cyDspTest.shtml";
-//		String url = "http://localhost:8023/ExChangeApi/cyDspTest.shtml";
 //		String url = "http://zdsp.nextading.com/cyDspTest.shtml";
-//		String url = "http://192.168.2.78:8089/ExChangeApi/addpb.shtml";
-//		String url = "http://localhost:8089/ExChangeApi/cyDspTest.shtml";
+//		String url = "http://bjtestdsp.zhidian3g.cn/cyDspTest.shtml";
+//		String url = "http://192.168.2.67:8089/cyDspTest.shtml";
+		String url = "http://localhost:8089/ExChangeApi/cyDspTest.shtml";
 //		String url = "http://zdsp.nextading.com/cyDspTest.shtml";
 //		String url = "http://qdsp.nextading.com/cyDspTest.shtml";
 //		String url = "http://dspapi.nextading.com/cyDspTest.shtml";
@@ -97,17 +82,25 @@ public class CYRequestTest {
 		Integer[] adSlotTypeArray = {1, 13};
 		int adSlotType = count%2==0 ? adSlotTypeArray[0] : adSlotTypeArray[1];
 		AdSlot adSlot = AdSlot.newBuilder()
-						.setAdslotType(adSlotType)
+						.setAdslotType(13)
 						.setHeight(320)
 						.setWidth(50)
 						.setPosition(position)
 						.addCreativeType(0)
 						.build();
+		Mobile mobile = null;
+		if(count%2==0) {
+			mobile = Mobile.newBuilder()
+		   			.setDeviceId("asdg")
+		   			.setPlatform(OS.ANDROID)
+		   			.build();
+		} else {
+			mobile = Mobile.newBuilder()
+		   			.setDeviceId("asdg")
+		   			.setPlatform(OS.ANDROID)
+		   			.build();
+		}
 		
-	   Mobile mobile = Mobile.newBuilder()
-			   			.setDeviceId("asdg")
-			   			.setPlatform(OS.ANDROID)
-			   			.build();
 		
        BidRequest bidRequest = BidRequest.newBuilder()
 				    		   .setId(cyRequestId)
@@ -115,7 +108,7 @@ public class CYRequestTest {
 				    		   .setUserAgent("Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.134 Safari/537.36")
 				    		   .setChangyanId(changyanId)
 				    		   .setGender(Gender.MALE)
-				    		   .setMobile(mobile)
+//				    		   .setMobile(mobile)
 				    		   .addUserCategory(1)
 				    		   .addAdslot(adSlot)
 				    		   .addPageKeyword("zhidian")
@@ -137,18 +130,20 @@ public class CYRequestTest {
         InputStream inStream=connection.getInputStream();
         BidResponse bidResponse = BidResponse.parseFrom(inStream);
         int adCount = bidResponse.getAdCount();
-        System.out.println("bidResponse=" + bidResponse + ";" +  bidResponse.getAdCount());
+//        System.out.println("bidResponse=" + bidResponse);
         if(adCount == 0) {
         	System.out.println("===========获取不到广告===========");
         	return;
+        } else {
+        	System.out.println("===========有广告===========");
         }
         String requestId = bidResponse.getId();
        
         Ad  ad = bidResponse.getAd(0);
         String landingPage = ad.getLandingPage();
-//        System.out.println("landingPage=" + landingPage);
+        System.out.println("landingPage=" + landingPage);
         String winUrl = ad.getNurl().replace("%%PRICE%%", "4000").replace("%%ID%%", requestId);
-        String showUrl = ad.getExposureUrls(0).getExposureUrl(0).replace("%%PRICE%%", "4000").replace("%%ID%%", requestId);
+        String showUrl = ad.getExposureUrls(0).getExposureUrl(1).replace("%%PRICE%%", "4000").replace("%%ID%%", requestId);
         String clickUrl = ad.getClickUrls(0);
         String clickUrl1 = ad.getClickUrls(1);
         System.out.println("showUrl=" + showUrl);
@@ -158,7 +153,7 @@ public class CYRequestTest {
         outputStream.close();  
        
 //        download(winUrl);
-        download(showUrl);
+//        download(showUrl);
 //        download(clickUrl);
 //        download(clickUrl1);
         
