@@ -42,6 +42,7 @@ import com.zhidian3g.dsp.vo.solr.RedisImageAd;
 import com.zhidian3g.dsp.vo.solr.RedisNativeAd;
 import com.zhidian3g.dsp.vo.solr.SearchAd;
 import com.zhidian3g.dsp.vo.solr.SearchAdCondition;
+import com.zhidian3g.dsp.vo.solr.SearchAdMateriolCondition;
 
 
 /**
@@ -343,6 +344,8 @@ public class AdSearchServiceImpl implements AdSearchService{
 			//广告素材类型1 纯图片 2 图文 3 图文描述(单图) 4 图文描述(多图) 5纯文字链接
 			Integer meterialType = null; 
 			//广告查询条件对象
+			SearchAdMateriolCondition searchAdMateriolCondition = new SearchAdMateriolCondition();
+			int imageCount = 0;
 			if(adTypeId == DspConstant.AD_TYPE_NATIVE) {
 				NativeAdTypeParam nativeAdTypeParam  = impParam.getNativeAdType();
 				//获取竞价对象数量
@@ -367,7 +370,6 @@ public class AdSearchServiceImpl implements AdSearchService{
 //					}
 					
 					TitleParam titleParam = asseet.getTitle();
-					
 					//设置标题条件
 					if(titleParam != null) {
 						Integer len = titleParam.getLen();
