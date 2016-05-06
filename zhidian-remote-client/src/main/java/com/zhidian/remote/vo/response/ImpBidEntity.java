@@ -14,6 +14,14 @@ public class ImpBidEntity {
     private String impId;
 
     /**
+     * 竞价方式
+     * 1.固定
+     * 2.竞价
+     */
+    @Deprecated
+    private Integer bidType;
+
+    /**
      * 竞价对象数组
      */
     private List<BidEntity> bids;
@@ -24,6 +32,16 @@ public class ImpBidEntity {
 
     public void setImpId(String impId) {
         this.impId = impId;
+    }
+
+    @Deprecated
+    public Integer getBidType() {
+        return bidType;
+    }
+
+    @Deprecated
+    public void setBidType(Integer bidType) {
+        this.bidType = bidType;
     }
 
     public List<BidEntity> getBids() {

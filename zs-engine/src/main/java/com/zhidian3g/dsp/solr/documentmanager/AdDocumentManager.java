@@ -103,6 +103,7 @@ public class AdDocumentManager extends DocumentManager<DspAdDocument>{
 		try {
 			query.setFields("adId");
 			QueryResponse response = solrServer.query(query);
+			
 			SolrDocumentList docs = response.getResults();
 			logger.info("查询时间：" + response.getQTime() + "; 查询文档个数：" + docs.getNumFound());
 			if(docs == null || docs.size() == 0) {
@@ -115,14 +116,14 @@ public class AdDocumentManager extends DocumentManager<DspAdDocument>{
 			}
 			
 			
-//			List<DspAdDocument> listAdDocumnt = response.getBeans(DspAdDocument.class);
+//			List<AdMaterialResponseDocument> listAdDocumnt = response.getBeans(AdMaterialResponseDocument.class);
 //			if(listAdDocumnt == null || listAdDocumnt.size() == 0) {
 //				logger.info("= 根据条件获取不到相应的广告 =");
 //				return null;
 //			}
 //			
 //			logger.info("查询时间：" + response.getQTime());
-//			for (DspAdDocument adDocument : listAdDocumnt) {
+//			for (AdMaterialResponseDocument adDocument : listAdDocumnt) {
 //				adIdList.add(adDocument.getAdId());
 //			}
 			

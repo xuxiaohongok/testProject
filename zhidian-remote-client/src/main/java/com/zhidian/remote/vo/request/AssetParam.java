@@ -16,7 +16,7 @@ public class AssetParam {
      * 0：否
      * 1：必须
      */
-    private Integer isRequiredAd;
+    private Integer isRequired;
 
     /**
      * 广告标题信息对象
@@ -28,6 +28,11 @@ public class AssetParam {
      */
     private ImgParam img;
 
+    /**
+     * 数据描述对象
+     */
+    private DataParam data;
+
     public Integer getId() {
         return id;
     }
@@ -36,12 +41,12 @@ public class AssetParam {
         this.id = id;
     }
 
-    public Integer getIsRequiredAd() {
-        return isRequiredAd;
+    public Integer getIsRequired() {
+        return isRequired;
     }
 
-    public void setIsRequiredAd(Integer isRequiredAd) {
-        this.isRequiredAd = isRequiredAd;
+    public void setIsRequired(Integer isRequired) {
+        this.isRequired = isRequired;
     }
 
     public TitleParam getTitle() {
@@ -58,5 +63,13 @@ public class AssetParam {
 
     public void setImg(ImgParam img) {
         this.img = img;
+    }
+
+    public DataParam getData() {
+        return data;
+    }
+
+    public void setData(DataParam data) {
+        this.data = data;
     }
 }

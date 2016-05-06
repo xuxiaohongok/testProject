@@ -1,7 +1,5 @@
 package com.zhidian3g.dsp.solr.document;
 
-import java.util.List;
-
 import org.apache.solr.client.solrj.beans.Field;
 
 /**

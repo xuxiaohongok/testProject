@@ -20,9 +20,22 @@ public class NativeAdEntity {
     private String title;
 
     /**
+     * 描述(有些媒体多个描述)
+     * 非必须
+     */
+    private String[] descriptions;
+
+    /**
+     * 图片map集合（key图片类型， value 为nativeImage）
+     * 否
+     */
+    private Map<Integer, NativeImageEntity> imagesMap;
+
+    /**
      * 图片素材地址
      * 非必须
      */
+    @Deprecated
     private String imgURL;
 
     /**
@@ -78,7 +91,6 @@ public class NativeAdEntity {
      */
     private Map<String, Object> extendObject;
 
-
     public Integer getId() {
         return id;
     }
@@ -95,10 +107,28 @@ public class NativeAdEntity {
         this.title = title;
     }
 
+    public String[] getDescriptions() {
+        return descriptions;
+    }
+
+    public void setDescriptions(String[] descriptions) {
+        this.descriptions = descriptions;
+    }
+
+    public Map<Integer, NativeImageEntity> getImagesMap() {
+        return imagesMap;
+    }
+
+    public void setImagesMap(Map<Integer, NativeImageEntity> imagesMap) {
+        this.imagesMap = imagesMap;
+    }
+
+    @Deprecated
     public String getImgURL() {
         return imgURL;
     }
 
+    @Deprecated
     public void setImgURL(String imgURL) {
         this.imgURL = imgURL;
     }

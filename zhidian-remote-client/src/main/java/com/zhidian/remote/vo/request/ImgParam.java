@@ -7,6 +7,11 @@ package com.zhidian.remote.vo.request;
 public class ImgParam {
 
     /**
+     * 图片类型
+     */
+    private Integer typeId;
+
+    /**
      * 宽
      */
     private Integer w;
@@ -15,6 +20,14 @@ public class ImgParam {
      * 高
      */
     private Integer h;
+
+    public Integer getTypeId() {
+        return typeId;
+    }
+
+    public void setTypeId(Integer typeId) {
+        this.typeId = typeId;
+    }
 
     public Integer getW() {
         return w;

@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -317,21 +318,41 @@ public class AdSearchServiceImpl implements AdSearchService{
 			
 			//广告创意类型
 			String adType = impParam.getAdType();
+			Integer adTypeId = Integer.valueOf(adType.split(",")[0]);
+			
 			Long adPrice = impParam.getBidMinimum();
+			String adCategory = impParam.getAdCategory();
+			String unSupportAdCategory = impParam.getUnSupportAdCategory();
 			
 			//广告位竞价对象列表
 			List<BidEntity> listBidEntities = new ArrayList<BidEntity>();
+			
+			//广告基本信息检索条件
+			SearchAdCondition searchAdCondition = new SearchAdCondition(DspConstant.ADX_TYPE + adxType, DspConstant.AD_TERMINALTYPE+terminalType,
+					getOSString(OS), DspConstant.AD_TYPE + adTypeId, ip);
+			//搜索对应的行业广告
+			if(StringUtils.isNotBlank(adCategory)) {
+				searchAdCondition.setAdCategory(adCategory);
+			}
+			
+			//不支持行业广告
+			if(StringUtils.isNotBlank(unSupportAdCategory)) {
+				searchAdCondition.setUnSupportAdCategory(unSupportAdCategory);
+			}
+			
+			//广告素材类型1 纯图片 2 图文 3 图文描述(单图) 4 图文描述(多图) 5纯文字链接
+			Integer meterialType = null; 
 			//广告查询条件对象
-			if(showType == DspConstant.NATIVE_AD_TYPE) {
+			if(adTypeId == DspConstant.AD_TYPE_NATIVE) {
 				NativeAdTypeParam nativeAdTypeParam  = impParam.getNativeAdType();
 				//获取竞价对象数量
 				Integer bids = nativeAdTypeParam.getPlcmtcnt();
 				//目前先获取一个
+//				String adxType, String terminalType, String osPlatform, String adType, String ip
 				
-				SearchAdCondition searchAdCondition = new SearchAdCondition(userId, DspConstant.ADX_TYPE + adxType, DspConstant.AD_SHOW_TYPE + showType, DspConstant.AD_TYPE+adType, getOSString(OS), ip);
+				
 				//广告位竞价对象
 				BidEntity bidEntity = null;
-				
 				//获取广告条件
 				List<AssetParam> listAssetParams = nativeAdTypeParam.getAssets();
 				StringBuffer imageHWs = new StringBuffer();
@@ -420,7 +441,7 @@ public class AdSearchServiceImpl implements AdSearchService{
 					bidEntity.setNativeAd(nativeAdEntity);
 				}
 				listBidEntities.add(bidEntity);
-			} else if(showType == DspConstant.IMAGE_TYPE) {
+			} else if(adTypeId == DspConstant.AD_TYPE_IMAGE) {
 				//广告位竞价对象
 				BidEntity bidEntity = null;
 				//目前返回一个图片广告
@@ -430,7 +451,6 @@ public class AdSearchServiceImpl implements AdSearchService{
 				//主图片
 				ImageAdTypeParam imageAdTypeParam = impParam.getImageAdType();
 				String imageHW = DspConstant.IMAGE_MAIN + imageAdTypeParam.getHeight() + H_W + imageAdTypeParam.getWidth();
-				searchAdCondition.setImageTypeHWs(imageHW);
 				SearchAd searchAd = solrSearchAdService.searchAdFormSolr(searchAdCondition);
 				if(searchAd == null) {
 					bidEntity = new BidEntity();

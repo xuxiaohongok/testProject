@@ -22,7 +22,6 @@ public class SolrDocumentContainer {
 		DspAdDocument adDocument = new DspAdDocument();
 		adDocument.setId("id" + ad.getId());
 		adDocument.setAdxType(DspConstant.ADX_TYPE + ad.getAdxType());
-		adDocument.setShowType(DspConstant.AD_SHOW_TYPE + ad.getShowType());
 		adDocument.setAdId(ad.getId());
 		adDocument.setAdHW(ad.getHeight() + "*" + ad.getWidth());
 		adDocument.setAdType(DspConstant.AD_TYPE + ad.getAdxType());

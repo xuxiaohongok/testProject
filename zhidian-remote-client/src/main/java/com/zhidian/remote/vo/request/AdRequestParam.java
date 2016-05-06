@@ -33,7 +33,6 @@ public class AdRequestParam {
      * 1、固定
      * 2、竞价
      */
-    @Deprecated
     private Integer bidType;
 
     /**
@@ -123,12 +122,10 @@ public class AdRequestParam {
         this.userId = userId;
     }
 
-    @Deprecated
     public Integer getBidType() {
         return bidType;
     }
 
-    @Deprecated
     public void setBidType(Integer bidType) {
         this.bidType = bidType;
     }

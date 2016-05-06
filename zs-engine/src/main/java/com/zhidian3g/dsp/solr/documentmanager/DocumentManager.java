@@ -37,7 +37,6 @@ public abstract class DocumentManager<T> {
     
 	}
 	
-
 	/**
 	 * 添加单个索引文档
 	 * @param t

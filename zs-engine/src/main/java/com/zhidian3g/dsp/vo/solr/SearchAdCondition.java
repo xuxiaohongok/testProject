@@ -4,37 +4,25 @@ public class SearchAdCondition {
 	
 	private String ip;
 	
-	private String userId;
-	
 	private String adxType;
 	
-	//获取终端类型：电脑、移动端 1、移动端2、PC端
-	private int terminalType;
+	//获取终端类型：电脑、移动端 1、移动端  2、PC端
+	private String terminalType;
 	
-	private String osType;
-	
-	//各个图片的长宽
-	private String imageTypeHWs;
-	
-	private String showType;
+	private String osPlatform;
 	
 	private String adType;
 	
-	private Integer adCategory; 
+	private String adCategory; 
 	
-	//title 标题长度
-	private Integer TH;
+	//不支持广告行业类型
+	private String unSupportAdCategory;
 	
-	//描述长度
-	private Integer DH;
-	
-	public SearchAdCondition(String userId, String adxType, String showType,String adType, String osType, String ip) {
+	public SearchAdCondition(String adxType, String terminalType, String osPlatform, String adType, String ip) {
 		super();
-		this.userId = userId;
+		this.terminalType = terminalType;
 		this.adxType = adxType;
-		this.showType = showType;
 		this.adType = adType;
-		this.osType = osType;
 		this.ip = ip;
 	}
 
@@ -46,14 +34,6 @@ public class SearchAdCondition {
 		this.ip = ip;
 	}
 
-	public String getUserId() {
-		return userId;
-	}
-
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
-
 	public String getAdxType() {
 		return adxType;
 	}
@@ -62,36 +42,20 @@ public class SearchAdCondition {
 		this.adxType = adxType;
 	}
 
-	public int getTerminalType() {
+	public String getTerminalType() {
 		return terminalType;
 	}
 
-	public void setTerminalType(int terminalType) {
+	public void setTerminalType(String terminalType) {
 		this.terminalType = terminalType;
 	}
 
-	public String getOsType() {
-		return osType;
+	public String getOsPlatform() {
+		return osPlatform;
 	}
 
-	public void setOsType(String osType) {
-		this.osType = osType;
-	}
-
-	public String getImageTypeHWs() {
-		return imageTypeHWs;
-	}
-
-	public void setImageTypeHWs(String imageTypeHWs) {
-		this.imageTypeHWs = imageTypeHWs;
-	}
-
-	public String getShowType() {
-		return showType;
-	}
-
-	public void setShowType(String showType) {
-		this.showType = showType;
+	public void setOsPlatform(String osPlatform) {
+		this.osPlatform = osPlatform;
 	}
 
 	public String getAdType() {
@@ -102,28 +66,20 @@ public class SearchAdCondition {
 		this.adType = adType;
 	}
 
-	public Integer getAdCategory() {
+	public String getAdCategory() {
 		return adCategory;
 	}
 
-	public void setAdCategory(Integer adCategory) {
+	public void setAdCategory(String adCategory) {
 		this.adCategory = adCategory;
 	}
 
-	public Integer getTH() {
-		return TH;
+	public String getUnSupportAdCategory() {
+		return unSupportAdCategory;
 	}
 
-	public void setTH(Integer tH) {
-		TH = tH;
-	}
-
-	public Integer getDH() {
-		return DH;
-	}
-
-	public void setDH(Integer dH) {
-		DH = dH;
+	public void setUnSupportAdCategory(String unSupportAdCategory) {
+		this.unSupportAdCategory = unSupportAdCategory;
 	}
 	
 }

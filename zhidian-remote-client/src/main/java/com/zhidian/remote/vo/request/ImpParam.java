@@ -1,7 +1,5 @@
 package com.zhidian.remote.vo.request;
 
-import java.util.List;
-
 /**
  * Created by cjl on 2016/3/23.
  *
@@ -38,9 +36,10 @@ public class ImpParam {
      * 8、视频广告
      * 9、Gif广告
      * 10、MRAID v2.0广告
+     * （可传多个，以，分隔）
      * （adtype输入值，对应的imageAdTypes, nativeAdTypes为必填）
      */
-    private Integer adType;
+    private String adType;
 
     /**
      * 底价(1元=10000单位，例如，15000代表1.5元)
@@ -64,14 +63,14 @@ public class ImpParam {
      * json array数组字符串
      * 非必须
      */
-    private List<ImageAdTypeParam> imageAdType;
+    private ImageAdTypeParam imageAdType;
 
     /**
      * 原生广告类型对象
      * json array数组字符串
      * 非必须
      */
-    private List<NativeAdTypeParam> nativeAdTypes;
+    private NativeAdTypeParam nativeAdType;
 
     /**
      * 不允许的广告类型（可传多个用英文单逗号隔开 如：1,2）
@@ -121,11 +120,11 @@ public class ImpParam {
         this.showType = showType;
     }
 
-    public Integer getAdType() {
+    public String getAdType() {
         return adType;
     }
 
-    public void setAdType(Integer adType) {
+    public void setAdType(String adType) {
         this.adType = adType;
     }
 
@@ -153,20 +152,20 @@ public class ImpParam {
         this.adMulit = adMulit;
     }
 
-    public List<ImageAdTypeParam> getImageAdType() {
+    public ImageAdTypeParam getImageAdType() {
         return imageAdType;
     }
 
-    public void setImageAdType(List<ImageAdTypeParam> imageAdType) {
+    public void setImageAdType(ImageAdTypeParam imageAdType) {
         this.imageAdType = imageAdType;
     }
 
-    public List<NativeAdTypeParam> getNativeAdTypes() {
-        return nativeAdTypes;
+    public NativeAdTypeParam getNativeAdType() {
+        return nativeAdType;
     }
 
-    public void setNativeAdTypes(List<NativeAdTypeParam> nativeAdTypes) {
-        this.nativeAdTypes = nativeAdTypes;
+    public void setNativeAdType(NativeAdTypeParam nativeAdType) {
+        this.nativeAdType = nativeAdType;
     }
 
     public String getUnSupportAdType() {

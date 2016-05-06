@@ -11,6 +11,7 @@ import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
+import org.apache.solr.common.SolrInputDocument;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -31,6 +32,30 @@ public class SolrTest {
 	public void init() { 
 		adDocumentManager = AdDocumentManager.getInstance();
 		httpSolrServer = (HttpSolrServer) adDocumentManager.getSolrServer();
+	}
+	
+	@Test
+	public void testSolrTest() {
+		try {
+			adDocumentManager.deleteAllDocument();
+			SolrInputDocument solrInputDocument = new SolrInputDocument();
+			solrInputDocument.addField("id", "id10");
+			solrInputDocument.addField("adId", 10);
+			solrInputDocument.addField("adxType", "name10");
+			
+			SolrInputDocument child = new SolrInputDocument();
+			child.addField("id", "12");
+			child.addField("adId", 10);
+			child.addField("adxType", "name10");
+			child.addField("parentId", "id10");
+			solrInputDocument.addChildDocument(child);
+			httpSolrServer.add(solrInputDocument);
+			httpSolrServer.commit();
+		} catch (SolrServerException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	
@@ -82,6 +107,7 @@ public class SolrTest {
 		query.setQuery(contentCondition.toString());
 		try {
 			QueryResponse response = httpSolrServer.query(query);
+			
 //			List<CXResponseSearchMessage> list = response.getBeans(CXResponseSearchMessage.class);
 //			System.out.println(list);
 			SolrDocumentList docs = response.getResults();

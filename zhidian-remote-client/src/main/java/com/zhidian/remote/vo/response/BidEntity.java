@@ -1,7 +1,5 @@
 package com.zhidian.remote.vo.response;
 
-import java.util.List;
-
 /**
  * Created by cjl on 2016/3/23.
  */
@@ -20,7 +18,7 @@ public class BidEntity {
      * (1元=10000单位，例如，15000代表1.5元)
      * 是否必须：是
      */
-    private Integer adPrice;
+    private Long adPrice;
 
     /**
      * 竞价方式
@@ -45,12 +43,12 @@ public class BidEntity {
     /**
      * 图片广告对象array
      */
-    private List<ImageAdEntity> imageAds;
+    private ImageAdEntity imageAd;
 
     /**
      * 原生广告对象array
      */
-    private List<NativeAdEntity> nativeAds;
+    private NativeAdEntity nativeAd;
 
     public Integer getIsHasAd() {
         return isHasAd;
@@ -60,11 +58,11 @@ public class BidEntity {
         this.isHasAd = isHasAd;
     }
 
-    public Integer getAdPrice() {
+    public Long getAdPrice() {
         return adPrice;
     }
 
-    public void setAdPrice(Integer adPrice) {
+    public void setAdPrice(Long adPrice) {
         this.adPrice = adPrice;
     }
 
@@ -84,20 +82,20 @@ public class BidEntity {
         this.adType = adType;
     }
 
-    public List<ImageAdEntity> getImageAds() {
-        return imageAds;
+    public ImageAdEntity getImageAd() {
+        return imageAd;
     }
 
-    public void setImageAds(List<ImageAdEntity> imageAds) {
-        this.imageAds = imageAds;
+    public void setImageAd(ImageAdEntity imageAd) {
+        this.imageAd = imageAd;
     }
 
-    public List<NativeAdEntity> getNativeAds() {
-        return nativeAds;
+    public NativeAdEntity getNativeAd() {
+        return nativeAd;
     }
 
-    public void setNativeAds(List<NativeAdEntity> nativeAds) {
-        this.nativeAds = nativeAds;
+    public void setNativeAd(NativeAdEntity nativeAd) {
+        this.nativeAd = nativeAd;
     }
 }
 
