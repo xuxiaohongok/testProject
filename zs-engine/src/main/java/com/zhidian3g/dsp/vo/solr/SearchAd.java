@@ -1,6 +1,6 @@
 package com.zhidian3g.dsp.vo.solr;
 
-import com.zhidian3g.dsp.vo.ad.AdLandingPageMessage;
+import com.zhidian3g.dsp.vo.ad.RedisAdLandingPageMessage;
 import com.zhidian3g.dsp.vo.ad.RedisAdBaseMessage;
 import com.zhidian3g.dsp.vo.ad.RedisAdCreatePackageMessage;
 import com.zhidian3g.dsp.vo.adcontrol.AdMaterialMessage;
@@ -9,7 +9,7 @@ public class SearchAd {
 	//广告基本信息
 	private RedisAdBaseMessage redisAdBaseMessage;
 	
-	private AdLandingPageMessage adLandingPageMessage;
+	private RedisAdLandingPageMessage adLandingPageMessage;
 	
 	private RedisAdCreatePackageMessage redisAdCreatePackageMessage;
 
@@ -21,11 +21,11 @@ public class SearchAd {
 		this.redisAdBaseMessage = redisAdBaseMessage;
 	}
 
-	public AdLandingPageMessage getAdLandingPageMessage() {
+	public RedisAdLandingPageMessage getAdLandingPageMessage() {
 		return adLandingPageMessage;
 	}
 
-	public void setAdLandingPageMessage(AdLandingPageMessage adLandingPageMessage) {
+	public void setAdLandingPageMessage(RedisAdLandingPageMessage adLandingPageMessage) {
 		this.adLandingPageMessage = adLandingPageMessage;
 	}
 

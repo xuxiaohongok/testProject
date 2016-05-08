@@ -6,7 +6,7 @@ package com.zhidian3g.dsp.vo.ad;
  * @author Administrator
  *
  */
-public class AdLandingPageMessage {
+public class RedisAdLandingPageMessage {
 
 	/**落地页id*/
 	private int id;

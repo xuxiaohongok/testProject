@@ -21,7 +21,7 @@ import com.zhidian3g.common.util.DateUtil;
 import com.zhidian3g.common.util.JsonUtil;
 import com.zhidian3g.dsp.solr.documentmanager.AdDspDocumentManager;
 import com.zhidian3g.dsp.solr.service.SolrSearchAdService;
-import com.zhidian3g.dsp.vo.ad.AdLandingPageMessage;
+import com.zhidian3g.dsp.vo.ad.RedisAdLandingPageMessage;
 import com.zhidian3g.dsp.vo.ad.RedisAdBaseMessage;
 import com.zhidian3g.dsp.vo.adcontrol.AdBaseMessage;
 import com.zhidian3g.dsp.vo.solr.SearchAd;
@@ -189,7 +189,7 @@ public class SolrSearchAdServiceImpl implements SolrSearchAdService {
 		String[] landpingKeyArray = map.keySet().toArray(new String[0]);
 		int mapIndex = chooseSolrDocument(map.size());
 		String jsonLandingPageString = map.get(landpingKeyArray[mapIndex]);
-		AdLandingPageMessage adLandingPageMessage = JsonUtil.fromJson(jsonLandingPageString, AdLandingPageMessage.class);
+		RedisAdLandingPageMessage adLandingPageMessage = JsonUtil.fromJson(jsonLandingPageString, RedisAdLandingPageMessage.class);
 		RedisAdBaseMessage adBaseMessage = JsonUtil.fromJson(jedis.get(adBaseRedisKey), RedisAdBaseMessage.class);
 		
 		jedisPools.closeJedis(jedis);

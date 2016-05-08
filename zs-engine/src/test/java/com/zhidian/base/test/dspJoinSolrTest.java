@@ -251,13 +251,11 @@ public class dspJoinSolrTest {
 		// 添加广告基本信息文档
 		AdDspDocumentManager.getInstance().createDocumentIndex(adBaseMessageDocument);
 		for (final AdMaterialMessage adMaterialMessage : adMaterialMesList) {
-			List<String> text = new ArrayList<String>();
 			final AdMaterialDocument adMaterialDocument = new AdMaterialDocument();
 			adMaterialDocument.setId("adId-" + adId + "-createId-" + adMaterialMessage.getCreateId() + "-meterialId-" + adMaterialMessage.getMeterialId());
 			adMaterialDocument.setCreateId(adMaterialMessage.getCreateId());
 			adMaterialDocument.setAdId(adBaseMessage.getId());
 			adMaterialDocument.setMeterialId(adMaterialMessage.getMeterialId());
-			adMaterialDocument.setLandingPageCount(adMaterialMessage.getLandingPageCount());
 			
 			// 创意类型
 			int meterIanType = adMaterialMessage.getMeterialType();

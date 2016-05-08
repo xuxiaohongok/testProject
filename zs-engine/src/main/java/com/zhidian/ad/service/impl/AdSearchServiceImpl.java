@@ -38,7 +38,7 @@ import com.zhidian3g.common.util.DateUtil;
 import com.zhidian3g.common.util.JsonUtil;
 import com.zhidian3g.common.util.PropertiesUtil;
 import com.zhidian3g.dsp.solr.service.SolrSearchAdService;
-import com.zhidian3g.dsp.vo.ad.AdLandingPageMessage;
+import com.zhidian3g.dsp.vo.ad.RedisAdLandingPageMessage;
 import com.zhidian3g.dsp.vo.ad.RedisAdBaseMessage;
 import com.zhidian3g.dsp.vo.ad.RedisAdCreatePackageMessage;
 import com.zhidian3g.dsp.vo.adcontrol.AdMaterialMessage;
@@ -454,7 +454,8 @@ public class AdSearchServiceImpl implements AdSearchService{
 				} else {//获取到相关的原生广告
 					RedisAdBaseMessage redisAdBaseMessage = searchAd.getRedisAdBaseMessage();
 					RedisAdCreatePackageMessage adMaterialMessage = searchAd.getRedisAdCreatePackageMessage();
-					AdLandingPageMessage adLandingPageMessage = searchAd.getAdLandingPageMessage();
+					RedisAdLandingPageMessage adLandingPageMessage = searchAd.getAdLandingPageMessage();
+					
 					Long adId = redisAdBaseMessage.getAdId();
 					Integer responseAdCategory = redisAdBaseMessage.getAdCategory();
 					
@@ -474,7 +475,7 @@ public class AdSearchServiceImpl implements AdSearchService{
 					Map<String, String> callBackURLMap = getCallBackURL(commonParments, adxType);
 					//设置原生广告信息
 					NativeAdEntity nativeAdEntity = new NativeAdEntity();
-					nativeAdEntity.setTitle(redisNativeAd.getTitle());
+					nativeAdEntity.setTitle(adMaterialMessage.getTitle());
 					nativeAdEntity.setLandingPage(landingPage);
 					nativeAdEntity.setAdCategory(responseAdCategory);
 					
@@ -508,7 +509,7 @@ public class AdSearchServiceImpl implements AdSearchService{
 					bidEntity = getBaseBidEntity(bidType, adPrice, DspConstant.IMAGE_TYPE);
 					//缓存中的广告
 					RedisAdBaseMessage redisImageAd = searchAd.getRedisAdBaseMessage();
-					AdLandingPageMessage adLandingPageMessage = searchAd.getAdLandingPageMessage();
+					RedisAdLandingPageMessage adLandingPageMessage = searchAd.getAdLandingPageMessage();
 					Long adId = redisImageAd.getAdId();
 					Integer redisAdCategory = redisImageAd.getAdCategory();
 					

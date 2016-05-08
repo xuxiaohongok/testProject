@@ -2,25 +2,54 @@ package com.zhidian3g.dsp.vo.ad;
 
 public class RedisAdCreatePackageMessage {
 
-	private Integer title;
+	/** 用户ID */
+	private Integer createId;
 	
-	private Integer detail;
+	private Integer meterialId;
+	
+	private Integer meterialType;
+	
+	private String title;
+	
+	private String detail;
 
-	public Integer getTitle() {
+	public Integer getCreateId() {
+		return createId;
+	}
+
+	public void setCreateId(Integer createId) {
+		this.createId = createId;
+	}
+
+	public Integer getMeterialId() {
+		return meterialId;
+	}
+
+	public void setMeterialId(Integer meterialId) {
+		this.meterialId = meterialId;
+	}
+
+	public Integer getMeterialType() {
+		return meterialType;
+	}
+
+	public void setMeterialType(Integer meterialType) {
+		this.meterialType = meterialType;
+	}
+
+	public String getTitle() {
 		return title;
 	}
 
-	public void setTitle(Integer title) {
+	public void setTitle(String title) {
 		this.title = title;
 	}
 
-	public Integer getDetail() {
+	public String getDetail() {
 		return detail;
 	}
 
-	public void setDetail(Integer detail) {
+	public void setDetail(String detail) {
 		this.detail = detail;
 	}
-
-
 }
