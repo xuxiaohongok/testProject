@@ -40,6 +40,7 @@ import com.zhidian3g.common.util.PropertiesUtil;
 import com.zhidian3g.dsp.solr.service.SolrSearchAdService;
 import com.zhidian3g.dsp.vo.ad.RedisAdBaseMessage;
 import com.zhidian3g.dsp.vo.ad.RedisAdCreatePackageMessage;
+import com.zhidian3g.dsp.vo.adcontrol.AdLandingPageMessage;
 import com.zhidian3g.dsp.vo.solr.SearchAd;
 import com.zhidian3g.dsp.vo.solr.SearchAdCondition;
 import com.zhidian3g.dsp.vo.solr.SearchAdMateriolCondition;
@@ -505,12 +506,13 @@ public class AdSearchServiceImpl implements AdSearchService{
 					bidEntity = getBaseBidEntity(bidType, adPrice, DspConstant.IMAGE_TYPE);
 					//缓存中的广告
 					RedisAdBaseMessage redisImageAd = searchAd.getRedisAdBaseMessage();
+					AdLandingPageMessage adLandingPageMessage = searchAd.getAdLandingPageMessage();
 					Long adId = redisImageAd.getAdId();
 					Integer redisAdCategory = redisImageAd.getAdCategory();
 					
 					ImageAdEntity imageAdEntity = new ImageAdEntity();
 					Integer createId =redisImageAd.getAdCategory();
-					String landingPageId =redisImageAd.getLandingPage();
+					int landingPageId = adLandingPageMessage.getId();
 					
 					String commonParments = "userId=" + userId + "&requestId="+ serialNumber + "&adId=" + adId
 							+ "&adBlockKey=" +  impId  +  "&adSlotType=" +  showType + "&createId=" +createId 
@@ -518,7 +520,7 @@ public class AdSearchServiceImpl implements AdSearchService{
 					
 					Map<String, String> callBackURLMap = getCallBackURL(commonParments, adxType);
 					//设置原生广告信息
-					imageAdEntity.setLandingPage(redisImageAd.getLandingPage());
+					imageAdEntity.setLandingPage(adLandingPageMessage.getLandingPageUrl());
 					imageAdEntity.setAdCategory(redisAdCategory);
 					
 					imageAdEntity.setWinUrls(callBackURLMap.get("adWinURL"));
