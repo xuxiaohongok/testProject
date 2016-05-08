@@ -2,7 +2,8 @@ package com.zhidian3g.dsp.vo.solr;
 
 public class SearchAdMateriolCondition {
 	
-	private String meterialType;
+	//素材类型
+	private Integer meterialType;
 	
 	private Integer tLen;
 	
@@ -10,11 +11,11 @@ public class SearchAdMateriolCondition {
 	
 	private String imageHW;
 
-	public String getMeterialType() {
+	public Integer getMeterialType() {
 		return meterialType;
 	}
 
-	public void setMeterialType(String meterialType) {
+	public void setMeterialType(Integer meterialType) {
 		this.meterialType = meterialType;
 	}
 

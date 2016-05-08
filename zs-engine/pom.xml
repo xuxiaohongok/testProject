@@ -117,8 +117,6 @@
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
 		</dependency>
-		<!-- <dependency> <groupId>org.apache.zookeeper</groupId> <artifactId>zookeeper</artifactId> 
-			</dependency> -->
 
 		<dependency>
 			<groupId>com.101tec</groupId>

@@ -9,6 +9,7 @@ public class RedisImageAd {
 	private Integer height;
 	//广告行业类别
 	private Integer adCategory;
+	
 	private Integer clickType;
 	//广告落地页
 	private String landingPage;

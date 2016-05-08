@@ -3,6 +3,7 @@ package com.zhidian3g.dsp.solr.documentmanager;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -54,14 +55,26 @@ public class AdDspDocumentManager extends DocumentManager{
 		return searchAdDocumentId(condition, null);
 	}
 	
-	public List<GroupCommand> searchAdMeterMessage(String condition) {
+	/**
+	 * 根据条件获取素材信息
+	 * @param condition
+	 * @param fifterString
+	 * @return
+	 */
+	public List<GroupCommand> searchAdMeterMessage(String condition, String fifterString) {
 		try {
 			SolrQuery query = new SolrQuery();// 查询全部
 			query.setParam(GroupParams.GROUP, true);
 			query.setParam(GroupParams.GROUP_FIELD, "adId");
 			query.setParam(GroupParams.GROUP_LIMIT, "100");
 			query.setFields("adId", "createId", "meterialId");
+			System.out.println("condition=" + condition);
 			query.setQuery(condition);
+			if(StringUtils.isNoneBlank(fifterString)) {
+				query.addFilterQuery(fifterString);
+				System.out.println("fifterString=" + fifterString);
+			}
+			
 			QueryResponse queryResponse1 = solrServer.query(query);
 			GroupResponse groupResponse = queryResponse1.getGroupResponse();
 			List<GroupCommand> groupList = groupResponse.getValues();

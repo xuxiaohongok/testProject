@@ -271,7 +271,7 @@ public class AdSearchServiceImpl implements AdSearchService{
 	
 	@Resource
 	private SolrSearchAdService solrSearchAdService;
-	private final String H_W = "*";
+	private final String H_W = "-";
 	//获取到广告
 	private final Integer HAS_AD = 0;
 		//获取不到广告
@@ -306,13 +306,13 @@ public class AdSearchServiceImpl implements AdSearchService{
 		//获取所有的广告位
 		List<ImpParam> listImplList = param.getImps();
 		for(ImpParam impParam : listImplList) {
+			//广告位id
 			String impId = impParam.getImpId();
-			
 			//广告位放回对象
 			ImpBidEntity impBidEntity = new ImpBidEntity();
 			impBidEntity.setImpId(impId);
 			CommonLoggerUtil.addBaseLog("传过来的参数impParam：" + JsonUtil.toJson(param));
-			//广告位id
+			//是否符合广告的请求判断标志
 			
 			//获取广告展示类型:也就是创意类型
 			Integer showType = impParam.getShowType();
@@ -321,6 +321,7 @@ public class AdSearchServiceImpl implements AdSearchService{
 			String adType = impParam.getAdType();
 			Integer adTypeId = Integer.valueOf(adType.split(",")[0]);
 			
+			//竞价低价
 			Long adPrice = impParam.getBidMinimum();
 			String adCategory = impParam.getAdCategory();
 			String unSupportAdCategory = impParam.getUnSupportAdCategory();
@@ -329,39 +330,45 @@ public class AdSearchServiceImpl implements AdSearchService{
 			List<BidEntity> listBidEntities = new ArrayList<BidEntity>();
 			
 			//广告基本信息检索条件
-			SearchAdCondition searchAdCondition = new SearchAdCondition(DspConstant.ADX_TYPE + adxType, DspConstant.AD_TERMINALTYPE+terminalType,
-					getOSString(OS), DspConstant.AD_TYPE + adTypeId, ip);
+			SearchAdCondition searchAdCondition = new SearchAdCondition(adxType, terminalType,
+					getOSString(OS), adTypeId, ip);
 			//搜索对应的行业广告
 			if(StringUtils.isNotBlank(adCategory)) {
 				searchAdCondition.setAdCategory(adCategory);
 			}
-			
 			//不支持行业广告
 			if(StringUtils.isNotBlank(unSupportAdCategory)) {
 				searchAdCondition.setUnSupportAdCategory(unSupportAdCategory);
 			}
 			
-			//广告素材类型1 纯图片 2 图文 3 图文描述(单图) 4 图文描述(多图) 5纯文字链接
+			/**
+			 * 广告素材类型1 纯图片 2 图文 3 图文描述(单图) 4 图文描述(多图) 5纯文字链接
+			 */
 			Integer meterialType = null; 
 			//广告查询条件对象
 			SearchAdMateriolCondition searchAdMateriolCondition = new SearchAdMateriolCondition();
-			int imageCount = 0;
 			if(adTypeId == DspConstant.AD_TYPE_NATIVE) {
 				NativeAdTypeParam nativeAdTypeParam  = impParam.getNativeAdType();
 				//获取竞价对象数量
 				Integer bids = nativeAdTypeParam.getPlcmtcnt();
-				//目前先获取一个
-//				String adxType, String terminalType, String osPlatform, String adType, String ip
-				
+//				for(int i=0; i<bids; i++) {
+//					
+//				}
 				
 				//广告位竞价对象
 				BidEntity bidEntity = null;
 				//获取广告条件
 				List<AssetParam> listAssetParams = nativeAdTypeParam.getAssets();
 				StringBuffer imageHWs = new StringBuffer();
+				boolean isHasTitle = false;
+				boolean ishasDetail = false;
+				boolean isWithAppName = false;
+				boolean isWithPackageName = false;
+				int imageCount = 0;
 				for(AssetParam asseet:listAssetParams) {
 					//条件是否为必须
 					Integer isAdRequire = asseet.getIsRequired();
+					
 //					Integer no = asseet.getId();
 					//如果是不必要的广告条件暂时过滤掉
 //					if(isAdRequire == 0) {
@@ -373,59 +380,90 @@ public class AdSearchServiceImpl implements AdSearchService{
 					//设置标题条件
 					if(titleParam != null) {
 						Integer len = titleParam.getLen();
-						searchAdCondition.setTH(len);
+						searchAdMateriolCondition.settLen(len);
+						isHasTitle = true;
 						continue;
 					}
 					
 					//设置图片条件
 					ImgParam imgParam = asseet.getImg();
 					if(imgParam != null) {
-						Integer imageTypeId = imgParam.getTypeId();
-						String imagePix = null;
-						//获取主图片
-						if(imageTypeId == 1) {
-							imagePix = DspConstant.IMAGE_MAIN;
-						} else if(imageTypeId == 2) {
-							//获取logo图片
-							imagePix = DspConstant.IMAGE_LOGO;
-						} else if(imageTypeId == 3) {
-							imagePix = DspConstant.IMAGE_ICON;
-						}
-						String imageHW = imagePix + imgParam.getH() + H_W + imgParam.getW();
-						imageHWs.append(imageHW + ";");
+//						Integer imageTypeId = imgParam.getTypeId();
+//						String imagePix = null;
+//						//获取主图片
+//						if(imageTypeId == 1) {
+//							imagePix = DspConstant.IMAGE_MAIN;
+//						} else if(imageTypeId == 2) {
+//							//获取logo图片
+//							imagePix = DspConstant.IMAGE_LOGO;
+//						} else if(imageTypeId == 3) {
+//							imagePix = DspConstant.IMAGE_ICON;
+//						}
+						imageHWs.append(imgParam.getH() + H_W + imgParam.getW() + ";");
+						imageCount++;
 						continue;
 					}
 					
 					DataParam dataParam = asseet.getData();
 					if(dataParam != null) {
 						Integer dataType = dataParam.getTypeId();
+						//请求广告的描述长度限制
+						if(dataType == 3) {
+							ishasDetail = true;
+							searchAdMateriolCondition.setdLen(dataParam.getLen());
+						} else if(dataType ==1 ) {
+							isWithAppName = true;
+						} else if(dataType == 2) {
+							isWithPackageName = true;
+						}
 					}
 				}
 				
-				int imagesLength = imageHWs.length();
-				if(imagesLength > 0) {
-					searchAdCondition.setImageTypeHWs(imageHWs.toString().substring(0, imagesLength -1));
+				//设置要检索的图片条件
+				searchAdMateriolCondition.setImageHW(imageHWs.toString());
+				if(isHasTitle) {//有标题
+					if(imageCount == 1 && !ishasDetail) {//说明是图片+标题广告
+						meterialType = 2;
+					} else if(imageCount == 1 && ishasDetail) {//图片+标题 +描述
+						meterialType = 3;
+					} else if(imageCount == 0) {
+						meterialType = 5; //文字链广告
+					} else {//多图片广告
+						meterialType = 4;
+					}
+				} else {//没有标题说明是纯图片
+					if(imageCount == 1) {//没有标题说明是纯图片
+						meterialType = 1;
+					} else {
+						unHasAd(impBidEntity, bids, "=========没有标题且不是一张图片的广告===" + JsonUtil.toJson(impParam));
+						responseListImpBidEntities.add(impBidEntity);
+						continue;
+					}
 				}
 				
-				SearchAd searchAd = solrSearchAdService.searchAdFormSolr(searchAdCondition);
+				//填充素材类别
+				searchAdMateriolCondition.setMeterialType(meterialType);
+				Map<String, Long> searchAd = solrSearchAdService.searchAdFormSolr(searchAdCondition, searchAdMateriolCondition);
+				//根据条件获取不到广告
 				if(searchAd == null) {
-					bidEntity = new BidEntity();
-					bidEntity.setIsHasAd(HAS_NO_AD);
-					CommonLoggerUtil.addBaseLog("=根据条件获取不了广告===" + JsonUtil.toJson(searchAdCondition));
-				} else {
+					unHasAd(impBidEntity, bids, "=根据条件获取不了广告===" + JsonUtil.toJson(impParam));
+					responseListImpBidEntities.add(impBidEntity);
+					continue;
+				} else {//获取到相关的原生广告
 					RedisNativeAd redisNativeAd = searchAd.getRedisNativeAd();
 					Long adId = redisNativeAd.getAdId();
-					Integer adCategory = redisNativeAd.getAdCategory();
+					Integer responseAdCategory = redisNativeAd.getAdCategory();
 					Integer createId =redisNativeAd.getCreateId();
 					//落地页
 					String landingPage = redisNativeAd.getLandingPage();
 					Integer landingPageId = redisNativeAd.getLandingPageId();
-					String apkDownloadParms = "zd_userId=" + userId + "&zd_requestId="+ serialNumber + "&zd_adId=" + adId+ "&zd_createId=" +createId + "&zd_landingPageId=" + landingPageId + "&requestAdDateTime=" + requestTime;
-					if(landingPage.contains("?")) {
-						landingPage = landingPage +  "&" + apkDownloadParms;
-					} else {
-						landingPage = landingPage +  "?" + apkDownloadParms; 
-					}
+					
+//					String apkDownloadParms = "zd_userId=" + userId + "&zd_requestId="+ serialNumber + "&zd_adId=" + adId+ "&zd_createId=" +createId + "&zd_landingPageId=" + landingPageId + "&requestAdDateTime=" + requestTime;
+//					if(landingPage.contains("?")) {
+//						landingPage = landingPage +  "&" + apkDownloadParms;
+//					} else {
+//						landingPage = landingPage +  "?" + apkDownloadParms; 
+//					}
 					
 					String commonParments = "userId=" + userId + "&requestId="+ serialNumber + "&adId=" + adId+ "&adBlockKey=" +  impId  +  "&adSlotType=" +  showType + "&createId=" +createId + "&landingPageId=" + landingPageId + "&requestAdDateTime=" + requestTime;
 					Map<String, String> callBackURLMap = getCallBackURL(commonParments, adxType);
@@ -436,8 +474,7 @@ public class AdSearchServiceImpl implements AdSearchService{
 					nativeAdEntity.setExposureUrls(callBackURLMap.get("adShowURL"));
 					nativeAdEntity.setClickUrls(callBackURLMap.get("adClickURL"));
 					nativeAdEntity.setLandingPage(landingPage);
-					nativeAdEntity.setAdCategory(adCategory);
-					
+					nativeAdEntity.setAdCategory(responseAdCategory);
 					//广告位竞价对象
 					bidEntity = getBaseBidEntity(bidType, adPrice, DspConstant.NATIVE_AD_TYPE);
 					bidEntity.setNativeAd(nativeAdEntity);
@@ -448,12 +485,15 @@ public class AdSearchServiceImpl implements AdSearchService{
 				BidEntity bidEntity = null;
 				//目前返回一个图片广告
 				//广告查询条件对象
-				SearchAdCondition searchAdCondition = new SearchAdCondition(userId, DspConstant.ADX_TYPE + adxType, DspConstant.AD_SHOW_TYPE + showType, DspConstant.AD_TYPE+adType, getOSString(OS), ip);
-				
 				//主图片
 				ImageAdTypeParam imageAdTypeParam = impParam.getImageAdType();
-				String imageHW = DspConstant.IMAGE_MAIN + imageAdTypeParam.getHeight() + H_W + imageAdTypeParam.getWidth();
-				SearchAd searchAd = solrSearchAdService.searchAdFormSolr(searchAdCondition);
+				meterialType = 1;//设置纯图片
+				String imageHW = imageAdTypeParam.getHeight() + H_W + imageAdTypeParam.getWidth();
+				//设置素材类型
+				searchAdMateriolCondition.setMeterialType(meterialType);
+				//设置图片的条件
+				searchAdMateriolCondition.setImageHW(imageHW);
+				SearchAd searchAd = solrSearchAdService.searchAdFormSolr(searchAdCondition, searchAdMateriolCondition);
 				if(searchAd == null) {
 					bidEntity = new BidEntity();
 					CommonLoggerUtil.addBaseLog("根据条件获取不到图片广告=" + JsonUtil.toJson(searchAdCondition));
@@ -464,9 +504,11 @@ public class AdSearchServiceImpl implements AdSearchService{
 					RedisImageAd redisImageAd = searchAd.getRedisImageAd();
 					ImageAdEntity imageAdEntity = new ImageAdEntity();
 					Long adId = redisImageAd.getAdId();
-					Integer  adCategory = redisImageAd.getAdCategory();
+					Integer adCategory1 = redisImageAd.getAdCategory();
 					Integer createId =redisImageAd.getAdCategory();
 					String landingPageId =redisImageAd.getLandingPage();
+					
+					
 					String commonParments = "userId=" + userId + "&requestId="+ serialNumber + "&adId=" + adId+ "&adBlockKey=" +  impId  +  "&adSlotType=" +  showType + "&createId=" +createId + "&landingPageId=" + landingPageId + "&requestAdDateTime=" + requestTime;
 					Map<String, String> callBackURLMap = getCallBackURL(commonParments, adxType);
 					//设置原生广告信息
@@ -474,7 +516,7 @@ public class AdSearchServiceImpl implements AdSearchService{
 					imageAdEntity.setExposureUrls(callBackURLMap.get("adShowURL"));
 					imageAdEntity.setClickUrls(callBackURLMap.get("adClickURL"));
 					imageAdEntity.setLandingPage(redisImageAd.getLandingPage());
-					imageAdEntity.setAdCategory(adCategory);
+					imageAdEntity.setAdCategory(adCategory1);
 					bidEntity.setImageAd(imageAdEntity);
 					//设置广告类型
 				}
@@ -487,6 +529,24 @@ public class AdSearchServiceImpl implements AdSearchService{
 		}
 		adResponseEntity.setImpBids(responseListImpBidEntities);
 		return JSON.toJSONString(adResponseEntity);
+	}
+
+
+	/**
+	 * 获取不到广告
+	 * @param imps
+	 * @param map
+	 * @return
+	 */
+	private void unHasAd(ImpBidEntity rImp,int bidCount, String text){
+		List<BidEntity> rBidList = new ArrayList<BidEntity>();
+		for(int i=0;i<bidCount;i++) {
+			BidEntity rBid= new BidEntity();
+			rBid.setIsHasAd(HAS_NO_AD);
+			rBidList.add(rBid);
+		}
+		rImp.setBids(rBidList);
+		CommonLoggerUtil.addErrQuest(text);
 	}
 	
 	/**

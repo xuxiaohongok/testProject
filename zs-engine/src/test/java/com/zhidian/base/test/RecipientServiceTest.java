@@ -21,9 +21,9 @@ public class RecipientServiceTest {
 
     @Test
     public void should_return_success_when_add_recipient_not_exist() throws Exception {
-    	SearchAdCondition searchAd = new SearchAdCondition("ok", DspConstant.ADX_TYPE + 2, DspConstant.AD_SHOW_TYPE + 2, DspConstant.AD_TYPE+1,DspConstant.OS_ANDROID, "127.0.0.1");
-    	for(;;) {
-    		solrSearchAdServiceImpl.searchAdFormSolr(searchAd);
-    	}
+//    	SearchAdCondition searchAd = new SearchAdCondition("ok", DspConstant.ADX_TYPE + 2, DspConstant.AD_SHOW_TYPE + 2, DspConstant.AD_TYPE+1,DspConstant.OS_ANDROID, "127.0.0.1");
+//    	for(;;) {
+//    		solrSearchAdServiceImpl.searchAdFormSolr(searchAd);
+//    	}
     }
 }

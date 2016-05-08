@@ -4,21 +4,21 @@ public class SearchAdCondition {
 	
 	private String ip;
 	
-	private String adxType;
+	private Integer adxType;
 	
 	//获取终端类型：电脑、移动端 1、移动端  2、PC端
-	private String terminalType;
+	private Integer terminalType;
 	
 	private String osPlatform;
 	
-	private String adType;
+	private Integer adType;
 	
 	private String adCategory; 
 	
 	//不支持广告行业类型
 	private String unSupportAdCategory;
 	
-	public SearchAdCondition(String adxType, String terminalType, String osPlatform, String adType, String ip) {
+	public SearchAdCondition(Integer adxType, Integer terminalType, String osPlatform, Integer adType, String ip) {
 		super();
 		this.terminalType = terminalType;
 		this.adxType = adxType;
@@ -34,19 +34,19 @@ public class SearchAdCondition {
 		this.ip = ip;
 	}
 
-	public String getAdxType() {
+	public Integer getAdxType() {
 		return adxType;
 	}
 
-	public void setAdxType(String adxType) {
+	public void setAdxType(Integer adxType) {
 		this.adxType = adxType;
 	}
 
-	public String getTerminalType() {
+	public Integer getTerminalType() {
 		return terminalType;
 	}
 
-	public void setTerminalType(String terminalType) {
+	public void setTerminalType(Integer terminalType) {
 		this.terminalType = terminalType;
 	}
 
@@ -58,11 +58,11 @@ public class SearchAdCondition {
 		this.osPlatform = osPlatform;
 	}
 
-	public String getAdType() {
+	public Integer getAdType() {
 		return adType;
 	}
 
-	public void setAdType(String adType) {
+	public void setAdType(Integer adType) {
 		this.adType = adType;
 	}
 
@@ -81,5 +81,6 @@ public class SearchAdCondition {
 	public void setUnSupportAdCategory(String unSupportAdCategory) {
 		this.unSupportAdCategory = unSupportAdCategory;
 	}
+
 	
 }

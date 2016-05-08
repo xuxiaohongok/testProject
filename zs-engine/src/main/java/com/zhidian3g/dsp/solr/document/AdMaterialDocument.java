@@ -1,5 +1,7 @@
 package com.zhidian3g.dsp.solr.document;
 
+import java.util.List;
+
 import org.apache.solr.client.solrj.beans.Field;
 
 /**
@@ -33,6 +35,9 @@ public class AdMaterialDocument {
 	
 	@Field
 	private Integer dLen;
+	
+	@Field
+	private List<String> text;
 
 	public String getId() {
 		return id;
@@ -97,4 +102,13 @@ public class AdMaterialDocument {
 	public void setdLen(Integer dLen) {
 		this.dLen = dLen;
 	}
+
+	public List<String> getText() {
+		return text;
+	}
+
+	public void setText(List<String> text) {
+		this.text = text;
+	}
+	
 }

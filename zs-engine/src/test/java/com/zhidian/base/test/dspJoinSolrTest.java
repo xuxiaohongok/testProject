@@ -29,6 +29,7 @@ import com.zhidian.dsp.constant.DspConstant;
 import com.zhidian3g.common.util.PropertiesUtil;
 import com.zhidian3g.dsp.solr.SolrServerFactory;
 import com.zhidian3g.dsp.solr.document.AdBaseMessageDocument;
+import com.zhidian3g.dsp.solr.document.AdMaterialDocument;
 import com.zhidian3g.dsp.solr.document.AdMaterialResponseDocument;
 import com.zhidian3g.dsp.solr.documentmanager.AdDocumentManager;
 import com.zhidian3g.dsp.solr.documentmanager.AdDspDocumentManager;
@@ -45,8 +46,8 @@ public class dspJoinSolrTest {
 		cxHttpSolrServer = SolrServerFactory.getHttpSolrServer(PropertiesUtil
 				.getInstance().getValue("solr.httpsolrserverjoin.url"));
 		 try {
-//		 cxHttpSolrServer.deleteByQuery("*:*");
-//		 cxHttpSolrServer.commit();
+//			 cxHttpSolrServer.deleteByQuery("*:*");
+//			 cxHttpSolrServer.commit();
 		 } catch (Exception e) {
 		 e.printStackTrace();
 		 }
@@ -109,7 +110,7 @@ public class dspJoinSolrTest {
 	public void testSearch1() {
 		try {
 			String childCondition = "meterialType:meterialType3";
-			long end = System.currentTimeMillis();
+			long startTime = System.currentTimeMillis();
 			String parentCondition = "adxType1 AND os-androoid";
 			String adCategory = "1";
 			StringBuffer fifterConditionStringBuffer = new StringBuffer();
@@ -129,19 +130,22 @@ public class dspJoinSolrTest {
 			}
 			List<Long> adIdList = AdDspDocumentManager.getInstance().searchAdDocumentId(parentCondition, fifterConditionStringBuffer.toString());
 			System.out.println("adIdList=" + adIdList);
-//			Map<Long, SolrDocumentList> map = new HashMap<Long, SolrDocumentList>();
-//			List<GroupCommand> adMeterList = AdDspDocumentManager.getInstance().searchAdMeterMessage(childCondition);
-//			
-//			for (GroupCommand groupCommand : adMeterList) {
-//				List<Group> groups = groupCommand.getValues();
-//				for (Group group : groups) {
-//					SolrDocumentList solrDocumentList = group.getResult();
-//					Long adId = (Long) solrDocumentList.get(0).getFieldValue("adId");
-//					if(adIdList.contains(adId)) {
-//						map.put(adId, solrDocumentList);
-//					}
-//				}
-//			}
+			Map<Long, SolrDocumentList> map = new HashMap<Long, SolrDocumentList>();
+			List<GroupCommand> adMeterList = AdDspDocumentManager.getInstance().searchAdMeterMessage(childCondition, null);
+			
+			for (GroupCommand groupCommand : adMeterList) {
+				System.out.println("groupCommand=" + groupCommand);
+				List<Group> groups = groupCommand.getValues();
+				for (Group group : groups) {
+					System.out.println("group=" + group);
+					SolrDocumentList solrDocumentList = group.getResult();
+					Long adId = (Long) solrDocumentList.get(0).getFieldValue("adId");
+					if(adIdList.contains(adId)) {
+						map.put(adId, solrDocumentList);
+					}
+				}
+			}
+			
 //			
 //			//优化广告逻辑
 //			Set<Long> adIdSet = map.keySet();
@@ -246,36 +250,36 @@ public class dspJoinSolrTest {
 		adBaseMessageDocument.setAreas(adBaseMessage.getAreas());
 		// 添加广告基本信息文档
 		AdDspDocumentManager.getInstance().createDocumentIndex(adBaseMessageDocument);
-//		for (final AdMaterialMessage adMaterialMessage : adMaterialMesList) {
-//			final AdMaterialDocument adMaterialDocument = new AdMaterialDocument();
-//			adMaterialDocument.setId("adId-" + adId + "-createId-" + adMaterialMessage.getCreateId() + "-meterialId-" + adMaterialMessage.getMeterialId());
-//			adMaterialDocument.setCreateId(adMaterialMessage.getCreateId());
-//			adMaterialDocument.setAdId(adBaseMessage.getId());
-//			adMaterialDocument.setMeterialId(adMaterialMessage.getMeterialId());
-//
-//			// 创意类型
-//			int meterIanType = adMaterialMessage.getMeterialType();
-//			adMaterialDocument.setMeterialType("meterialType" + meterIanType
-//					+ " meterialType7");
-//
-//			// 根据创意类型设置对应的索引属性值
-//
-//			// 1 纯图片 2 图文 3 图文描述(单图) 4 图文描述(多图) 5纯文字链接
-//			if (meterIanType == 1) {
-//				adMaterialDocument.setImageHWs(adMaterialMessage.getImageHWs());
-//			} else if (meterIanType == 2 || meterIanType == 4) {// 图文广告
-//				adMaterialDocument.setImageHWs(adMaterialMessage.getImageHWs());
-//				adMaterialDocument.settLen(adMaterialMessage.gettLen());
-//			} else if (meterIanType == 3) {// 图文描述
-//				adMaterialDocument.setImageHWs(adMaterialMessage.getImageHWs());
-//				adMaterialDocument.settLen(adMaterialMessage.gettLen());
-//				adMaterialDocument.setdLen(adMaterialMessage.getdLen());
-//			} else if (meterIanType == 5) {
-//				adMaterialDocument.settLen(adMaterialMessage.gettLen());
-//			}
-//			// 添加广告素材文档
-//			AdDspDocumentManager.getInstance().createDocumentIndex(adMaterialDocument);
-//		}
+		for (final AdMaterialMessage adMaterialMessage : adMaterialMesList) {
+			List<String> text = new ArrayList<String>();
+			final AdMaterialDocument adMaterialDocument = new AdMaterialDocument();
+			adMaterialDocument.setId("adId-" + adId + "-createId-" + adMaterialMessage.getCreateId() + "-meterialId-" + adMaterialMessage.getMeterialId());
+			adMaterialDocument.setCreateId(adMaterialMessage.getCreateId());
+			adMaterialDocument.setAdId(adBaseMessage.getId());
+			adMaterialDocument.setMeterialId(adMaterialMessage.getMeterialId());
+			// 创意类型
+			int meterIanType = adMaterialMessage.getMeterialType();
+			adMaterialDocument.setMeterialType("meterialType" + meterIanType
+					+ " meterialType7");
+
+			// 根据创意类型设置对应的索引属性值
+
+			// 1 纯图片 2 图文 3 图文描述(单图) 4 图文描述(多图) 5纯文字链接
+			if (meterIanType == 1) {
+				adMaterialDocument.setImageHWs(adMaterialMessage.getImageHWs());
+			} else if (meterIanType == 2 || meterIanType == 4) {// 图文广告
+				adMaterialDocument.setImageHWs(adMaterialMessage.getImageHWs());
+				adMaterialDocument.settLen(adMaterialMessage.gettLen());
+			} else if (meterIanType == 3) {// 图文描述
+				adMaterialDocument.setImageHWs(adMaterialMessage.getImageHWs());
+				adMaterialDocument.settLen(adMaterialMessage.gettLen());
+				adMaterialDocument.setdLen(adMaterialMessage.getdLen());
+			} else if (meterIanType == 5) {
+				adMaterialDocument.settLen(adMaterialMessage.gettLen());
+			}
+			// 添加广告素材文档
+			AdDspDocumentManager.getInstance().createDocumentIndex(adMaterialDocument);
+		}
 	}
 
 	private Map<Integer, String> getCity() {
