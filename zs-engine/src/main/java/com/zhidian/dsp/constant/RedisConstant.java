@@ -13,6 +13,4 @@ public class RedisConstant {
 	//落地页hash集合
 	public static final String AD_CREATE_LANDINGPAGE = "ad_create_landingpage";
 
-	public static final String AD_IMAGE = "ad_image_";
-	
 }

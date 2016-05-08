@@ -1,7 +1,8 @@
 package com.zhidian3g.dsp.vo.solr;
 
+import com.zhidian3g.dsp.vo.ad.AdLandingPageMessage;
 import com.zhidian3g.dsp.vo.ad.RedisAdBaseMessage;
-import com.zhidian3g.dsp.vo.adcontrol.AdLandingPageMessage;
+import com.zhidian3g.dsp.vo.ad.RedisAdCreatePackageMessage;
 import com.zhidian3g.dsp.vo.adcontrol.AdMaterialMessage;
 
 public class SearchAd {
@@ -10,7 +11,7 @@ public class SearchAd {
 	
 	private AdLandingPageMessage adLandingPageMessage;
 	
-	private AdMaterialMessage adMaterialMessage;
+	private RedisAdCreatePackageMessage redisAdCreatePackageMessage;
 
 	public RedisAdBaseMessage getRedisAdBaseMessage() {
 		return redisAdBaseMessage;
@@ -28,11 +29,14 @@ public class SearchAd {
 		this.adLandingPageMessage = adLandingPageMessage;
 	}
 
-	public AdMaterialMessage getAdMaterialMessage() {
-		return adMaterialMessage;
+	public RedisAdCreatePackageMessage getRedisAdCreatePackageMessage() {
+		return redisAdCreatePackageMessage;
 	}
 
-	public void setAdMaterialMessage(AdMaterialMessage adMaterialMessage) {
-		this.adMaterialMessage = adMaterialMessage;
+	public void setRedisAdCreatePackageMessage(
+			RedisAdCreatePackageMessage redisAdCreatePackageMessage) {
+		this.redisAdCreatePackageMessage = redisAdCreatePackageMessage;
 	}
+
+	
 }

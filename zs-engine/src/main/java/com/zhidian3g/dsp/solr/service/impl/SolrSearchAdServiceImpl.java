@@ -21,8 +21,9 @@ import com.zhidian3g.common.util.DateUtil;
 import com.zhidian3g.common.util.JsonUtil;
 import com.zhidian3g.dsp.solr.documentmanager.AdDspDocumentManager;
 import com.zhidian3g.dsp.solr.service.SolrSearchAdService;
+import com.zhidian3g.dsp.vo.ad.AdLandingPageMessage;
+import com.zhidian3g.dsp.vo.ad.RedisAdBaseMessage;
 import com.zhidian3g.dsp.vo.adcontrol.AdBaseMessage;
-import com.zhidian3g.dsp.vo.adcontrol.AdLandingPageMessage;
 import com.zhidian3g.dsp.vo.solr.SearchAd;
 import com.zhidian3g.dsp.vo.solr.SearchAdCondition;
 import com.zhidian3g.dsp.vo.solr.SearchAdMateriolCondition;
@@ -160,11 +161,6 @@ public class SolrSearchAdServiceImpl implements SolrSearchAdService {
 		SolrDocumentList solrDocumentList =  adAdMaterilmap.get(adId);
 		SolrDocument solrDocument = solrDocumentList.get(chooseSolrDocument(solrDocumentList.size() - 1));
 		
-//		"adId", "createId", "meterialId", "landingPageCount"
-//		Map<String, Long> map = new HashMap<String, Long>();
-//		map.put("createId", (Long)solrDocument.getFieldValue("createId"));
-//		map.put("meterialId", (Long)solrDocument.getFieldValue("meterialId"));
-		
 		int createId = (Integer)solrDocument.getFieldValue("createId");
 		int meterialId = (Integer)solrDocument.getFieldValue("meterialId");
 		
@@ -194,7 +190,7 @@ public class SolrSearchAdServiceImpl implements SolrSearchAdService {
 		int mapIndex = chooseSolrDocument(map.size());
 		String jsonLandingPageString = map.get(landpingKeyArray[mapIndex]);
 		AdLandingPageMessage adLandingPageMessage = JsonUtil.fromJson(jsonLandingPageString, AdLandingPageMessage.class);
-		AdBaseMessage adBaseMessage = JsonUtil.fromJson(jedis.get(adBaseRedisKey), AdBaseMessage.class);
+		RedisAdBaseMessage adBaseMessage = JsonUtil.fromJson(jedis.get(adBaseRedisKey), RedisAdBaseMessage.class);
 		
 		jedisPools.closeJedis(jedis);
 		return null;

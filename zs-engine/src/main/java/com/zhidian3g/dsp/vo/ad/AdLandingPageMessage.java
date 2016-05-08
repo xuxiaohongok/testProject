@@ -1,4 +1,4 @@
-package com.zhidian3g.dsp.vo.adcontrol;
+package com.zhidian3g.dsp.vo.ad;
 
 
 /**

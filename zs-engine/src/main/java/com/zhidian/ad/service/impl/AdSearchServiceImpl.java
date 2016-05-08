@@ -38,9 +38,10 @@ import com.zhidian3g.common.util.DateUtil;
 import com.zhidian3g.common.util.JsonUtil;
 import com.zhidian3g.common.util.PropertiesUtil;
 import com.zhidian3g.dsp.solr.service.SolrSearchAdService;
+import com.zhidian3g.dsp.vo.ad.AdLandingPageMessage;
 import com.zhidian3g.dsp.vo.ad.RedisAdBaseMessage;
 import com.zhidian3g.dsp.vo.ad.RedisAdCreatePackageMessage;
-import com.zhidian3g.dsp.vo.adcontrol.AdLandingPageMessage;
+import com.zhidian3g.dsp.vo.adcontrol.AdMaterialMessage;
 import com.zhidian3g.dsp.vo.solr.SearchAd;
 import com.zhidian3g.dsp.vo.solr.SearchAdCondition;
 import com.zhidian3g.dsp.vo.solr.SearchAdMateriolCondition;
@@ -451,15 +452,16 @@ public class AdSearchServiceImpl implements AdSearchService{
 					responseListImpBidEntities.add(impBidEntity);
 					continue;
 				} else {//获取到相关的原生广告
-					
 					RedisAdBaseMessage redisAdBaseMessage = searchAd.getRedisAdBaseMessage();
+					RedisAdCreatePackageMessage adMaterialMessage = searchAd.getRedisAdCreatePackageMessage();
+					AdLandingPageMessage adLandingPageMessage = searchAd.getAdLandingPageMessage();
 					Long adId = redisAdBaseMessage.getAdId();
 					Integer responseAdCategory = redisAdBaseMessage.getAdCategory();
 					
-					Integer createId =redisNativeAd.getCreateId();
+					Integer createId =adMaterialMessage.getCreateId();
 					//落地页
-					String landingPage = redisNativeAd.getLandingPage();
-					Integer landingPageId = redisNativeAd.getLandingPageId();
+					String landingPage = adLandingPageMessage.getLandingPageUrl();
+					Integer landingPageId = adLandingPageMessage.getId();
 					
 //					String apkDownloadParms = "zd_userId=" + userId + "&zd_requestId="+ serialNumber + "&zd_adId=" + adId+ "&zd_createId=" +createId + "&zd_landingPageId=" + landingPageId + "&requestAdDateTime=" + requestTime;
 //					if(landingPage.contains("?")) {
@@ -523,11 +525,11 @@ public class AdSearchServiceImpl implements AdSearchService{
 					imageAdEntity.setLandingPage(adLandingPageMessage.getLandingPageUrl());
 					imageAdEntity.setAdCategory(redisAdCategory);
 					
+					//回传地址设置
 					imageAdEntity.setWinUrls(callBackURLMap.get("adWinURL"));
 					imageAdEntity.setExposureUrls(callBackURLMap.get("adShowURL"));
 					imageAdEntity.setClickUrls(callBackURLMap.get("adClickURL"));
 					bidEntity.setImageAd(imageAdEntity);
-					//设置广告类型
 				}
 				//广告竞价对象
 				listBidEntities.add(bidEntity);
