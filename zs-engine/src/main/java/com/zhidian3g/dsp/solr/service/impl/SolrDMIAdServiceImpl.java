@@ -31,6 +31,10 @@ public class SolrDMIAdServiceImpl implements SolrDMIAdService {
 		
 		//添加广告基本信息文档
 		AdDspDocumentManager.getInstance().createDocumentIndex(adBaseMessageDocument);
+		
+		/**
+		 * 添加素材文档信息
+		 */
 		for (final AdMaterialMessage adMaterialMessage : adMaterialMesList) {
 			final AdMaterialDocument adMaterialDocument = new AdMaterialDocument();
 			adMaterialDocument.setId("adId-" + adId + "-createId-" + adMaterialMessage.getCreateId() + "-meterialId-" + adMaterialMessage.getMeterialId());

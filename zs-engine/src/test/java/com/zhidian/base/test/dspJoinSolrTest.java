@@ -257,10 +257,11 @@ public class dspJoinSolrTest {
 			adMaterialDocument.setCreateId(adMaterialMessage.getCreateId());
 			adMaterialDocument.setAdId(adBaseMessage.getId());
 			adMaterialDocument.setMeterialId(adMaterialMessage.getMeterialId());
+			adMaterialDocument.setLandingPageCount(adMaterialMessage.getLandingPageCount());
+			
 			// 创意类型
 			int meterIanType = adMaterialMessage.getMeterialType();
-			adMaterialDocument.setMeterialType("meterialType" + meterIanType
-					+ " meterialType7");
+			adMaterialDocument.setMeterialType("meterialType"+meterIanType+" meterialType7");
 
 			// 根据创意类型设置对应的索引属性值
 

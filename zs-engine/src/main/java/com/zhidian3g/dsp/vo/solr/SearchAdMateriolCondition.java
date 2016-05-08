@@ -5,10 +5,13 @@ public class SearchAdMateriolCondition {
 	//素材类型
 	private Integer meterialType;
 	
+	//标题的长度
 	private Integer tLen;
 	
+	//描述的长度
 	private Integer dLen;
 	
+	//图片的长宽
 	private String imageHW;
 
 	public Integer getMeterialType() {

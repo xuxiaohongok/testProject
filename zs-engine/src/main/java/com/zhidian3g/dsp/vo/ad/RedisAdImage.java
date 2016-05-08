@@ -1,7 +1,6 @@
-package com.zhidian3g.dsp.vo.solr;
+package com.zhidian3g.dsp.vo.ad;
 
-public class RedisNativeAd {
-	
+public class RedisAdImage {
 	//广告id
 	private Long adId;
 	//广告标题

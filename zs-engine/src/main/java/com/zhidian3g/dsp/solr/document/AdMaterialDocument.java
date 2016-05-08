@@ -102,7 +102,7 @@ public class AdMaterialDocument {
 	public void setdLen(Integer dLen) {
 		this.dLen = dLen;
 	}
-
+	
 	public List<String> getText() {
 		return text;
 	}

@@ -1,4 +1,4 @@
-package com.zhidian3g.dsp.vo.service;
+package com.zhidian.ad.service.impl;
 
 import com.zhidian.remote.vo.request.AdConditionParam;
 import com.zhidian.remote.vo.request.AdRequestParam;

@@ -78,5 +78,5 @@ public class AdMaterialMessage {
 	public void setdLen(Integer dLen) {
 		this.dLen = dLen;
 	}
-	
+
 }

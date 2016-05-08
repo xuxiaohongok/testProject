@@ -6,23 +6,23 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.response.Group;
 import org.apache.solr.client.solrj.response.GroupCommand;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.springframework.stereotype.Service;
-
 import redis.clients.jedis.Jedis;
-
 import com.zhidian.dsp.constant.DspConstant;
+import com.zhidian.dsp.constant.RedisConstant;
 import com.zhidian3g.common.redisClient.JedisPools;
 import com.zhidian3g.common.util.CommonLoggerUtil;
 import com.zhidian3g.common.util.DateUtil;
 import com.zhidian3g.common.util.JsonUtil;
 import com.zhidian3g.dsp.solr.documentmanager.AdDspDocumentManager;
 import com.zhidian3g.dsp.solr.service.SolrSearchAdService;
+import com.zhidian3g.dsp.vo.adcontrol.AdBaseMessage;
+import com.zhidian3g.dsp.vo.adcontrol.AdLandingPageMessage;
 import com.zhidian3g.dsp.vo.solr.SearchAd;
 import com.zhidian3g.dsp.vo.solr.SearchAdCondition;
 import com.zhidian3g.dsp.vo.solr.SearchAdMateriolCondition;
@@ -34,7 +34,7 @@ public class SolrSearchAdServiceImpl implements SolrSearchAdService {
 	private final JedisPools jedisPools = JedisPools.getInstance();
 	
 	@Override
-	public Map<String, Long> searchAdFormSolr(SearchAdCondition searchAdCondition, SearchAdMateriolCondition searchAdMateriolCondition) {
+	public SearchAd searchAdFormSolr(SearchAdCondition searchAdCondition, SearchAdMateriolCondition searchAdMateriolCondition) {
 		Long adId = null;
 //		DspConstant.ADX_TYPE + adxType, DspConstant.AD_TERMINALTYPE+terminalType, getOSString(OS), DspConstant.AD_TYPE + adTypeId, ip
 		//添加广告筛选区域
@@ -154,48 +154,61 @@ public class SolrSearchAdServiceImpl implements SolrSearchAdService {
 		
 		//优化广告逻辑
 		Set<Long> adIdSet = adAdMaterilmap.keySet();
-		
-		SolrDocumentList solrDocumentList =  adAdMaterilmap.get(adId);
-		SolrDocument solrDocument = chooseSolrDocument(solrDocumentList);
-		
-//		"adId", "createId", "meterialId"
-		Map<String, Long> map = new HashMap<String, Long>();
-		map.put("adId", (Long)solrDocument.getFieldValue("adId"));
-		map.put("createId", (Long)solrDocument.get("createId"));
-		map.put("meterialId", (Long)solrDocument.get("meterialId"));
-		
 		//获取到广告进行筛选
 		adId = adIdList.get(0);
+		
+		SolrDocumentList solrDocumentList =  adAdMaterilmap.get(adId);
+		SolrDocument solrDocument = solrDocumentList.get(chooseSolrDocument(solrDocumentList.size() - 1));
+		
+//		"adId", "createId", "meterialId", "landingPageCount"
+//		Map<String, Long> map = new HashMap<String, Long>();
+//		map.put("createId", (Long)solrDocument.getFieldValue("createId"));
+//		map.put("meterialId", (Long)solrDocument.getFieldValue("meterialId"));
+		
+		int createId = (Integer)solrDocument.getFieldValue("createId");
+		int meterialId = (Integer)solrDocument.getFieldValue("meterialId");
+		
+		//获取
 		Jedis jedis = jedisPools.getJedis();
 		
-		String adJsonString = null;
-		//原生广告
-//		if(adShowType.equals(DspConstant.AD_SHOW_TYPE + DspConstant.NATIVE_AD_TYPE)) {
-//			adJsonString = JedisUtil.get(jedis, RedisConstant.AD_NATIVE + adId);
-//			RedisNativeAd redisNativeAd = JsonUtil.fromJson(adJsonString, RedisNativeAd.class);
-//			searchAd.setRedisNativeAd(redisNativeAd);
-//		} else if(adShowType.equals(DspConstant.AD_SHOW_TYPE + DspConstant.IMAGE_TYPE)) {
-//			adJsonString = JedisUtil.get(jedis, RedisConstant.AD_IMAGE + adId);
-//			RedisImageAd redisImageAd = JsonUtil.fromJson(adJsonString, RedisImageAd.class);
-//			searchAd.setRedisImageAd(redisImageAd);
-//		}
+		String adBaseRedisKey = RedisConstant.AD_BASE + adId;
+		//落地页的选择
+		String adLandingPageKey = RedisConstant.AD_CREATE_LANDINGPAGE + "" + adId + "_" + createId;
+		
+//		广告素材类型1 纯图片 2 图文 3 图文描述(单图) 4 图文描述(多图) 5纯文字链接
+		if(meterialType == 1) {//说明是纯图片
+			String imageKey = RedisConstant.AD_IMAGE + adId + "_" + createId + "_" + meterialId + "";
+			jedis.get("");
+		} else if(meterialType == 2) {
+			
+		} else if(meterialType == 3) {
+			
+		} else if(meterialType == 4) {
+			
+		} else if(meterialType == 5) {
+			
+		} 
+		
+		Map<String, String> map = jedis.hgetAll(adLandingPageKey);
+		String[] landpingKeyArray = map.keySet().toArray(new String[0]);
+		int mapIndex = chooseSolrDocument(map.size());
+		String jsonLandingPageString = map.get(landpingKeyArray[mapIndex]);
+		AdLandingPageMessage adLandingPageMessage = JsonUtil.fromJson(jsonLandingPageString, AdLandingPageMessage.class);
+		AdBaseMessage adBaseMessage = JsonUtil.fromJson(jedis.get(adBaseRedisKey), AdBaseMessage.class);
 		
 		jedisPools.closeJedis(jedis);
-		return map;
+		return null;
 	}
 		
 	/**
 	 * 随机获取广告id集合的一个ID
 	 * @param result
 	 */
-	private SolrDocument chooseSolrDocument(SolrDocumentList solrDocumentList){
-		int random = (int)Math.rint(Math.random() * (solrDocumentList.size() - 1));
-		SolrDocument solrDocument = solrDocumentList.get(random);
-		CommonLoggerUtil.addBaseLog("获取的广告创意包广告=" + solrDocument);
-		return solrDocument;
+	private int chooseSolrDocument(int count){
+		int random = (int)Math.rint(Math.random() * (count));
+		return random;
 	}
 
-	
 	private void fifterAdCondition(String adCategory, StringBuffer fifterConditionStringBuffer, String addOrRemove) {
 		String[] adCategoryArray = adCategory.split(",");
 		fifterConditionStringBuffer.append(addOrRemove + ":(");
