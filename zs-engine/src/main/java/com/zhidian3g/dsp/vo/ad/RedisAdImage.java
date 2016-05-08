@@ -1,9 +1,9 @@
 package com.zhidian3g.dsp.vo.ad;
 
 public class RedisAdImage {
-	
+	//图片长
 	private int height;
-	
+	//图片宽
 	private int width;
 	//广告素材地址
 	private String imgURL;
