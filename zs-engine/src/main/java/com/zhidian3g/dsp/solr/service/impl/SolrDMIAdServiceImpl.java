@@ -22,7 +22,7 @@ public class SolrDMIAdServiceImpl implements SolrDMIAdService {
 		adBaseMessageDocument.setId("adId-" + adId);
 		adBaseMessageDocument.setAdId(adBaseMessage.getId());
 		adBaseMessageDocument.setAdxType( DspConstant.ADX_TYPE + adBaseMessage.getAdxType());
-		adBaseMessageDocument.setAdType( DspConstant.AD_TYPE + adBaseMessage.getAdType());
+		adBaseMessageDocument.setAdType(DspConstant.AD_TYPE + adBaseMessage.getAdType() + " " + DspConstant.AD_TYPE + 7);
 		adBaseMessageDocument.setAdCategory( DspConstant.AD_CATEGORY + adBaseMessage.getAdCategory());
 		adBaseMessageDocument.setTerminalType("terminalType" + adBaseMessage.getTerminalType());
 		adBaseMessageDocument.setOsPlatform(adBaseMessage.getOsPlatform());
@@ -44,7 +44,7 @@ public class SolrDMIAdServiceImpl implements SolrDMIAdService {
 			
 			//创意类型
 			int meterIanType = adMaterialMessage.getMeterialType();
-			adMaterialDocument.setMeterialType("meterialType-" + meterIanType + " meterialType-7");//附带原生广告
+			adMaterialDocument.setMeterialType("meterialType-" + meterIanType);//附带原生广告
 			
 			//根据创意类型设置对应的索引属性值
 			

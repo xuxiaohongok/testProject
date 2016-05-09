@@ -1,4 +1,4 @@
-//package at.bro.code.solr.blockjoins;
+//package at.bro.code.solr;
 //
 //import java.util.Calendar;
 //import java.util.Date;

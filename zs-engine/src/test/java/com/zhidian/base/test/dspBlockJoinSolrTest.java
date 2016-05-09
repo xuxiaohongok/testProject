@@ -22,7 +22,6 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import at.bro.code.solr.utils.SolrUtils;
 
 import com.zhidian.base.CareateReource;
 import com.zhidian.dsp.constant.DspConstant;

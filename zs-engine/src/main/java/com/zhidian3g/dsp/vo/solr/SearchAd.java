@@ -1,9 +1,11 @@
 package com.zhidian3g.dsp.vo.solr;
 
-import com.zhidian3g.dsp.vo.ad.RedisAdLandingPageMessage;
+import java.util.Map;
+
 import com.zhidian3g.dsp.vo.ad.RedisAdBaseMessage;
-import com.zhidian3g.dsp.vo.ad.RedisAdCreatePackageMessage;
-import com.zhidian3g.dsp.vo.adcontrol.AdMaterialMessage;
+import com.zhidian3g.dsp.vo.ad.RedisAdCreateMaterialMessage;
+import com.zhidian3g.dsp.vo.ad.RedisAdImage;
+import com.zhidian3g.dsp.vo.ad.RedisAdLandingPageMessage;
 
 public class SearchAd {
 	//广告基本信息
@@ -11,7 +13,9 @@ public class SearchAd {
 	
 	private RedisAdLandingPageMessage adLandingPageMessage;
 	
-	private RedisAdCreatePackageMessage redisAdCreatePackageMessage;
+	private RedisAdCreateMaterialMessage redisAdCreateMaterialMessage;
+	
+	private Map<String,RedisAdImage> redisAdImageMap;
 
 	public RedisAdBaseMessage getRedisAdBaseMessage() {
 		return redisAdBaseMessage;
@@ -25,18 +29,25 @@ public class SearchAd {
 		return adLandingPageMessage;
 	}
 
-	public void setAdLandingPageMessage(RedisAdLandingPageMessage adLandingPageMessage) {
+	public void setAdLandingPageMessage(
+			RedisAdLandingPageMessage adLandingPageMessage) {
 		this.adLandingPageMessage = adLandingPageMessage;
 	}
 
-	public RedisAdCreatePackageMessage getRedisAdCreatePackageMessage() {
-		return redisAdCreatePackageMessage;
+	public RedisAdCreateMaterialMessage getRedisAdCreateMaterialMessage() {
+		return redisAdCreateMaterialMessage;
 	}
 
-	public void setRedisAdCreatePackageMessage(
-			RedisAdCreatePackageMessage redisAdCreatePackageMessage) {
-		this.redisAdCreatePackageMessage = redisAdCreatePackageMessage;
+	public void setRedisAdCreateMaterialMessage(
+			RedisAdCreateMaterialMessage redisAdCreateMaterialMessage) {
+		this.redisAdCreateMaterialMessage = redisAdCreateMaterialMessage;
 	}
 
-	
+	public Map<String, RedisAdImage> getRedisAdImageMap() {
+		return redisAdImageMap;
+	}
+
+	public void setRedisAdImageMap(Map<String, RedisAdImage> redisAdImageMap) {
+		this.redisAdImageMap = redisAdImageMap;
+	}
 }

@@ -20,8 +20,9 @@ public class SearchAdCondition {
 	
 	public SearchAdCondition(Integer adxType, Integer terminalType, String osPlatform, Integer adType, String ip) {
 		super();
-		this.terminalType = terminalType;
 		this.adxType = adxType;
+		this.terminalType = terminalType;
+		this.osPlatform = osPlatform;
 		this.adType = adType;
 		this.ip = ip;
 	}
@@ -82,5 +83,4 @@ public class SearchAdCondition {
 		this.unSupportAdCategory = unSupportAdCategory;
 	}
 
-	
 }

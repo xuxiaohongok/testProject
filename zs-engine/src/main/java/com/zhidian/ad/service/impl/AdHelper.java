@@ -3,7 +3,11 @@ package com.zhidian.ad.service.impl;
 import com.zhidian.remote.vo.request.AdConditionParam;
 import com.zhidian.remote.vo.request.AdRequestParam;
 import com.zhidian.remote.vo.request.AdSlotParam;
+import com.zhidian.remote.vo.request.ImageAdTypeParam;
+import com.zhidian.remote.vo.request.ImpParam;
 import com.zhidian.remote.vo.request.MobileParam;
+import com.zhidian.remote.vo.request.NativeAdTypeParam;
+
 import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
@@ -57,36 +61,47 @@ public class AdHelper {
             errorMessages.add("终端类型不能为空");
         }
 
-        if (param.getAdCondition() != null) {
-            AdConditionParam adCondition = param.getAdCondition();
-            if (adCondition.getShowType() == null) {
+        if (param.getImps() != null && param.getImps().size() !=0 ) {
+        	ImpParam impParam = param.getImps().get(0);
+            if (impParam.getShowType() == null) {
                 result = false;
                 errorMessages.add("adCondition广告要求 - showType 允许展示类型不能为空");
             }
-            if (adCondition.getAdType() == null) {
+            if (impParam.getAdType() == null) {
                 result = false;
                 errorMessages.add("adCondition广告要求 - adType 允许广告创意类型不能为空");
             }
-        }
-
-        if (param.getAdSlot() != null) {
-            AdSlotParam adSlot = param.getAdSlot();
-            if (adSlot.getWidth() == null) {
-                result = false;
-                errorMessages.add("adSlot广告位信息 - width 宽不能为空");
-            }
-            if (adSlot.getHeight() == null) {
-                result = false;
-                errorMessages.add("adSlot广告位信息 - height 高不能为空");
-            }
-            if (adSlot.getBidMinimum() == null) {
+            if (impParam.getBidMinimum() == null) {
                 result = false;
                 errorMessages.add("adSlot广告位信息 - bidMinimum 底价不能为空");
             }
-            if (adSlot.getClickType() == null) {
-                result = false;
-                errorMessages.add("adSlot广告位信息 - clickType 点击交互类类型不能为空");
+            
+            if(impParam.getImageAdType() != null ) {
+            	 ImageAdTypeParam imageAdTypeParam = impParam.getImageAdType();
+                 if (imageAdTypeParam.getWidth() == null) {
+                     result = false;
+                     errorMessages.add("imageAdTypeParam广告位信息 - width 宽不能为空");
+                 }
+                 if (imageAdTypeParam.getHeight() == null) {
+                     result = false;
+                     errorMessages.add("imageAdTypeParam广告位信息 - height 高不能为空");
+                 }
+            } else if(impParam.getNativeAdType() != null ) {
+            	 NativeAdTypeParam nativeAdTypeParam = impParam.getNativeAdType();
+            	 if(nativeAdTypeParam.getPlcmtcnt() == null) {
+            		 result = false;
+                     errorMessages.add("imageAdTypeParam原生广告 - 竞价数不能为空");
+            	 }
+            	 
+            	 if(nativeAdTypeParam.getAssets() == null) {
+            		 result = false;
+            		 errorMessages.add("imageAdTypeParam原生广告 - 广告位条件不能为空");;
+            	 } 
             }
+            
+        } else {
+        	result = false;
+            errorMessages.add("===============广告位为空==========");
         }
 
         if (param.getMobile() != null) {
@@ -104,6 +119,8 @@ public class AdHelper {
                 errorMessages.add("mobile移动设备信息 - deviceType 设备类型不能为空");
             }
         }
+        
+        System.out.println("errorMessages=" + errorMessages);
         return result;
     }
 }

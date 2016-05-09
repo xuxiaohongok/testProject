@@ -1,0 +1,37 @@
+{
+	"mobileApp": {
+		"appName": "消灭星星",
+		"appCategory": 34,
+		"appId": "2000550",
+		"appPackageName": "com.zplay.removestar"
+	},
+	"imps": [{
+		"imageAdType": {
+			"height": 360,
+			"width": 360
+		},
+		"adMulit": 1,
+		"bidMinimum": 130,
+		"showType": 6,
+		"impId": "1",
+		"adType": "1"
+	}],
+	"feeType": 1,
+	"terminalType": 1,
+	"mediaPlatformId": 3,
+	"serialNumber": "ba287ce3-36de-4534-ae30-230c40fbb7e3",
+	"bidType": 2,
+	"mobile": {
+		"model": "iPhone 5S",
+		"deviceOS":2,
+		"deviceType":1,
+		"uuId": "93a73cd98f5a38b63f4c4a4c69f9263f9b5750f2",
+		"imei": "358142035282084",
+		"androidId": "f07a13984f6d116a",
+		"carrier": "46000",
+		"brand": "Apple",
+		"mac": "54caecc03e0a559a8554e14cfcd8c7b987c56ee4",
+		"idfa": "236A005B-700F-4889-B9CE-999EAB2B605D"
+	},
+	"ip": "113.105.20.186"
+}

@@ -1,4 +1,4 @@
-//package at.bro.code.solr.blockjoins;
+//package at.bro.code.solr;
 //
 //import java.util.ArrayList;
 //import java.util.Arrays;
@@ -16,10 +16,10 @@
 //import org.testng.annotations.BeforeClass;
 //import org.testng.annotations.Test;
 //
-//import at.bro.code.solr.blockjoins.api.MilagePackageReceived;
-//import at.bro.code.solr.blockjoins.api.Price;
-//import at.bro.code.solr.blockjoins.api.Rating;
-//import at.bro.code.solr.blockjoins.api.Vehicle;
+//import at.bro.code.solr.api.MilagePackageReceived;
+//import at.bro.code.solr.api.Price;
+//import at.bro.code.solr.api.Rating;
+//import at.bro.code.solr.api.Vehicle;
 //import at.bro.code.solr.utils.SolrUtils;
 //
 //@Test
