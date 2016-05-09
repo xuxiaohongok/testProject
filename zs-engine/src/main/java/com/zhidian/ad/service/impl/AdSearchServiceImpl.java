@@ -444,7 +444,8 @@ public class AdSearchServiceImpl implements AdSearchService{
 				}
 				
 				//设置要检索的图片条件
-				searchAdMateriolCondition.setImageHW(imageHWs.toString());
+				String imageString = imageHWs.substring(0, imageHWs.length() -1);
+				searchAdMateriolCondition.setImageHW(imageString);
 				if(isHasTitle) {//有标题
 					if(imageCount == 1 && !ishasDetail) {//说明是图片+标题广告
 						meterialType = 2;
@@ -512,18 +513,19 @@ public class AdSearchServiceImpl implements AdSearchService{
 					
 					//图片信息填充
 					if(meterialType != 4 && meterialType != 5) {
-						RedisAdImage reAdImage = searchAd.getRedisAdImageMap().get(imageHWs.substring(0, imageHWs.length() -1));
+						RedisAdImage reAdImage = searchAd.getRedisAdImageMap().get(imageString);
 						Map<Integer,NativeImageEntity> imagesMap = new HashMap<Integer, NativeImageEntity>();
-						NativeImageEntity nativeImage = new NativeImageEntity();
-						nativeImage.setTypeId(1);
-						nativeImage.setW(reAdImage.getWidth());
-						nativeImage.setH(reAdImage.getHeight());
-						nativeImage.setUrl(reAdImage.getImgURL());
-						imagesMap.put(1,nativeImage);
+						setImageEntity(reAdImage, imagesMap);
 						nativeAdEntity.setImagesMap(imagesMap);
 					} else if(meterialType == 4) {
-						String[] imageArrays = imageHWs.toString().split(";");
-						
+						String[] imageArrays = imageString.split(";");
+						Map<String, RedisAdImage> redisAdImageMap = searchAd.getRedisAdImageMap();
+						Map<Integer,NativeImageEntity> imagesMap = new HashMap<Integer, NativeImageEntity>();
+						for(String imageHW : imageArrays) {
+							RedisAdImage reAdImage = redisAdImageMap.get(imageHW);
+							setImageEntity(reAdImage, imagesMap);
+						}
+						nativeAdEntity.setImagesMap(imagesMap);
 					}
 					
 					//扩展字段的设置
@@ -555,7 +557,7 @@ public class AdSearchServiceImpl implements AdSearchService{
 				//设置素材类型
 				searchAdMateriolCondition.setMeterialType(meterialType);
 				//设置图片的条件
-				searchAdMateriolCondition.setImageHW(imageHW + ";");
+				searchAdMateriolCondition.setImageHW(imageHW);
 				SearchAd searchAd = solrSearchAdService.searchAdFormSolr(searchAdCondition, searchAdMateriolCondition);
 				if(searchAd == null) {
 					bidEntity = new BidEntity();
@@ -613,6 +615,21 @@ public class AdSearchServiceImpl implements AdSearchService{
 		}
 		adResponseEntity.setImpBids(responseListImpBidEntities);
 		return JSON.toJSONString(adResponseEntity);
+	}
+
+	/**
+	 * 图片设置
+	 * @param reAdImage
+	 * @param imagesMap
+	 */
+	private void setImageEntity(RedisAdImage reAdImage,
+			Map<Integer, NativeImageEntity> imagesMap) {
+		NativeImageEntity nativeImage = new NativeImageEntity();
+		nativeImage.setTypeId(1);
+		nativeImage.setW(reAdImage.getWidth());
+		nativeImage.setH(reAdImage.getHeight());
+		nativeImage.setUrl(reAdImage.getImgURL());
+		imagesMap.put(1,nativeImage);
 	}
 
 

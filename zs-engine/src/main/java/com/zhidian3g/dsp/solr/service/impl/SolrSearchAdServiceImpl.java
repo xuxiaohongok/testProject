@@ -96,8 +96,8 @@ public class SolrSearchAdServiceImpl implements SolrSearchAdService {
 		Integer meterialType = searchAdMateriolCondition.getMeterialType();
 		String imagesHWS = searchAdMateriolCondition.getImageHW();
 		String oneImageHW = null;
-		if(meterialType != 4 && meterialType != 5) { 
-			oneImageHW = imagesHWS.substring(0, imagesHWS.length() -1);
+		if(meterialType != 4 && meterialType != 5 ) { 
+			oneImageHW = imagesHWS;
 			System.out.println("oneImageHW=" + oneImageHW);
 		}
 		
@@ -191,15 +191,21 @@ public class SolrSearchAdServiceImpl implements SolrSearchAdService {
 		String jsonLandingPageString = map.get(landpingKeyArray[mapIndex]);
 		RedisAdLandingPageMessage adLandingPageMessage = JsonUtil.fromJson(jsonLandingPageString, RedisAdLandingPageMessage.class);
 		RedisAdBaseMessage adBaseMessage = JsonUtil.fromJson(jedis.get(adBaseRedisKey), RedisAdBaseMessage.class);
-		Map<String,RedisAdImage> redisAdImageMap = new HashMap<String, RedisAdImage>();
+		Map<String,RedisAdImage> redisAdImageMap = null;
 		if(meterialType == 1 || meterialType == 2 || meterialType == 3) {//说明是纯图片
 			String imageKey = RedisConstant.AD_IMAGE + adId + "_" + createId + "_" + materialId + "_" + oneImageHW;
-			RedisAdImage redisAdImage = JsonUtil.fromJson(jedis.get(imageKey), RedisAdImage.class);
-			redisAdImageMap.put(oneImageHW, redisAdImage);
-			searchAd.setRedisAdImageMap(redisAdImageMap);
+			redisAdImageMap = new HashMap<String, RedisAdImage>();
+			setAdImage(jedis, redisAdImageMap, imageKey, oneImageHW);
 		}  else if(meterialType == 4) {//多图片现在过滤
-			
+			String[] imageArray = imagesHWS.split(";");
+			redisAdImageMap = new HashMap<String, RedisAdImage>();
+			for(String imageString : imageArray) {
+				String imageKey = RedisConstant.AD_IMAGE + adId + "_" + createId + "_" + materialId + "_" + imageString;
+				setAdImage(jedis, redisAdImageMap, imageKey, imageString);
+			}
 		} 
+		
+		searchAd.setRedisAdImageMap(redisAdImageMap);
 		searchAd.setRedisAdBaseMessage(adBaseMessage);
 		searchAd.setRedisAdCreateMaterialMessage(redisAdCreateMaterialMessage);
 		searchAd.setAdLandingPageMessage(adLandingPageMessage);
@@ -214,6 +220,11 @@ public class SolrSearchAdServiceImpl implements SolrSearchAdService {
 	private int chooseSolrDocument(int count){
 		int random = (int)Math.rint(Math.random() * (count));
 		return random;
+	}
+	
+	private void setAdImage(Jedis jedis, Map<String,RedisAdImage> redisAdImageMap, String imageKey, String oneImageHW) {
+		RedisAdImage redisAdImage = JsonUtil.fromJson(jedis.get(imageKey), RedisAdImage.class);
+		redisAdImageMap.put(oneImageHW, redisAdImage);
 	}
 
 	private void fifterAdCondition(String adCategory, StringBuffer fifterConditionStringBuffer, String addOrRemove) {

@@ -3,7 +3,6 @@ package com.temp.control;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.RandomUtils;
 import org.junit.Test;
 
 import redis.clients.jedis.Jedis;
@@ -29,9 +28,10 @@ public class TestControl {
 		Jedis jedis = jedisPools.getJedis();
 		int adxType = 3;
 		//广告基本信息
+		Long adId = 3l;
 		RedisAdBaseMessage redisAdBaseMessage = new RedisAdBaseMessage();
 		redisAdBaseMessage.setAdCategory(1);
-		redisAdBaseMessage.setAdId(1l);
+		redisAdBaseMessage.setAdId(adId);
 		redisAdBaseMessage.setAdName("散人私服");
 		redisAdBaseMessage.setAdPackageName("com.alicall.androidzb");
 		redisAdBaseMessage.setAdPrice(8000);
@@ -40,7 +40,6 @@ public class TestControl {
 //		redisAdBaseMessage.setExtendMessage(JsonUtil.toJson(extendMap));
 		
 		
-		Long adId = redisAdBaseMessage.getAdId();
 		String adBaseRedisKey = RedisConstant.AD_BASE + adId;
 		jedis.set(adBaseRedisKey, JsonUtil.toJson(redisAdBaseMessage));
 		
@@ -86,7 +85,7 @@ public class TestControl {
 		adBaseMessage.setId(adId);
 		adBaseMessage.setOsPlatform(DspConstant.OS_ANDROID + " " + DspConstant.OS_IOS);
 		adBaseMessage.setTerminalType(1);
-		adBaseMessage.setTimeZones("15-00, 16-00, 17-00, 18-00");
+		adBaseMessage.setTimeZones("22-00, 23-00, 00-00, 18-00");
 		
 		List<AdMaterialMessage> list = new ArrayList<AdMaterialMessage>();
 		list.add(new AdMaterialMessage(createId, materialId, redisAdCreateMaterialMessage.getMeterialType(), imageHW, null, null));
