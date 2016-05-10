@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zhidian.ad.dao.AdMapper">
+	<resultMap id="BaseResultMap" type="com.zhidian.nextad.domain.Ad" />
+	<!-- sql块，方便重用 -->
+	 <sql id="adBase">
+	     ad.id, ad.accountId, ad.name, ad.objectType, ad.keyword, ad.description, ad.isSupportPad, ad.showType, ad.clickType,
+	     ad.clickSite, ad.apkSize, ad.packageName, ad.feeType, ad.feeSum, ad.dayBudget, ad.putInState, ad.startDate, 
+	     ad.endDate
+	 </sql>
+	
+	<!-- banner条信息模块  -->
+	 <sql id="bannerMessage">
+	     ab.adId, ab.imageType, ab.adLogo, ab.adText1, ab.adText2, ab.adText3, ab.adText4, ab.adText5, ab.adImage240x38,
+	     ab.adImage320x50, ab.adImage480x75, ab.adImage540x84, ab.adImage640x100
+	 </sql>
+  
+  <select id="getAdList" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+    select <include refid="adBase"/> from cx_ad where putInState = #{putInState,jdbcType=BIGINT} and isDelete=0
+  </select>
+  
+  <select id="getAdById" resultType="Ad" parameterType="java.lang.Long">
+    	select <include refid="adBase"/> FROM cx_ad ad where ad.id = #{adId,jdbcType=BIGINT} and state=2 and putInState=2 and isDelete=0
+  </select>
+  
+  <select id="updateAdState" parameterType="java.util.Map">
+    	update cx_ad set putInState=#{putInState,jdbcType=BIGINT} where id = #{adId,jdbcType=BIGINT} 
+  </select>
+  
+   <select id="getAdByPackageName" resultType="Ad" parameterType="java.util.Map">
+    	select <include refid="adBase"/> FROM cx_ad ad where ad.packageName = #{packageName,jdbcType=VARCHAR} and state=2 
+    	and putInState = #{putInState,jdbcType=BIGINT} and isDelete=0
+  </select>
+  <select id="getAdBannerByAdId" resultType="AdBanner" parameterType="java.lang.Long">
+    select * FROM cx_ad_banner ab where ab.adId = #{adId,jdbcType=BIGINT}
+  </select>
+  
+  <select id="getAdScreenByAdId" resultType="AdScreen" parameterType="java.lang.Long">
+    select * FROM cx_ad_screen where adId = #{adId,jdbcType=BIGINT}
+  </select>
+  
+  <select id="getAdDeveloperIncome" resultType="AdDeveloperIncome" parameterType="java.util.Map">
+  	select id, adId, feeType, income from cx_ad_developer_income where adId=#{adId,jdbcType=BIGINT} and 
+  	#{date,jdbcType=VARCHAR}>=startDate and endDate>=#{date,jdbcType=VARCHAR} 
+   </select>
+   
+    <select id="getAccount" resultType="Account" parameterType="java.lang.Long">
+  		select id as accountId, loginName from cx_account where id=#{accountId,jdbcType=BIGINT} 
+   </select>
+  
+</mapper>
