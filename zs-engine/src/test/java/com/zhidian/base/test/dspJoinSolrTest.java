@@ -183,6 +183,7 @@ public class dspJoinSolrTest {
 			for (Group group : groups) {
 				SolrDocumentList solrDocumentList = group.getResult();
 				Long adId = (Long) solrDocumentList.get(0).getFieldValue("adId");
+				System.out.println(group.getGroupValue() + "==num" + group.getResult().getNumFound());
 			}
 		}
 	}

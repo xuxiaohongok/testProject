@@ -283,135 +283,127 @@ public class AdSearchServiceImpl implements AdSearchService{
 	
 	@Override
 	public String adSearchHanderV1(String adMessage) {
-		CommonLoggerUtil.addBaseLog("adMessage=" + adMessage);
-		AdResponseEntity adResponseEntity = new AdResponseEntity();
-		AdRequestParam param = JsonUtil.fromJson(adMessage, AdRequestParam.class);
-		
-		if(!AdHelper.checkRequestParam(param)) {
-			CommonLoggerUtil.addErrQuest("=============参数验证不通过=============");
-			//获取所有的广告位
-			List<ImpParam> listImplList = param.getImps();
+		long startTime = System.currentTimeMillis();
+		AdResponseEntity adResponseEntity = null;
+		AdRequestParam param = null;
+		try {
+			adResponseEntity = new AdResponseEntity();
+			param = JsonUtil.fromJson(adMessage, AdRequestParam.class);
+			
+			if(!AdHelper.checkRequestParam(param)) {
+				CommonLoggerUtil.addErrQuest("=============参数验证不通过=============");
+				//获取所有的广告位
+				noAd(adResponseEntity, param);
+				return JSON.toJSONString(adResponseEntity);
+			}
+			
+			
+			Integer bidType = param.getBidType();
+			String serialNumber = param.getSerialNumber();
+			adResponseEntity.setSerialNumber(serialNumber);
 			//返回总的广告位广告列表
 			List<ImpBidEntity> responseListImpBidEntities = new ArrayList<ImpBidEntity>();
-			ImpBidEntity rImp = new ImpBidEntity();
-			List<BidEntity> rBidList = new ArrayList<BidEntity>();
-			BidEntity rBid= new BidEntity();
-			rBid.setIsHasAd(this.HAS_NO_AD);
-			rBidList.add(rBid);
-			rImp.setImpId(listImplList.get(0).getImpId());
-			rImp.setBids(rBidList);
-			responseListImpBidEntities.add(rImp);
-			adResponseEntity.setImpBids(responseListImpBidEntities);
-			return JSON.toJSONString(adResponseEntity);
-		}
-		
-		
-		Integer bidType = param.getBidType();
-		String serialNumber = param.getSerialNumber();
-		adResponseEntity.setSerialNumber(serialNumber);
-		//返回总的广告位广告列表
-		List<ImpBidEntity> responseListImpBidEntities = new ArrayList<ImpBidEntity>();
-		
-		//获取请求参数第一层
-		Integer adxType = param.getMediaPlatformId();
-		//获取终端类型：电脑、移动端 1、移动端2、PC端
-		Integer terminalType = param.getTerminalType();
-		
-		String ip = param.getIp();
-		String userId = param.getUserId();
-		String requestTime = DateUtil.get("yyyy-MM-dd_HH:mm:ss");
-		
+			
+			//获取请求参数第一层
+			Integer adxType = param.getMediaPlatformId();
+			//获取终端类型：电脑、移动端 1、移动端2、PC端
+			Integer terminalType = param.getTerminalType();
+			
+			String ip = param.getIp();
+			String userId = param.getUserId();
+			String requestTime = DateUtil.get("yyyy-MM-dd_HH:mm:ss");
+			
 //		String userId = param.getUserId();
-		MobileParam mobile = param.getMobile();
-		
-		//获取系统类型1、IOS  2、Android  3、windows_phone
-		Integer OS = mobile.getDeviceOS();
-		
-		//获取所有的广告位
-		List<ImpParam> listImplList = param.getImps();
-		for(ImpParam impParam : listImplList) {
-			//广告位id
-			String impId = impParam.getImpId();
-			//广告位放回对象
-			ImpBidEntity impBidEntity = new ImpBidEntity();
-			impBidEntity.setImpId(impId);
-			CommonLoggerUtil.addBaseLog("传过来的参数impParam：" + JsonUtil.toJson(param));
-			//是否符合广告的请求判断标志
+			MobileParam mobile = param.getMobile();
 			
-			//获取广告展示类型:也就是创意类型
-			Integer showType = impParam.getShowType();
+			//获取系统类型1、IOS  2、Android  3、windows_phone
+			Integer OS = mobile.getDeviceOS();
 			
-			//广告创意类型
-			String adType = impParam.getAdType();
-			Integer adTypeId = Integer.valueOf(adType.split(",")[0]);
-			
-			//竞价低价
-			Long adPrice = impParam.getBidMinimum();
-			String adCategory = impParam.getAdCategory();
-			String unSupportAdCategory = impParam.getUnSupportAdCategory();
-			
-			//广告位竞价对象列表
-			List<BidEntity> listBidEntities = new ArrayList<BidEntity>();
-			
-			//广告基本信息检索条件
-			SearchAdCondition searchAdCondition = new SearchAdCondition(adxType, terminalType,
-					getOSString(OS), adTypeId, ip);
-			//搜索对应的行业广告
-			if(StringUtils.isNotBlank(adCategory)) {
-				searchAdCondition.setAdCategory(adCategory);
-			}
-			//不支持行业广告
-			if(StringUtils.isNotBlank(unSupportAdCategory)) {
-				searchAdCondition.setUnSupportAdCategory(unSupportAdCategory);
-			}
-			
-			/**
-			 * 广告素材类型1 纯图片 2 图文 3 图文描述(单图) 4 图文描述(多图) 5纯文字链接
-			 */
-			Integer meterialType = null; 
-			//广告查询条件对象
-			SearchAdMateriolCondition searchAdMateriolCondition = new SearchAdMateriolCondition();
-			if(adTypeId == DspConstant.AD_TYPE_NATIVE) {
-				NativeAdTypeParam nativeAdTypeParam  = impParam.getNativeAdType();
-				//获取竞价对象数量
-				Integer bids = nativeAdTypeParam.getPlcmtcnt();
+			//获取所有的广告位
+			List<ImpParam> listImplList = param.getImps();
+			for(ImpParam impParam : listImplList) {
+				//广告位id
+				String impId = impParam.getImpId();
+				//广告位放回对象
+				ImpBidEntity impBidEntity = new ImpBidEntity();
+				impBidEntity.setImpId(impId);
+//			CommonLoggerUtil.addBaseLog("传过来的参数impParam：" + JsonUtil.toJson(param));
+				//是否符合广告的请求判断标志
+				
+				//获取广告展示类型:也就是创意类型
+				Integer showType = impParam.getShowType();
+				
+				//广告创意类型
+				String adType = impParam.getAdType();
+				Integer adTypeId = Integer.valueOf(adType.split(",")[0]);
+				
+				//竞价低价
+				Long adPrice = impParam.getBidMinimum();
+				String adCategory = impParam.getAdCategory();
+				String unSupportAdCategory = impParam.getUnSupportAdCategory();
+				
+				//广告位竞价对象列表
+				List<BidEntity> listBidEntities = new ArrayList<BidEntity>();
+				
+				//广告基本信息检索条件
+				SearchAdCondition searchAdCondition = new SearchAdCondition(adxType, terminalType,
+						getOSString(OS), adTypeId, ip);
+				//搜索对应的行业广告
+				if(StringUtils.isNotBlank(adCategory)) {
+					searchAdCondition.setAdCategory(adCategory);
+				}
+				//不支持行业广告
+				if(StringUtils.isNotBlank(unSupportAdCategory)) {
+					searchAdCondition.setUnSupportAdCategory(unSupportAdCategory);
+				}
+				
+				/**
+				 * 广告素材类型1 纯图片 2 图文 3 图文描述(单图) 4 图文描述(多图) 5纯文字链接
+				 */
+				Integer meterialType = null; 
+				//广告查询条件对象
+				SearchAdMateriolCondition searchAdMateriolCondition = new SearchAdMateriolCondition();
+				if(adTypeId == DspConstant.AD_TYPE_NATIVE) {
+					NativeAdTypeParam nativeAdTypeParam  = impParam.getNativeAdType();
+					//获取竞价对象数量
+					Integer bids = nativeAdTypeParam.getPlcmtcnt();
 //				for(int i=0; i<bids; i++) {
 //					
 //				}
-				
-				//广告位竞价对象
-				BidEntity bidEntity = null;
-				//获取广告条件
-				List<AssetParam> listAssetParams = nativeAdTypeParam.getAssets();
-				StringBuffer imageHWs = new StringBuffer();
-				boolean isHasTitle = false;
-				boolean ishasDetail = false;
-				boolean isWithAppName = false;
-				boolean isWithPackageName = false;
-				int imageCount = 0;
-				for(AssetParam asseet:listAssetParams) {
-					//条件是否为必须
-					Integer isAdRequire = asseet.getIsRequired();
 					
+					//广告位竞价对象
+					BidEntity bidEntity = null;
+					//获取广告条件
+					List<AssetParam> listAssetParams = nativeAdTypeParam.getAssets();
+					StringBuffer imageHWs = new StringBuffer();
+					boolean isHasTitle = false;
+					boolean ishasDetail = false;
+					boolean isWithAppName = false;
+					boolean isWithPackageName = false;
+					int imageCount = 0;
+					for(AssetParam asseet:listAssetParams) {
+						//条件是否为必须
+						Integer isAdRequire = asseet.getIsRequired();
+						
 //					Integer no = asseet.getId();
-					//如果是不必要的广告条件暂时过滤掉
+						//如果是不必要的广告条件暂时过滤掉
 //					if(isAdRequire == 0) {
 //						CommonLoggerUtil.addBaseLog("序号为" + no + "为非必须广告过滤掉==");
 //						continue;
 //					}
-					
-					TitleParam titleParam = asseet.getTitle();
-					//设置标题条件
-					if(titleParam != null) {
-						Integer len = titleParam.getLen();
-						searchAdMateriolCondition.settLen(len);
-						isHasTitle = true;
-						continue;
-					}
-					
-					//设置图片条件
-					ImgParam imgParam = asseet.getImg();
-					if(imgParam != null) {
+						
+						TitleParam titleParam = asseet.getTitle();
+						//设置标题条件
+						if(titleParam != null) {
+							Integer len = titleParam.getLen();
+							searchAdMateriolCondition.settLen(len);
+							isHasTitle = true;
+							continue;
+						}
+						
+						//设置图片条件
+						ImgParam imgParam = asseet.getImg();
+						if(imgParam != null) {
 //						Integer imageTypeId = imgParam.getTypeId();
 //						String imagePix = null;
 //						//获取主图片
@@ -423,198 +415,229 @@ public class AdSearchServiceImpl implements AdSearchService{
 //						} else if(imageTypeId == 3) {
 //							imagePix = DspConstant.IMAGE_ICON;
 //						}
-						imageHWs.append(imgParam.getH() + H_W + imgParam.getW() + ";");
-						imageCount++;
-						continue;
-					}
-					
-					DataParam dataParam = asseet.getData();
-					if(dataParam != null) {
-						Integer dataType = dataParam.getTypeId();
-						//请求广告的描述长度限制
-						if(dataType == 3) {
-							ishasDetail = true;
-							searchAdMateriolCondition.setdLen(dataParam.getLen());
-						} else if(dataType ==1 ) {
-							isWithAppName = true;
-						} else if(dataType == 2) {
-							isWithPackageName = true;
+							imageHWs.append(imgParam.getH() + H_W + imgParam.getW() + ";");
+							imageCount++;
+							continue;
+						}
+						
+						DataParam dataParam = asseet.getData();
+						if(dataParam != null) {
+							Integer dataType = dataParam.getTypeId();
+							//请求广告的描述长度限制
+							if(dataType == 3) {
+								ishasDetail = true;
+								searchAdMateriolCondition.setdLen(dataParam.getLen());
+							} else if(dataType ==1 ) {
+								isWithAppName = true;
+							} else if(dataType == 2) {
+								isWithPackageName = true;
+							}
 						}
 					}
-				}
-				
-				//设置要检索的图片条件
-				String imageString = imageHWs.substring(0, imageHWs.length() -1);
-				searchAdMateriolCondition.setImageHW(imageString);
-				if(isHasTitle) {//有标题
-					if(imageCount == 1 && !ishasDetail) {//说明是图片+标题广告
-						meterialType = 2;
-					} else if(imageCount == 1 && ishasDetail) {//图片+标题 +描述
-						meterialType = 3;
-					} else if(imageCount == 0) {
-						meterialType = 5; //文字链广告
-					} else {//多图片广告
-						meterialType = 4;
+					
+					//设置要检索的图片条件
+					String imageString = imageHWs.substring(0, imageHWs.length() -1);
+					searchAdMateriolCondition.setImageHW(imageString);
+					if(isHasTitle) {//有标题
+						if(imageCount == 1 && !ishasDetail) {//说明是图片+标题广告
+							meterialType = 2;
+						} else if(imageCount == 1 && ishasDetail) {//图片+标题 +描述
+							meterialType = 3;
+						} else if(imageCount == 0) {
+							meterialType = 5; //文字链广告
+						} else {//多图片广告
+							meterialType = 4;
+						}
+					} else {//没有标题说明是纯图片
+						if(imageCount == 1) {//没有标题说明是纯图片
+							meterialType = 1;
+						} else {
+							unHasAd(impBidEntity, bids, "=========没有标题且不是一张图片的广告===" + JsonUtil.toJson(impParam));
+							responseListImpBidEntities.add(impBidEntity);
+							continue;
+						}
 					}
-				} else {//没有标题说明是纯图片
-					if(imageCount == 1) {//没有标题说明是纯图片
-						meterialType = 1;
-					} else {
-						unHasAd(impBidEntity, bids, "=========没有标题且不是一张图片的广告===" + JsonUtil.toJson(impParam));
+					
+					//填充素材类别
+					searchAdMateriolCondition.setMeterialType(meterialType);
+					SearchAd searchAd = solrSearchAdService.searchAdFormSolr(searchAdCondition, searchAdMateriolCondition);
+					//根据条件获取不到广告
+					if(searchAd == null) {
+						unHasAd(impBidEntity, bids, "=根据条件获取不了广告===" + JsonUtil.toJson(impParam));
 						responseListImpBidEntities.add(impBidEntity);
 						continue;
-					}
-				}
-				
-				//填充素材类别
-				searchAdMateriolCondition.setMeterialType(meterialType);
-				SearchAd searchAd = solrSearchAdService.searchAdFormSolr(searchAdCondition, searchAdMateriolCondition);
-				//根据条件获取不到广告
-				if(searchAd == null) {
-					unHasAd(impBidEntity, bids, "=根据条件获取不了广告===" + JsonUtil.toJson(impParam));
-					responseListImpBidEntities.add(impBidEntity);
-					continue;
-				} else {//获取到相关的原生广告
-					//广告基本信息
-					RedisAdBaseMessage redisAdBaseMessage = searchAd.getRedisAdBaseMessage();
-					//广告素材信息
-					RedisAdCreateMaterialMessage adMaterialMessage = searchAd.getRedisAdCreateMaterialMessage();
-					//广告落地页信息
-					RedisAdLandingPageMessage adLandingPageMessage = searchAd.getAdLandingPageMessage();
-					
-					Long adId = redisAdBaseMessage.getAdId();
-					Integer responseAdCategory = redisAdBaseMessage.getAdCategory();
-					Integer createId =adMaterialMessage.getCreateId();
-					
-					//落地页
-					String landingPage = adLandingPageMessage.getLandingPageUrl();
-					Integer landingPageId = adLandingPageMessage.getId();
-					
+					} else {//获取到相关的原生广告
+						//广告基本信息
+						RedisAdBaseMessage redisAdBaseMessage = searchAd.getRedisAdBaseMessage();
+						//广告素材信息
+						RedisAdCreateMaterialMessage adMaterialMessage = searchAd.getRedisAdCreateMaterialMessage();
+						//广告落地页信息
+						RedisAdLandingPageMessage adLandingPageMessage = searchAd.getAdLandingPageMessage();
+						
+						Long adId = redisAdBaseMessage.getAdId();
+						Integer responseAdCategory = redisAdBaseMessage.getAdCategory();
+						Integer createId =adMaterialMessage.getCreateId();
+						
+						//落地页
+						String landingPage = adLandingPageMessage.getLandingPageUrl();
+						Integer landingPageId = adLandingPageMessage.getId();
+						
 //					String apkDownloadParms = "zd_userId=" + userId + "&zd_requestId="+ serialNumber + "&zd_adId=" + adId+ "&zd_createId=" +createId + "&zd_landingPageId=" + landingPageId + "&requestAdDateTime=" + requestTime;
 //					if(landingPage.contains("?")) {
 //						landingPage = landingPage +  "&" + apkDownloadParms;
 //					} else {
 //						landingPage = landingPage +  "?" + apkDownloadParms; 
 //					}
-					
-					//设置原生广告信息
-					NativeAdEntity nativeAdEntity = new NativeAdEntity();
-					nativeAdEntity.setTitle(adMaterialMessage.getTitle());
-					nativeAdEntity.setLandingPage(landingPage);
-					nativeAdEntity.setAdCategory(responseAdCategory);
-					//广告名称
-					if(isWithAppName) {
-						nativeAdEntity.setAdName(redisAdBaseMessage.getAdName());
-					}
-					//广告包名
-					if(isWithPackageName) {
-						nativeAdEntity.setAdPackage(redisAdBaseMessage.getAdPackageName());
-					}
-					
-					//图片信息填充
-					if(meterialType != 4 && meterialType != 5) {
-						RedisAdImage reAdImage = searchAd.getRedisAdImageMap().get(imageString);
-						Map<Integer,NativeImageEntity> imagesMap = new HashMap<Integer, NativeImageEntity>();
-						setImageEntity(reAdImage, imagesMap);
-						nativeAdEntity.setImagesMap(imagesMap);
-					} else if(meterialType == 4) {
-						String[] imageArrays = imageString.split(";");
-						Map<String, RedisAdImage> redisAdImageMap = searchAd.getRedisAdImageMap();
-						Map<Integer,NativeImageEntity> imagesMap = new HashMap<Integer, NativeImageEntity>();
-						for(String imageHW : imageArrays) {
-							RedisAdImage reAdImage = redisAdImageMap.get(imageHW);
-							setImageEntity(reAdImage, imagesMap);
+						
+						//设置原生广告信息
+						NativeAdEntity nativeAdEntity = new NativeAdEntity();
+						nativeAdEntity.setTitle(adMaterialMessage.getTitle());
+						nativeAdEntity.setLandingPage(landingPage);
+						nativeAdEntity.setAdCategory(responseAdCategory);
+						//广告名称
+						if(isWithAppName) {
+							nativeAdEntity.setAdName(redisAdBaseMessage.getAdName());
 						}
-						nativeAdEntity.setImagesMap(imagesMap);
+						//广告包名
+						if(isWithPackageName) {
+							nativeAdEntity.setAdPackage(redisAdBaseMessage.getAdPackageName());
+						}
+						
+						//图片信息填充
+						if(meterialType != 4 && meterialType != 5) {
+							RedisAdImage reAdImage = searchAd.getRedisAdImageMap().get(imageString);
+							System.out.println(searchAd.getRedisAdImageMap() + "imageString=" + imageString);
+							Map<Integer,NativeImageEntity> imagesMap = new HashMap<Integer, NativeImageEntity>();
+							setImageEntity(reAdImage, imagesMap);
+							nativeAdEntity.setImagesMap(imagesMap);
+						} else if(meterialType == 4) {
+							String[] imageArrays = imageString.split(";");
+							Map<String, RedisAdImage> redisAdImageMap = searchAd.getRedisAdImageMap();
+							Map<Integer,NativeImageEntity> imagesMap = new HashMap<Integer, NativeImageEntity>();
+							for(String imageHW : imageArrays) {
+								RedisAdImage reAdImage = redisAdImageMap.get(imageHW);
+								setImageEntity(reAdImage, imagesMap);
+							}
+							nativeAdEntity.setImagesMap(imagesMap);
+						}
+						
+						//扩展字段的设置
+						String extendMessage = redisAdBaseMessage.getExtendMessage();
+						if(extendMessage != null) {
+							nativeAdEntity.setExtendObject(JsonUtil.fromJsonType(extendMessage, new TypeReference<Map<String, Object>>(){}));	
+						}
+						
+						String commonParments = "userId=" + userId + "&requestId="+ serialNumber + "&adId=" + adId+ "&adBlockKey=" +  impId  +  "&adSlotType=" +  showType + "&createId=" +createId + "&landingPageId=" + landingPageId + "&requestAdDateTime=" + requestTime;
+						Map<String, String> callBackURLMap = getCallBackURL(commonParments, adxType);
+						nativeAdEntity.setWinUrls(callBackURLMap.get("adWinURL"));
+						nativeAdEntity.setExposureUrls(callBackURLMap.get("adShowURL"));
+						nativeAdEntity.setClickUrls(callBackURLMap.get("adClickURL"));
+						
+						//广告位竞价对象
+						bidEntity = getBaseBidEntity(bidType, adPrice, DspConstant.NATIVE_AD_TYPE);
+						bidEntity.setNativeAd(nativeAdEntity);
 					}
-					
-					//扩展字段的设置
-					String extendMessage = redisAdBaseMessage.getExtendMessage();
-					if(extendMessage != null) {
-						nativeAdEntity.setExtendObject(JsonUtil.fromJsonType(extendMessage, new TypeReference<Map<String, Object>>(){}));	
-					}
-					
-					String commonParments = "userId=" + userId + "&requestId="+ serialNumber + "&adId=" + adId+ "&adBlockKey=" +  impId  +  "&adSlotType=" +  showType + "&createId=" +createId + "&landingPageId=" + landingPageId + "&requestAdDateTime=" + requestTime;
-					Map<String, String> callBackURLMap = getCallBackURL(commonParments, adxType);
-					nativeAdEntity.setWinUrls(callBackURLMap.get("adWinURL"));
-					nativeAdEntity.setExposureUrls(callBackURLMap.get("adShowURL"));
-					nativeAdEntity.setClickUrls(callBackURLMap.get("adClickURL"));
-					
+					listBidEntities.add(bidEntity);
+				} else if(adTypeId == DspConstant.AD_TYPE_IMAGE) {
 					//广告位竞价对象
-					bidEntity = getBaseBidEntity(bidType, adPrice, DspConstant.NATIVE_AD_TYPE);
-					bidEntity.setNativeAd(nativeAdEntity);
-				}
-				listBidEntities.add(bidEntity);
-			} else if(adTypeId == DspConstant.AD_TYPE_IMAGE) {
-				//广告位竞价对象
-				BidEntity bidEntity = null;
-				//目前返回一个图片广告
-				//广告查询条件对象
-				//主图片
-				ImageAdTypeParam imageAdTypeParam = impParam.getImageAdType();
-				meterialType = 1;//设置纯图片
-				String imageHW = imageAdTypeParam.getHeight() + H_W + imageAdTypeParam.getWidth();
-				//设置素材类型
-				searchAdMateriolCondition.setMeterialType(meterialType);
-				//设置图片的条件
-				searchAdMateriolCondition.setImageHW(imageHW);
-				SearchAd searchAd = solrSearchAdService.searchAdFormSolr(searchAdCondition, searchAdMateriolCondition);
-				if(searchAd == null) {
-					bidEntity = new BidEntity();
-					CommonLoggerUtil.addBaseLog("根据条件获取不到图片广告=" + JsonUtil.toJson(searchAdCondition));
-					bidEntity.setIsHasAd(HAS_NO_AD);
-				} else {
-					bidEntity = getBaseBidEntity(bidType, adPrice, DspConstant.IMAGE_TYPE);
-					//缓存中的广告
-					RedisAdBaseMessage redisAdBaseMessage = searchAd.getRedisAdBaseMessage();
-					RedisAdLandingPageMessage adLandingPageMessage = searchAd.getAdLandingPageMessage();
-					RedisAdImage redisAdImage = searchAd.getRedisAdImageMap().get(imageHW);
-					Long adId = redisAdBaseMessage.getAdId();
-					Integer redisAdCategory = redisAdBaseMessage.getAdCategory();
-					
-					ImageAdEntity imageAdEntity = new ImageAdEntity(); 
-					Integer createId =redisAdBaseMessage.getAdCategory();
-					int landingPageId = adLandingPageMessage.getId();
-					
-					//设置广告信息
-					imageAdEntity.setLandingPage(adLandingPageMessage.getLandingPageUrl());
-					imageAdEntity.setAdCategory(redisAdCategory);
-					imageAdEntity.setClickType(redisAdBaseMessage.getClickType());
-					imageAdEntity.setAdPackage(redisAdBaseMessage.getAdPackageName());
-					imageAdEntity.setAdDownload(adLandingPageMessage.getLandingPageUrl());
-					
-					//广告图片信息
-					imageAdEntity.setWidth(redisAdImage.getWidth());
-					imageAdEntity.setHeight(redisAdImage.getHeight());
-					imageAdEntity.setAdMUrl(redisAdImage.getImgURL());
-					
-					//回传地址设置
-					String commonParments = "userId=" + userId + "&requestId="+ serialNumber + "&adId=" + adId
-							+ "&adBlockKey=" +  impId  +  "&adSlotType=" +  showType + "&createId=" +createId 
-							+ "&landingPageId=" + landingPageId + "&requestAdDateTime=" + requestTime;
-					
-					Map<String, String> callBackURLMap = getCallBackURL(commonParments, adxType);
-					imageAdEntity.setWinUrls(callBackURLMap.get("adWinURL"));
-					imageAdEntity.setExposureUrls(callBackURLMap.get("adShowURL"));
-					imageAdEntity.setClickUrls(callBackURLMap.get("adClickURL"));
-					
-					//扩展字段的设置
-					String extendMessage = redisAdBaseMessage.getExtendMessage();
-					if(extendMessage != null) {
-						imageAdEntity.setExtendObject(JsonUtil.fromJsonType(extendMessage, new TypeReference<Map<String, Object>>(){}));	
+					BidEntity bidEntity = null;
+					//目前返回一个图片广告
+					//广告查询条件对象
+					//主图片
+					ImageAdTypeParam imageAdTypeParam = impParam.getImageAdType();
+					meterialType = 1;//设置纯图片
+					String imageHW = imageAdTypeParam.getHeight() + H_W + imageAdTypeParam.getWidth();
+					//设置素材类型
+					searchAdMateriolCondition.setMeterialType(meterialType);
+					//设置图片的条件
+					searchAdMateriolCondition.setImageHW(imageHW);
+					SearchAd searchAd = solrSearchAdService.searchAdFormSolr(searchAdCondition, searchAdMateriolCondition);
+					if(searchAd == null) {
+						bidEntity = new BidEntity();
+						CommonLoggerUtil.addBaseLog("根据条件获取不到图片广告=" + JsonUtil.toJson(searchAdCondition));
+						bidEntity.setIsHasAd(HAS_NO_AD);
+					} else {
+						bidEntity = getBaseBidEntity(bidType, adPrice, DspConstant.IMAGE_TYPE);
+						//缓存中的广告
+						RedisAdBaseMessage redisAdBaseMessage = searchAd.getRedisAdBaseMessage();
+						RedisAdLandingPageMessage adLandingPageMessage = searchAd.getAdLandingPageMessage();
+						RedisAdImage redisAdImage = searchAd.getRedisAdImageMap().get(imageHW);
+						Long adId = redisAdBaseMessage.getAdId();
+						Integer redisAdCategory = redisAdBaseMessage.getAdCategory();
+						
+						ImageAdEntity imageAdEntity = new ImageAdEntity(); 
+						Integer createId =redisAdBaseMessage.getAdCategory();
+						int landingPageId = adLandingPageMessage.getId();
+						
+						//设置广告信息
+						imageAdEntity.setLandingPage(adLandingPageMessage.getLandingPageUrl());
+						imageAdEntity.setAdCategory(redisAdCategory);
+						imageAdEntity.setClickType(redisAdBaseMessage.getClickType());
+						imageAdEntity.setAdPackage(redisAdBaseMessage.getAdPackageName());
+						imageAdEntity.setAdDownload(adLandingPageMessage.getLandingPageUrl());
+						
+						//广告图片信息
+						imageAdEntity.setWidth(redisAdImage.getWidth());
+						imageAdEntity.setHeight(redisAdImage.getHeight());
+						imageAdEntity.setAdMUrl(redisAdImage.getImgURL());
+						
+						//回传地址设置
+						String commonParments = "userId=" + userId + "&requestId="+ serialNumber + "&adId=" + adId
+								+ "&adBlockKey=" +  impId  +  "&adSlotType=" +  showType + "&createId=" +createId 
+								+ "&landingPageId=" + landingPageId + "&requestAdDateTime=" + requestTime;
+						
+						Map<String, String> callBackURLMap = getCallBackURL(commonParments, adxType);
+						imageAdEntity.setWinUrls(callBackURLMap.get("adWinURL"));
+						imageAdEntity.setExposureUrls(callBackURLMap.get("adShowURL"));
+						imageAdEntity.setClickUrls(callBackURLMap.get("adClickURL"));
+						
+						//扩展字段的设置
+						String extendMessage = redisAdBaseMessage.getExtendMessage();
+						if(extendMessage != null) {
+							imageAdEntity.setExtendObject(JsonUtil.fromJsonType(extendMessage, new TypeReference<Map<String, Object>>(){}));	
+						}
+						
+						bidEntity.setImageAd(imageAdEntity);
 					}
-					
-					bidEntity.setImageAd(imageAdEntity);
+					//广告竞价对象
+					listBidEntities.add(bidEntity);
+				} else {
+					System.out.println("==没有符合类型的广告============");
+					noAd(adResponseEntity, param);
+					return JSON.toJSONString(adResponseEntity);
 				}
-				//广告竞价对象
-				listBidEntities.add(bidEntity);
+				
+				//条件
+				impBidEntity.setBids(listBidEntities);
+				responseListImpBidEntities.add(impBidEntity);
 			}
-			//条件
-			impBidEntity.setBids(listBidEntities);
-			responseListImpBidEntities.add(impBidEntity);
+			adResponseEntity.setImpBids(responseListImpBidEntities);
+			long endTime = System.currentTimeMillis();
+			System.out.println("用时==" + (endTime - startTime));
+			return JSON.toJSONString(adResponseEntity);
+		} catch (Exception e) {
+			noAd(adResponseEntity, param);
+			CommonLoggerUtil.addErrQuest("=============异常获取不到广告=============");
+			CommonLoggerUtil.addExceptionLog(e);
 		}
+		
+		return null;
+		
+	}
+
+	private void noAd(AdResponseEntity adResponseEntity, AdRequestParam param) {
+		List<ImpParam> listImplList = param.getImps();
+		//返回总的广告位广告列表
+		List<ImpBidEntity> responseListImpBidEntities = new ArrayList<ImpBidEntity>();
+		ImpBidEntity rImp = new ImpBidEntity();
+		List<BidEntity> rBidList = new ArrayList<BidEntity>();
+		BidEntity rBid= new BidEntity();
+		rBid.setIsHasAd(this.HAS_NO_AD);
+		rBidList.add(rBid);
+		rImp.setImpId(listImplList.get(0).getImpId());
+		rImp.setBids(rBidList);
+		responseListImpBidEntities.add(rImp);
 		adResponseEntity.setImpBids(responseListImpBidEntities);
-		return JSON.toJSONString(adResponseEntity);
 	}
 
 	/**

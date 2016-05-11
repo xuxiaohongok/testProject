@@ -4,31 +4,32 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.response.Group;
 import org.apache.solr.client.solrj.response.GroupCommand;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.springframework.stereotype.Service;
+
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.Pipeline;
+import redis.clients.jedis.Response;
+
 import com.zhidian.dsp.constant.DspConstant;
 import com.zhidian.dsp.constant.RedisConstant;
-import com.zhidian.remote.vo.response.ImageAdEntity;
-import com.zhidian.remote.vo.response.NativeImageEntity;
 import com.zhidian3g.common.redisClient.JedisPools;
 import com.zhidian3g.common.util.CommonLoggerUtil;
 import com.zhidian3g.common.util.DateUtil;
 import com.zhidian3g.common.util.JsonUtil;
 import com.zhidian3g.dsp.solr.documentmanager.AdDspDocumentManager;
 import com.zhidian3g.dsp.solr.service.SolrSearchAdService;
+import com.zhidian3g.dsp.vo.ad.RedisAdBaseMessage;
 import com.zhidian3g.dsp.vo.ad.RedisAdCreateMaterialMessage;
 import com.zhidian3g.dsp.vo.ad.RedisAdImage;
 import com.zhidian3g.dsp.vo.ad.RedisAdLandingPageMessage;
-import com.zhidian3g.dsp.vo.ad.RedisAdBaseMessage;
-import com.zhidian3g.dsp.vo.adcontrol.AdBaseMessage;
 import com.zhidian3g.dsp.vo.solr.SearchAd;
 import com.zhidian3g.dsp.vo.solr.SearchAdCondition;
 import com.zhidian3g.dsp.vo.solr.SearchAdMateriolCondition;
@@ -91,6 +92,7 @@ public class SolrSearchAdServiceImpl implements SolrSearchAdService {
 			CommonLoggerUtil.addBaseLog("==根据条件获取不了广告=" + JsonUtil.toJson(searchAdCondition));
 			return null;
 		}
+		System.out.println("adIdList=" + adIdList);
 		
 		//根据素材条件获取相应的广告素材
 		Integer meterialType = searchAdMateriolCondition.getMeterialType();
@@ -132,6 +134,7 @@ public class SolrSearchAdServiceImpl implements SolrSearchAdService {
 			adMaterialCondition.append("+tLen:{0 TO " + tLen +"]");
 		}
 		
+		adMaterialCondition.append(" AND " + DspConstant.METERIALTYPE + meterialType);
 		System.out.println("adMaterialCondition=" + adMaterialCondition + ";adMaterialFifterCondition=" + adMaterialFifterCondition);
 		List<GroupCommand> listadMterial = adDocumentManager.searchAdMeterMessage(adMaterialCondition.toString(), adMaterialFifterCondition.toString());
 		if(listadMterial == null || listadMterial.size() == 0) {
@@ -145,8 +148,8 @@ public class SolrSearchAdServiceImpl implements SolrSearchAdService {
 			List<Group> groups = groupCommand.getValues();
 			for (Group group : groups) {
 				SolrDocumentList solrDocumentList = group.getResult();
+				System.out.println(group.getGroupValue() + "==num=" + solrDocumentList.getNumFound() + "=" + solrDocumentList);
 				Long adMatertailAdId = (Long) solrDocumentList.get(0).getFieldValue("adId");
-				System.out.println("adMatertailAdId=" + adMatertailAdId);
 				if(adIdList.contains(adMatertailAdId)) {
 					adAdMaterilmap.put(adMatertailAdId, solrDocumentList);
 				}
@@ -157,6 +160,8 @@ public class SolrSearchAdServiceImpl implements SolrSearchAdService {
 		if(adAdMaterilmap.size() == 0) {
 			CommonLoggerUtil.addBaseLog("==根据素材包条件获取不到信息=======" + adMaterialCondition.toString() + "==" + adMaterialFifterCondition.toString());
 			return null;
+		} else {
+			System.out.println("adAdMaterilmap=" + adAdMaterilmap.keySet() + ";" + adAdMaterilmap);
 		}
 		
 		//优化广告逻辑
@@ -165,6 +170,7 @@ public class SolrSearchAdServiceImpl implements SolrSearchAdService {
 		
 		//获取到广告进行筛选
 		Long adId = mapAdIdList.get(chooseSolrDocument(mapAdIdList.size() - 1));
+		System.out.println("mapAdIdList=" + mapAdIdList + "随机adId=" + adId);
 		
 		SolrDocumentList solrDocumentList =  adAdMaterilmap.get(adId);
 		SolrDocument solrDocument = solrDocumentList.get(chooseSolrDocument(solrDocumentList.size() - 1));
@@ -174,23 +180,28 @@ public class SolrSearchAdServiceImpl implements SolrSearchAdService {
 		
 		//获取
 		Jedis jedis = jedisPools.getJedis();
-		
 		String adBaseRedisKey = RedisConstant.AD_BASE + adId;
 		//落地页的选择
 		String adLandingPageKey = RedisConstant.AD_CREATE_LANDINGPAGE + "" + adId + "_" + createId;
-		
-//		广告素材类型1 纯图片 2 图文 3 图文描述(单图) 4 图文描述(多图) 5纯文字链接
-		
 		String createPackageMessageKey = RedisConstant.AD_CREATE_MATERIAL + adId + "_" + createId + "_" + materialId;
-		RedisAdCreateMaterialMessage redisAdCreateMaterialMessage = JsonUtil.fromJson(jedis.get(createPackageMessageKey),RedisAdCreateMaterialMessage.class);
-		SearchAd searchAd = new SearchAd();
 		
-		Map<String, String> map = jedis.hgetAll(adLandingPageKey);
+		//缓存中取数据
+		Pipeline pipeline = jedis.pipelined();
+		Response<String> responseaAdBase = pipeline.get(adBaseRedisKey);
+		Response<String> responseaCreatePackageMessage = pipeline.get(createPackageMessageKey);
+		Response<Map<String, String>> responseAdLandingPage = pipeline.hgetAll(adLandingPageKey);
+		pipeline.sync();
+		
+		//缓存数据转换成对象
+		RedisAdBaseMessage adBaseMessage = JsonUtil.fromJson(responseaAdBase.get(), RedisAdBaseMessage.class);
+		RedisAdCreateMaterialMessage redisAdCreateMaterialMessage = JsonUtil.fromJson(responseaCreatePackageMessage.get(), RedisAdCreateMaterialMessage.class);
+		Map<String, String> map = responseAdLandingPage.get();
+//		广告素材类型1 纯图片 2 图文 3 图文描述(单图) 4 图文描述(多图) 5纯文字链接
+		SearchAd searchAd = new SearchAd();
 		String[] landpingKeyArray = map.keySet().toArray(new String[0]);
-		int mapIndex = chooseSolrDocument(map.size());
+		int mapIndex = chooseSolrDocument(map.size() - 1);
 		String jsonLandingPageString = map.get(landpingKeyArray[mapIndex]);
 		RedisAdLandingPageMessage adLandingPageMessage = JsonUtil.fromJson(jsonLandingPageString, RedisAdLandingPageMessage.class);
-		RedisAdBaseMessage adBaseMessage = JsonUtil.fromJson(jedis.get(adBaseRedisKey), RedisAdBaseMessage.class);
 		Map<String,RedisAdImage> redisAdImageMap = null;
 		if(meterialType == 1 || meterialType == 2 || meterialType == 3) {//说明是纯图片
 			String imageKey = RedisConstant.AD_IMAGE + adId + "_" + createId + "_" + materialId + "_" + oneImageHW;

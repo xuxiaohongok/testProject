@@ -63,7 +63,9 @@
     <!-- spring日志级别设置 -->
     <logger name="org.springframework" level="WARN"/>
     <logger name="org.apache.ibatis" level="WARN"/>
-    <logger name="org.apache.http" level="WARN"/>
+    <logger name="org.apache.http" level="info"/>
+    <logger name="o.a.h" level="info"/>
+    <logger name="org.apache.zookeeper" level="info"/>
 
 	<root level="baseLog">
 		<appender-ref ref="STDOUT" />

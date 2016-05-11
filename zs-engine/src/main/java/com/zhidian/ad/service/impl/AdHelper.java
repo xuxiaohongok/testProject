@@ -114,13 +114,17 @@ public class AdHelper {
                 result = false;
                 errorMessages.add("mobile移动设备信息 - deviceOS 设备操作系统不能为空");
             }
+            
             if (mobile.getDeviceType() == null) {
                 result = false;
                 errorMessages.add("mobile移动设备信息 - deviceType 设备类型不能为空");
             }
         }
         
-        System.out.println("errorMessages=" + errorMessages);
+        if(!result) {
+        	System.out.println("errorMessages=" + errorMessages);
+        }
+        
         return result;
     }
 }

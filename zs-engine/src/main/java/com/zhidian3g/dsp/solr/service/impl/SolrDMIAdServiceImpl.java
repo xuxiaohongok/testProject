@@ -44,7 +44,7 @@ public class SolrDMIAdServiceImpl implements SolrDMIAdService {
 			
 			//创意类型
 			int meterIanType = adMaterialMessage.getMeterialType();
-			adMaterialDocument.setMeterialType("meterialType-" + meterIanType);//附带原生广告
+			adMaterialDocument.setMeterialType(DspConstant.METERIALTYPE + meterIanType);//附带原生广告
 			
 			//根据创意类型设置对应的索引属性值
 			

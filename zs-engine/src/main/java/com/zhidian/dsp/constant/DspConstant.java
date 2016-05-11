@@ -42,6 +42,9 @@ public class DspConstant {
 	public static final String OS_ANDROID = "os-androoid";
 
 	public static final String OS_WINDOWS = "os-window";
+
+
+	public static final String METERIALTYPE = "meterialType";
 	
 
 }

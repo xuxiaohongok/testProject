@@ -29,7 +29,7 @@ public class RemoteServiceImpl implements RemoteService{
 	@Override
 	public String getAdMessageV1(String adMessage) {
 		Logger logger = LoggerFactory.getLogger("apiRequestLog");
-		logger.info("=getAdMessageV1=:" + adMessage);
+		logger.info(adMessage);
 		return adSearchService.adSearchHanderV1(adMessage);
 	}
 

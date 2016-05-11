@@ -1,5 +1,7 @@
 package com.zhidian3g.dsp.vo.ad;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 public class RedisAdImage {
 	//图片长
 	private int height;
@@ -7,6 +9,13 @@ public class RedisAdImage {
 	private int width;
 	//广告素材地址
 	private String imgURL;
+	
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return ToStringBuilder.reflectionToString(this);
+	}
+	
 	public int getHeight() {
 		return height;
 	}
