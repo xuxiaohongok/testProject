@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zhidian.ad.domain.AdBaseMessage">
+
+	<resultMap id="BaseResultMap" type="com.zhidian.ad.domain.AdBaseMessage">
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<result column="name" jdbcType="VARCHAR" property="name" />
+	    <result column="cust_id" jdbcType="BIGINT" property="accountId" />
+	    <result column="channel_id" jdbcType="BIGINT" property="adxType" />
+	    <result column="terminal_type" jdbcType="TINYINT" property="terminalType" />
+	    <result column="bidding_type" jdbcType="TINYINT" property="biddingType" />
+	    <result column="max_bid" jdbcType="BIGINT" property="adPrice" />
+	    <result column="total_budget" jdbcType="BIGINT" property="totalBudget" />
+	    <result column="day_budget" jdbcType="BIGINT" property="dayBudget" />
+	    <result column="put_start_time" jdbcType="DATE" property="putStartTime" />
+	    <result column="put_end_time" jdbcType="DATE" property="putEndTime" />
+	    <result column="Industry_id" jdbcType="BIGINT" property="adCategory" />
+	    <result column="package_name" jdbcType="VARCHAR" property="adPackageName" />
+    </resultMap>	
+    
+  <select id="getAdList"  resultType="Long">
+    	select id FROM ad_plan ad where put_state in(2, 3, 4, 5)
+  </select>
+  
+  <select id="getAdBaseMessage"  resultMap="BaseResultMap">
+    	select * FROM ad_plan ad where id=#{adId,jdbcType=BIGINT}
+  </select>
+  
+  <select id="updateAdStatus"  parameterType="java.util.Map">
+    	update ad_plan set put_state=#{putState,jdbcType=TINYINT} where id=#{adId,jdbcType=BIGINT}
+  </select>
+  
+   <select id="updateAdListStatus" resultType="java.lang.Integer">
+    update ad_plan set put_state=4 where id in
+ 		<foreach item="item" index="index" collection="list" open="(" separator="," close=")">#{item}</foreach>	
+  </select>
+  
+</mapper>

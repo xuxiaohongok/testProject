@@ -14,4 +14,8 @@ public class RedisConstant {
 	public static final String AD_CREATE_LANDINGPAGE = "ad_create_landingpage_";
 
 	public static final String AD_CREATE_MATERIAL = "ad_create_material_";
+	
+	public static final String AD_MATERTIAL_LANDINGPAGE = "ad_materital_landingpage_";
+	
+	public static final String AD_STOP_IDS = "ad_stop_ids";
 }

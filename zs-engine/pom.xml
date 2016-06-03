@@ -28,6 +28,12 @@
 			<version>${zhidian-remote-client.version}</version>
 		</dependency>
 
+		<dependency>
+			<groupId>com.zhidian</groupId>
+			<artifactId>ip-finder</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+
 		<!-- Common Dependency Begin -->
 		<dependency>
 			<groupId>antlr</groupId>
@@ -112,11 +118,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-		</dependency>
+
 		<!-- <dependency> <groupId>org.apache.zookeeper</groupId> <artifactId>zookeeper</artifactId> 
 			</dependency> -->
 
@@ -125,6 +127,11 @@
 			<artifactId>zkclient</artifactId>
 		</dependency>
 		<!-- dubbo 需要的jar end -->
+
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+		</dependency>
 
 		<dependency>
 			<groupId>zhidian.common.core</groupId>
@@ -136,7 +143,7 @@
 
 	<build>
 		<finalName>zs-engine</finalName>
-		<resources>
+	<!-- 	<resources>
 			<resource>
 				<targetPath>${project.build.directory}/classes</targetPath>
 				<directory>src/main/resources</directory>
@@ -146,7 +153,7 @@
 					<include>**/*.properties</include>
 				</includes>
 			</resource>
-		</resources>
+		</resources> -->
 
 	</build>
 

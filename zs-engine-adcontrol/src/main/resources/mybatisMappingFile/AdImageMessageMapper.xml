@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zhidian.ad.domain.AdImageMessage">
+	 
+  <select id="getAdImageMessage"  resultType="com.zhidian.ad.domain.AdImageMessage" parameterType="java.util.Map">
+    	select height, width,  source imageURL 
+    	FROM resources where creative_package_id=#{createId,jdbcType=BIGINT} 
+    	and material_package_id=#{materialId,jdbcType=BIGINT} and status=1
+  </select>
+  
+</mapper>

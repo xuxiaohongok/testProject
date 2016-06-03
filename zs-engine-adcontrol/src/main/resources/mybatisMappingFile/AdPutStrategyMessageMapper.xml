@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zhidian.ad.domain.AdPutStrategyMessage">
+	 
+  <select id="getAdPutStrategyMessage"  resultType="com.zhidian.ad.domain.AdPutStrategyMessage" parameterType="java.lang.Long">
+    	select ps.plan_id adId, ps.forefathers_id parentId, GROUP_CONCAT(ps.target_item_id) targetItemIds, ps.is_include isInclude from 
+    	put_strategy ps where ps.plan_id =#{adId,jdbcType=BIGINT} GROUP BY ps.plan_id, ps.forefathers_id, ps.is_include and status=1
+  </select>
+  
+</mapper>

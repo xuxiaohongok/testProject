@@ -1,15 +1,21 @@
 package com.zhidian.remote.vo.request;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by cjl on 2016/2/29.
  * 广告引擎接口参数对象
  */
-public class AdRequestParam {
+public class AdRequestParam implements Serializable{
 
 
     /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	/**
      * Ip地址
      * 是否必须：是
      */

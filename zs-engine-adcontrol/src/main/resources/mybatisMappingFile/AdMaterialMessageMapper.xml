@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zhidian.ad.domain.AdMaterialMessage">
+	 
+   <!-- 
+	private Long createId;
+	private Long materialId;
+	private Integer materialType;
+	private String title;
+	private String description; -->
+  <select id="getAdMaterialMessage"  resultType="AdMaterialMessage" parameterType="java.util.Map">
+    	select mp.creative_package_id createId,  mp.id materialId, mp.type materialType, 
+    	mp.title, mp.description FROM material_package mp where  mp.creative_package_id=#{createId,jdbcType=BIGINT} 
+    	 and mp.id=#{materialId,jdbcType=BIGINT} and status=1
+  </select>
+  
+</mapper>

@@ -22,9 +22,9 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.zhidian3g.common.util.PropertiesUtil;
-import com.zhidian3g.dsp.solr.SolrServerFactory;
-import com.zhidian3g.dsp.solr.documentmanager.AdDocumentManager;
+import com.zhidian.dsp.solr.SolrServerFactory;
+import com.zhidian.dsp.solr.documentmanager.AdDocumentManager;
+import com.zhidian.common.util.PropertiesUtil;
 
 public class CopyOfSolrTestCase1 {
 	protected Logger logger = LoggerFactory.getLogger(getClass());

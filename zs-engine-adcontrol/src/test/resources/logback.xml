@@ -1,0 +1,223 @@
+<!-- DEBUG < INFO < WARN < ERROR < FATAL -->
+<configuration debug="false">
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<!-- encoder 默认配置为PatternLayoutEncoder -->
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
+			</pattern>
+		</encoder>
+	</appender>
+	
+	 <!-- 出错日志 appender  -->
+    <appender name="ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 按天回滚 daily -->
+            <!-- log.dir 在maven profile里配置 -->
+            <fileNamePattern>/var/log/resin/SDK_Data_Server/err/exception-%d{yyyy-MM-dd}.log</fileNamePattern>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger - %msg%n</pattern>
+        </encoder>
+    </appender>
+    
+    <appender name="ERRORREQUSET" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 按天回滚 daily -->
+            <!-- log.dir 在maven profile里配置 -->
+            <fileNamePattern>/var/log/resin/SDK_Data_Server/errRequest/errRequest-%d{yyyy-MM-dd}.log</fileNamePattern>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+  <appender name="eventStartAppAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <File>/var/log/resin/SDK_Data_Server/sdkDataLog/eventStartApp/eventStartApp-01.log</File>
+    <Append>true</Append>
+    <encoder>
+      <pattern>%m%n</pattern>
+    </encoder>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>/var/log/resin/SDK_Data_Server/sdkDataLog/eventStartApp/eventStartApp-01.log.%d{yyyy-MM-dd_HH}</fileNamePattern>
+    </rollingPolicy>
+  </appender> 
+  
+  <appender name="eventUseLongTimeAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <File>/var/log/resin/SDK_Data_Server/sdkDataLog/eventUseLongTime/eventUseLongTime-01.log</File>
+    <Append>true</Append>
+    <encoder>
+      <pattern>%m%n</pattern>
+    </encoder>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>/var/log/resin/SDK_Data_Server/sdkDataLog/eventUseLongTime/eventUseLongTime-01.log.%d{yyyy-MM-dd_HH}</fileNamePattern>
+    </rollingPolicy>
+  </appender> 
+  
+  <appender name="eventPaidAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <File>/var/log/resin/SDK_Data_Server/sdkDataLog/eventPaid/eventPaid-01.log</File>
+    <Append>true</Append>
+    <encoder>
+      <pattern>%m%n</pattern>
+    </encoder>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>/var/log/resin/SDK_Data_Server/sdkDataLog/eventPaid/eventPaid-01.log.%d{yyyy-MM-dd_HH}</fileNamePattern>
+    </rollingPolicy>
+  </appender>   
+   
+   <appender name="eventShowDetailsAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <File>/var/log/resin/SDK_Data_Server/sdkDataLog/eventShowDetails/eventShowDetails-01.log</File>
+    <Append>true</Append>
+    <encoder>
+      <pattern>%m%n</pattern>
+    </encoder>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>/var/log/resin/SDK_Data_Server/sdkDataLog/eventShowDetails/eventShowDetails-01.log.%d{yyyy-MM-dd_HH}</fileNamePattern>
+    </rollingPolicy>
+  </appender> 
+  
+  <appender name="eventDisplayAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <File>/var/log/resin/SDK_Data_Server/sdkDataLog/eventDisplay/eventDisplay-01.log</File>
+    <Append>true</Append>
+    <encoder>
+      <pattern>%m%n</pattern>
+    </encoder>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>/var/log/resin/SDK_Data_Server/sdkDataLog/eventDisplay/eventDisplay-01.log.%d{yyyy-MM-dd_HH}</fileNamePattern>
+    </rollingPolicy>
+  </appender> 
+  
+  <appender name="eventDownloadAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <File>/var/log/resin/SDK_Data_Server/sdkDataLog/eventDownload/eventDownload-01.log</File>
+    <Append>true</Append>
+    <encoder>
+      <pattern>%m%n</pattern>
+    </encoder>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>/var/log/resin/SDK_Data_Server/sdkDataLog/eventDownload/eventDownload-01.log.%d{yyyy-MM-dd_HH}</fileNamePattern>
+    </rollingPolicy>
+  </appender> 
+  
+  <appender name="eventInstalledAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <File>/var/log/resin/SDK_Data_Server/sdkDataLog/eventInstalled/eventInstalled-01.log</File>
+    <Append>true</Append>
+    <encoder>
+      <pattern>%m%n</pattern>
+    </encoder>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>/var/log/resin/SDK_Data_Server/sdkDataLog/eventInstalled/eventInstalled-01.log.%d{yyyy-MM-dd_HH}</fileNamePattern>
+    </rollingPolicy>
+  </appender> 
+  
+  <appender name="eventInstalledAppListAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <File>/var/log/resin/SDK_Data_Server/sdkDataLog/eventInstalledAppList/eventInstalledAppList-01.log</File>
+    <Append>true</Append>
+    <encoder>
+      <pattern>%m%n</pattern>
+    </encoder>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>/var/log/resin/SDK_Data_Server/sdkDataLog/eventInstalledAppList/eventInstalledAppList-01.log.%d{yyyy-MM-dd_HH}</fileNamePattern>
+    </rollingPolicy>
+  </appender> 
+  
+  <appender name="eventSysInstalledAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <File>/var/log/resin/SDK_Data_Server/sdkDataLog/eventSysInstalled/eventSysInstalled-01.log</File>
+    <Append>true</Append>
+    <encoder>
+      <pattern>%m%n</pattern>
+    </encoder>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>/var/log/resin/SDK_Data_Server/sdkDataLog/eventSysInstalled/eventSysInstalled-01.log.%d{yyyy-MM-dd_HH}</fileNamePattern>
+    </rollingPolicy>
+  </appender> 
+  
+  <appender name="eventSysUnInstalledAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <File>/var/log/resin/SDK_Data_Server/sdkDataLog/eventSysUnInstalled/eventSysUnInstalled-01.log</File>
+    <Append>true</Append>
+    <encoder>
+      <pattern>%m%n</pattern>
+    </encoder>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>/var/log/resin/SDK_Data_Server/sdkDataLog/eventSysUnInstalled/eventSysUnInstalled-01.log.%d{yyyy-MM-dd_HH}</fileNamePattern>
+    </rollingPolicy>
+  </appender> 
+  
+  <appender name="eventScreenAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <File>/var/log/resin/SDK_Data_Server/sdkDataLog/eventScreen/eventScreen-01.log</File>
+    <Append>true</Append>
+    <encoder>
+      <pattern>%m%n</pattern>
+    </encoder>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>/var/log/resin/SDK_Data_Server/sdkDataLog/eventScreen/eventScreen-01.log.%d{yyyy-MM-dd_HH}</fileNamePattern>
+    </rollingPolicy>
+  </appender> 
+  
+ 	<!--  **********************************************        -->
+	<!--logback.LogbackDemo：类的全路径 -->
+	<logger name="eventStartAppLog" level="INFO" additivity="false">
+		<appender-ref ref="eventStartAppAppender" />
+	</logger>
+	
+	<logger name="eventUseLongTimeLog" level="INFO" additivity="false">
+		<appender-ref ref="eventUseLongTimeAppender" />
+	</logger>
+	
+	<logger name="eventPaidLog" level="INFO" additivity="false">
+		<appender-ref ref="eventPaidAppender" />
+	</logger>
+
+	<logger name="eventShowDetailsLog" level="INFO" additivity="false">
+		<appender-ref ref="eventShowDetailsAppender" />
+	</logger>
+	
+	
+	<logger name="eventDisplayLog" level="INFO" additivity="false">
+		<appender-ref ref="eventDisplayAppender" />
+	</logger>
+	
+	<logger name="eventDownloadLog" level="INFO" additivity="false">
+		<appender-ref ref="eventDownloadAppender" />
+	</logger>
+	
+	<logger name="eventInstalledLog" level="INFO" additivity="false">
+		<appender-ref ref="eventInstalledAppender" />
+	</logger>
+	
+	<logger name="eventInstalledAppListLog" level="INFO" additivity="false">
+		<appender-ref ref="eventInstalledAppListAppender" />
+	</logger>
+	
+	<logger name="eventSysInstalledLog" level="INFO" additivity="false">
+		<appender-ref ref="eventSysInstalledAppender" />
+	</logger>
+	
+	<logger name="eventSysUnInstalledLog" level="INFO" additivity="false">
+		<appender-ref ref="eventSysUnInstalledAppender" />
+	</logger>
+	
+	<logger name="eventScreenLog" level="INFO" additivity="false">
+		<appender-ref ref="eventScreenAppender" />
+	</logger>
+
+	<!--错误日志-->
+    <logger name="exceptionLog" level="info">
+        <appender-ref ref="ERROR"/>
+    </logger>
+    
+    <!--错误请求日志-->
+    <logger name="errRequestLog" level="info">
+        <appender-ref ref="ERRORREQUSET"/>
+    </logger>
+    
+    <!-- spring日志级别设置 -->
+    <logger name="org.springframework" level="WARN"/>
+    <logger name="org.apache.ibatis" level="WARN"/>
+    <logger name="org.apache.http" level="info"/>
+    <logger name="o.a.h" level="info"/>
+    <logger name="org.apache.zookeeper" level="info"/>
+
+	<root level="baseLog">
+		<appender-ref ref="STDOUT" />
+	</root>
+
+</configuration>

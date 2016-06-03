@@ -1,6 +1,6 @@
 package com.zhidian.dsp.constant;
 
-import com.zhidian3g.common.util.PropertiesUtil;
+import com.zhidian.common.util.PropertiesUtil;
 
 public class PropertieConstant {
 	
@@ -21,16 +21,13 @@ public class PropertieConstant {
 	 */
 	public static final String SERVER_URL = propertiesUtil.getValue("server.server_url");
 	
+	public static final Integer AD_VALID_TIME = Integer.valueOf(propertiesUtil.getValue("ad_valid_time"));
+	
 	/**
 	 * 图片服务器
 	 */
-	public static final String IMAGES_SERVER = propertiesUtil.getValue("server.image");
+	public static final String IMAGES_SERVER = "";//propertiesUtil.getValue("server.image");
 		
-	/**
-	 * 点击下载安装 
-	 */
-	public static final String CLICK_DOWNLOAD_INSTALL_SERVER = propertiesUtil.getValue("server.download_install");
-	
 	/**ip地址****/
 	public static final String IP_ADRESS = propertiesUtil.getValue("server.ip.adress");
 	

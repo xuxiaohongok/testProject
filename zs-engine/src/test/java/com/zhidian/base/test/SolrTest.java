@@ -18,10 +18,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.zhidian.dsp.constant.DspConstant;
-import com.zhidian3g.dsp.solr.SolrDocumentContainer;
-import com.zhidian3g.dsp.solr.document.DspAdDocument;
-import com.zhidian3g.dsp.solr.documentmanager.AdDocumentManager;
-import com.zhidian3g.dsp.vo.adcontrol.Ad;
+import com.zhidian.dsp.solr.SolrDocumentContainer;
+import com.zhidian.dsp.solr.document.DspAdDocument;
+import com.zhidian.dsp.solr.documentmanager.AdDocumentManager;
+import com.zhidian.dsp.vo.adcontrol.Ad;
 
 public class SolrTest {
 	protected Logger logger = LoggerFactory.getLogger(getClass());

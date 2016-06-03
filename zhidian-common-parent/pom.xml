@@ -32,6 +32,7 @@
 		<zs-engine.version>1.0-SNAPSHOT</zs-engine.version>
 		<zhidian-remote-test.version>1.0-SNAPSHOT</zhidian-remote-test.version>
 		<zhidian-common-core.version>1.0-SNAPSHOT</zhidian-common-core.version>
+		<zs-adcontrol.version>1.0-SNAPSHOT</zs-adcontrol.version>
 
 		<!-- frameworks -->
 		<org.springframework.version>3.2.4.RELEASE</org.springframework.version>
@@ -310,12 +311,22 @@
 			</dependency>
 			<!-- MyBatis Dependency End -->
 
-			<!-- Others Begin -->
+			<!-- Mysql Driver Begin -->
+			<dependency>
+				<groupId>mysql</groupId>
+				<artifactId>mysql-connector-java</artifactId>
+				<version>5.1.33</version>
+			</dependency>
+			
+			<!-- data source 相关jar包 -->
 			<dependency>
 				<groupId>com.alibaba</groupId>
 				<artifactId>druid</artifactId>
-				<version>0.2.23</version>
+				<version>1.0.9</version>
 			</dependency>
+
+			<!-- Others Begin -->
+
 			<dependency>
 				<groupId>com.alibaba</groupId>
 				<artifactId>fastjson</artifactId>

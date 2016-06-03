@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zhidian.ad.domain.AccountFeeMessage">
+	 
+  <select id="getAccountFeeMessage"  resultType="AccountFeeMessage" parameterType="java.lang.Long">
+    	select id, balance, sum FROM customer_finance where cust_id=#{accountId,jdbcType=BIGINT}
+  </select>
+  
+</mapper>

@@ -1,9 +1,9 @@
 package com.zhidian.dsp.util;
 
 import com.zhidian.dsp.constant.PropertieConstant;
-import com.zhidian3g.common.mail.MailService;
-import com.zhidian3g.common.util.CommonLoggerUtil;
-import com.zhidian3g.common.util.Utils;
+import com.zhidian.common.mail.MailService;
+import com.zhidian.common.util.CommonLoggerUtil;
+import com.zhidian.common.util.Utils;
 
 public class SolrUtil {
 	

@@ -2,7 +2,7 @@ package dubbo.test;
 
 import org.junit.Test;
 
-import com.zhidian3g.dsp.solr.documentmanager.AdDocumentManager;
+import com.zhidian.dsp.solr.documentmanager.AdDocumentManager;
 
 public class TestSolr {
 	

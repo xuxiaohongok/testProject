@@ -15,7 +15,8 @@
 	<context:annotation-config />
 
 	<!-- 配置要扫描的包 -->
-	<context:component-scan base-package="com.zhidian.remote.service, com.zhidian.ad.service, com.zhidian3g.dsp.solr.service" />
+	<context:component-scan base-package="com.zhidian.remote.service, com.zhidian.ad.service, com.zhidian.dsp.solr.service" />
+	<bean class="com.zhidian.dsp.sy.init.InitDataListener" init-method="initMethod"  destroy-method="destroyMethod" />
 
 	<!-- 读入配置属性文件 -->
 	<!-- <context:property-placeholder location="classpath:jdbc.properties" /> -->

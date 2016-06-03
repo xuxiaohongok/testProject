@@ -16,7 +16,9 @@
 	<!-- 用dubbo协议在20880端口暴露服务 -->
 	<dubbo:protocol name="dubbo" port="20880" />
 		
+		<dubbo:provider threads=""> </dubbo:provider>
 	<!-- 用户服务接口 -->
 	<dubbo:service interface="com.zhidian.remote.service.RemoteService" ref="remoteService" />
+	<dubbo:service interface="com.zhidian.dsp.solr.service.SolrDMIAdService" ref="solrDMIAdService" />
 
 </beans>  

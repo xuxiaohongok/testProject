@@ -1,16 +1,15 @@
 package com.zhidian.ad.service.impl;
 
-import com.zhidian.remote.vo.request.AdConditionParam;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
+
 import com.zhidian.remote.vo.request.AdRequestParam;
-import com.zhidian.remote.vo.request.AdSlotParam;
 import com.zhidian.remote.vo.request.ImageAdTypeParam;
 import com.zhidian.remote.vo.request.ImpParam;
 import com.zhidian.remote.vo.request.MobileParam;
 import com.zhidian.remote.vo.request.NativeAdTypeParam;
-
-import org.apache.commons.lang3.StringUtils;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by cjl on 2016/3/4.
@@ -44,6 +43,12 @@ public class AdHelper {
             result = false;
             errorMessages.add("IP地址不能为空");
         }
+        
+        if (StringUtils.isBlank(param.getUserId())) {
+            result = false;
+            errorMessages.add("用户唯一标识不能为空");
+        }
+        
         if (StringUtils.isBlank(param.getSerialNumber())) {
             result = false;
             errorMessages.add("流水号不能为空");
@@ -97,6 +102,9 @@ public class AdHelper {
             		 result = false;
             		 errorMessages.add("imageAdTypeParam原生广告 - 广告位条件不能为空");;
             	 } 
+            } else {
+            	result = false;
+       		 	errorMessages.add("imageAdTypeParam图片广告  NativeAdTypeParam 原生广告都没有");;
             }
             
         } else {

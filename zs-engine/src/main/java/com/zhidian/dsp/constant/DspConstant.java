@@ -37,14 +37,19 @@ public class DspConstant {
 	
 	public static final String CX_PRICE_TYPE = "cx.price.type";
 
-	public static final String OS_IOS = "os-ios";
+	public static final String OS_IOS = "IOS";
 
-	public static final String OS_ANDROID = "os-androoid";
+	public static final String OS_ANDROID = "Android";
 
 	public static final String OS_WINDOWS = "os-window";
 
 
 	public static final String METERIALTYPE = "meterialType";
+	
+	public static final Integer LOG_RECEIVE_CODE = 2;
+	public static final Integer LOG_WIN_CODE = 3;
+	public static final Integer LOG_SHOW_CODE = 4;
+	public static final Integer LOG_CLICK_CODE = 5;
 	
 
 }

@@ -6,9 +6,7 @@ import mockit.integration.junit4.JMockit;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import com.zhidian.dsp.constant.DspConstant;
-import com.zhidian3g.dsp.solr.service.impl.SolrSearchAdServiceImpl;
-import com.zhidian3g.dsp.vo.solr.SearchAdCondition;
+import com.zhidian.dsp.solr.service.impl.SolrSearchAdServiceImpl;
 
 @RunWith(JMockit.class)
 public class RecipientServiceTest {

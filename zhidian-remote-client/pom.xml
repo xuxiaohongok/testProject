@@ -1,11 +1,18 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
+	<parent>
+		<groupId>zhidian.common</groupId>
+		<artifactId>zhidian-common-parent</artifactId>
+		<version>1.0-SNAPSHOT</version>
+		<relativePath>../zhidian-common-parent</relativePath>
+	</parent>
 
 	<groupId>zhidian.remote.client</groupId>
-		<artifactId>zhidian-remote-client</artifactId>
-		<version>1.1.0-SNAPSHOT</version>
-		
+	<artifactId>zhidian-remote-client</artifactId>
+	<version>1.1.0-SNAPSHOT</version>
+
 	<packaging>jar</packaging>
 
 	<name>zhidian-remote-client</name>
@@ -23,8 +30,6 @@
 			<url>http://znexus.zdev.com/nexus/content/repositories/snapshots/</url>
 		</snapshotRepository>
 	</distributionManagement>
-
-
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

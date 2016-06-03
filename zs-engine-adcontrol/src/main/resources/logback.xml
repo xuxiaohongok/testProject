@@ -1,0 +1,79 @@
+<!-- DEBUG < INFO < WARN < ERROR < FATAL -->
+<configuration debug="false">
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<!-- encoder 默认配置为PatternLayoutEncoder -->
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
+			</pattern>
+		</encoder>
+	</appender>
+
+	<!-- 出错日志 appender -->
+	<appender name="ERROR"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!-- 按天回滚 daily -->
+			<!-- log.dir 在maven profile里配置 -->
+			<fileNamePattern>/var/log/web/log4j/zs-engine-adcontrol/err/exception-%d{yyyy-MM-dd}.log
+			</fileNamePattern>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger - %msg%n
+			</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="ERRORREQUSET"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!-- 按天回滚 daily -->
+			<!-- log.dir 在maven profile里配置 -->
+			<fileNamePattern>/var/log/web/log4j/zs-engine-adcontrol/errRequest/errRequest-%d{yyyy-MM-dd}.log
+			</fileNamePattern>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger - %msg%n
+			</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="TIMELOGAPPENDER"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!-- 按天回滚 daily -->
+			<!-- log.dir 在maven profile里配置 -->
+			<fileNamePattern>/var/log/web/log4j/zs-engine-adcontrol/timeLog/timeLog-%d{yyyy-MM-dd}.log
+			</fileNamePattern>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%m%n</pattern>
+		</encoder>
+	</appender>
+
+	<!-- ********************************************** -->
+	<!--错误日志 -->
+	<logger name="exceptionLog" level="info">
+		<appender-ref ref="ERROR" />
+	</logger>
+
+	<!--错误请求日志 -->
+	<logger name="errRequestLog" level="info">
+		<appender-ref ref="ERRORREQUSET" />
+	</logger>
+
+	<logger name="timeLog" level="info">
+		<appender-ref ref="TIMELOGAPPENDER" />
+	</logger>
+
+	<!-- spring日志级别设置 -->
+	<logger name="org.springframework" level="WARN" />
+	<logger name="org.apache.ibatis" level="WARN" />
+	<logger name="org.apache.http" level="info" />
+	<logger name="o.a.h" level="info" />
+	<logger name="org.apache.zookeeper" level="info" />
+
+	<root level="baseLog">
+		<appender-ref ref="STDOUT" />
+	</root>
+
+</configuration>

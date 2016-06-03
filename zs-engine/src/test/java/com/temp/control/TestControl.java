@@ -9,18 +9,18 @@ import org.junit.Test;
 
 import redis.clients.jedis.Jedis;
 
+import com.zhidian.common.redisClient.JedisPools;
+import com.zhidian.common.util.JsonUtil;
 import com.zhidian.dsp.constant.DspConstant;
 import com.zhidian.dsp.constant.RedisConstant;
-import com.zhidian3g.common.redisClient.JedisPools;
-import com.zhidian3g.common.util.JsonUtil;
-import com.zhidian3g.dsp.solr.documentmanager.AdDspDocumentManager;
-import com.zhidian3g.dsp.solr.service.impl.SolrDMIAdServiceImpl;
-import com.zhidian3g.dsp.vo.ad.RedisAdBaseMessage;
-import com.zhidian3g.dsp.vo.ad.RedisAdCreateMaterialMessage;
-import com.zhidian3g.dsp.vo.ad.RedisAdImage;
-import com.zhidian3g.dsp.vo.ad.RedisAdLandingPageMessage;
-import com.zhidian3g.dsp.vo.adcontrol.AdBaseMessage;
-import com.zhidian3g.dsp.vo.adcontrol.AdMaterialMessage;
+import com.zhidian.dsp.solr.documentmanager.AdDspDocumentManager;
+import com.zhidian.dsp.solr.service.impl.SolrDMIAdServiceImpl;
+import com.zhidian.dsp.solr.vo.AdBaseDocumentSourceMessage;
+import com.zhidian.dsp.solr.vo.AdMaterialDocumentSourceMessage;
+import com.zhidian.dsp.vo.ad.AdImageMessage;
+import com.zhidian.dsp.vo.ad.AdLandpageMessage;
+import com.zhidian.dsp.vo.ad.AdMaterialMessage;
+import com.zhidian.dsp.vo.ad.RedisAdBaseMessage;
 
 public class TestControl {
 
@@ -34,57 +34,60 @@ public class TestControl {
 	
 	@Test
 	public void testAddAd() {
-//		adxType4 AND terminalType1 AND os-ios AND adType1 AND 9-00
+//		adxType4 AND terminalType1 AND os-ios AND adType1 AND 9
 		Jedis jedis = jedisPools.getJedis();
-		int adxType = 4;
+		int adxType = 2;
 		//广告基本信息
-		Long adId = 5l;
-		Map<String, Object> extendMap = new HashMap<String, Object>(); 
+		Long adId = 1l;
+		/*Map<String, Object> extendMap = new HashMap<String, Object>(); 
 		extendMap.put("adId", adId);
-		extendMap.put("cid", 1);
+		extendMap.put("cid", 1);*/
 		int adCategory = 15;
-		int adType = 1;
 		int terminalType = 1;
 		
-		setRedisBaseMessage(jedis, adId, extendMap, adCategory);
+//		Map<String,Object> map = new HashMap<String, Object>();
+//		map.put("adid", "1");
+//		map.put("adVersion", "1.0.0");
+//		map.put("adFileName", "zy007_bbtan.apk");
 		
-		int createId = 1;
-		int materialId = 1;
+		setRedisBaseMessage(jedis, adId, null, adCategory);
+		
+		long createId = 1l;
+		long materialId = 1;
 		int materialType = 1;
 //		广告素材类型1 纯图片 2 图文 3 图文描述(单图) 4 图文描述(多图) 5纯文字链接
-		setMaterialMessage(
-				jedis, adId, createId, materialId, materialType);
-		
-		
-		//设置图片
-		String imageHW = setImage(jedis,  adId, 50,  320,  createId,  materialId);
+		int h = 120;
+		int w = 160;
+		String imageHW = h + "-" + w;
+		setMaterialMessage(jedis, adId, createId, materialId, materialType, null, null, h, w, "http://d.zhidian3g.cn/zhidian-smart/youdao/160x120.jpg");
 		
 		//落地页的选择
-		RedisAdLandingPageMessage adLandingPageMessage = new RedisAdLandingPageMessage();
-		adLandingPageMessage.setId(1);
-		adLandingPageMessage.setLandingPageUrl("http://d.zhidian3g.cn/zdy6/static/srsf/16022958976.html");
+		AdLandpageMessage adLandingPageMessage = new AdLandpageMessage();
+		adLandingPageMessage.setId(1l);
+		adLandingPageMessage.setLandPageUrl("http://d.zhidian3g.cn/zdy6/static/srsf/3/16011556969.html");
 		
 		//落地页的选择
-		RedisAdLandingPageMessage adLandingPageMessage1 = new RedisAdLandingPageMessage();
-		adLandingPageMessage1.setId(2);
-		adLandingPageMessage1.setLandingPageUrl("http://www.baidu.com");
+//		AdLandpageMessage adLandingPageMessage1 = new AdLandpageMessage();
+//		adLandingPageMessage1.setId(2l);
+//		adLandingPageMessage1.setLandPageUrl("http://www.baidu.com");
 		
-		String adLandingPageKey = RedisConstant.AD_CREATE_LANDINGPAGE + "" + adId + "_" + createId;
+		String adLandingPageKey = RedisConstant.AD_MATERTIAL_LANDINGPAGE + adId + "_" + createId + "_" + materialId;
 		jedis.hset(adLandingPageKey, "1", JsonUtil.toJson(adLandingPageMessage));
-		jedis.hset(adLandingPageKey, "2", JsonUtil.toJson(adLandingPageMessage1));
+//		jedis.hset(adLandingPageKey, "2", JsonUtil.toJson(adLandingPageMessage1));
 		
-		AdBaseMessage adBaseMessage = new AdBaseMessage();
+		AdBaseDocumentSourceMessage adBaseMessage = new AdBaseDocumentSourceMessage();
 		adBaseMessage.setAdCategory(adCategory);
-		adBaseMessage.setAdType(adType);
 		adBaseMessage.setAdxType(adxType);
-		adBaseMessage.setAreas("广东省");
+		adBaseMessage.setAdPrice(8000l);
+		adBaseMessage.setAreas("广东省,北京市,广东省广州市");
 		adBaseMessage.setId(adId);
 		adBaseMessage.setOsPlatform(DspConstant.OS_ANDROID + " " + DspConstant.OS_IOS);
+		adBaseMessage.setNetworkType("WiFi,2G,3G,4G");
 		adBaseMessage.setTerminalType(terminalType);
-		adBaseMessage.setTimeZones("9-00, 10-00, 11-00, 12-00, 13-00,14-00, 15-00, 16-00, 17-00, 18-00");
+		adBaseMessage.setTimeZones("hour9, hour10, hour11, hour12, hour13, hour14, hour15, hour16, hour17, hour18");
 		
-		List<AdMaterialMessage> list = new ArrayList<AdMaterialMessage>();
-		list.add(new AdMaterialMessage(createId, materialId, materialType, imageHW, null, null));
+		List<AdMaterialDocumentSourceMessage> list = new ArrayList<AdMaterialDocumentSourceMessage>();
+		list.add(new AdMaterialDocumentSourceMessage(createId, materialId, materialType, imageHW, null, null));
 		adBaseMessage.setAdMaterialMessageList(list);
 	
 		SolrDMIAdServiceImpl solrDMIAdServiceImpl = new SolrDMIAdServiceImpl();
@@ -94,12 +97,11 @@ public class TestControl {
 	private void setRedisBaseMessage(Jedis jedis, Long adId,
 			Map<String, Object> extendMap, int adCategory) {
 		RedisAdBaseMessage redisAdBaseMessage = new RedisAdBaseMessage();
+		redisAdBaseMessage.setAccountId(1l);
 		redisAdBaseMessage.setAdCategory(adCategory);
-		redisAdBaseMessage.setAdId(adId);
-		redisAdBaseMessage.setAdName("散人私服" + adId);
+		redisAdBaseMessage.setId(adId);
+		redisAdBaseMessage.setName("散人私服" + adId);
 		redisAdBaseMessage.setAdPackageName("com.alicall.androidzb");
-		redisAdBaseMessage.setAdPrice(8000);
-		redisAdBaseMessage.setClickType(1);
 		if(extendMap != null) {
 			redisAdBaseMessage.setExtendMessage(JsonUtil.toJson(extendMap));
 		}
@@ -108,123 +110,282 @@ public class TestControl {
 		jedis.set(adBaseRedisKey, JsonUtil.toJson(redisAdBaseMessage));
 	}
 
-	private RedisAdCreateMaterialMessage setMaterialMessage(Jedis jedis,
-			Long adId, int createId, int materialId, int materialType) {
-		RedisAdCreateMaterialMessage redisAdCreateMaterialMessage = new RedisAdCreateMaterialMessage();
+	private AdMaterialMessage setMaterialMessage(Jedis jedis,
+			Long adId, Long createId, Long materialId, int materialType, String title, String detail, Integer h, Integer w, String url) {
+		AdMaterialMessage redisAdCreateMaterialMessage = new AdMaterialMessage();
 		redisAdCreateMaterialMessage.setCreateId(createId);
-		redisAdCreateMaterialMessage.setMeterialId(materialId);
-		redisAdCreateMaterialMessage.setMeterialType(materialType);
-		String createPackageMessageKey = RedisConstant.AD_CREATE_MATERIAL + adId + "_" + createId + "_" + materialId;
+		redisAdCreateMaterialMessage.setMaterialId(materialId);
+		redisAdCreateMaterialMessage.setMaterialType(materialType);
+		redisAdCreateMaterialMessage.setTitle(title);
+		redisAdCreateMaterialMessage.setDescription(detail);
+		
+		Map<String, AdImageMessage> mapAdImage = new HashMap<String, AdImageMessage>();
+		AdImageMessage redisAdImage = new AdImageMessage();
+		redisAdImage.setHeight(h);
+		redisAdImage.setWidth(w);
+		String imageHW = h + "-" + w;
+		redisAdImage.setImageURL(url);
+		mapAdImage.put(imageHW, redisAdImage);
+		redisAdCreateMaterialMessage.setMapAdImage(mapAdImage);
+		
+		String createPackageMessageKey = RedisConstant.AD_CREATE_MATERIAL + createId + "_" + materialId;
 		jedis.set(createPackageMessageKey, JsonUtil.toJson(redisAdCreateMaterialMessage));
 		return redisAdCreateMaterialMessage;
 	}
 
-	private String setImage(Jedis jedis, Long adId,int h, int w,  int createId, int materialId) {
-		RedisAdImage redisAdImage = new RedisAdImage();
+	private String setImage(Jedis jedis, Long adId, int h, int w,  long createId, long materialId, String url) {
+		AdImageMessage redisAdImage = new AdImageMessage();
 		redisAdImage.setHeight(h);
 		redisAdImage.setWidth(w);
 		String imageHW = h + "-" + w;
-		redisAdImage.setImgURL("http://d.zhidian3g.cn/zhidian-smart/cy/1/360x360.jpg");
-		String imageKey = RedisConstant.AD_IMAGE + adId + "_" + createId + "_" + materialId + "_" + imageHW;
+		redisAdImage.setImageURL(url);
+		String imageKey = RedisConstant.AD_IMAGE + createId + "_" + materialId + "_" + imageHW;
 		jedis.set(imageKey, JsonUtil.toJson(redisAdImage));
 		return imageHW;
 	}
 	
 	@Test
-	public void testAddAd2() {
-		Long adId = 3l;
+	public void testImage() {
 		Jedis jedis = jedisPools.getJedis();
-		int adxType = 3;
-		//广告基本信息
-		RedisAdBaseMessage redisAdBaseMessage = new RedisAdBaseMessage();
-		redisAdBaseMessage.setAdCategory(1);
-		redisAdBaseMessage.setAdId(adId);
-		redisAdBaseMessage.setAdName("散人私服" + adId);
-		redisAdBaseMessage.setAdPackageName("com.alicall.androidzb");
-		redisAdBaseMessage.setAdPrice(8000);
-		redisAdBaseMessage.setClickType(1);
-		
-		String adBaseRedisKey = RedisConstant.AD_BASE + adId;
-		jedis.set(adBaseRedisKey, JsonUtil.toJson(redisAdBaseMessage));
-		
-		int createId = 2;
-		int materialId = 2;
-		int materialId2 = 3;
-		String title = "散人私服 散人私服 散人私服" + adId;
-		String detail = "散人私服 散人私服 描述" + adId;
-		
-		RedisAdCreateMaterialMessage redisAdCreateMaterialMessage = new RedisAdCreateMaterialMessage();
-		redisAdCreateMaterialMessage.setCreateId(createId);
-		redisAdCreateMaterialMessage.setMeterialId(materialId);
-		redisAdCreateMaterialMessage.setMeterialType(2);
-		redisAdCreateMaterialMessage.setTitle(title);
-//		广告素材类型1 纯图片 2 图文 3 图文描述(单图) 4 图文描述(多图) 5纯文字链接
-		String createPackageMessageKey = RedisConstant.AD_CREATE_MATERIAL + adId + "_" + createId + "_" + materialId;
+		AdMaterialMessage redisAdCreateMaterialMessage = new AdMaterialMessage();
+		redisAdCreateMaterialMessage.setCreateId(1l);
+		redisAdCreateMaterialMessage.setMaterialId(2l);
+		redisAdCreateMaterialMessage.setMaterialType(1);
+		redisAdCreateMaterialMessage.setTitle("ok");
+		redisAdCreateMaterialMessage.setDescription(null);
+		AdImageMessage redisAdImage = new AdImageMessage();
+		redisAdImage.setHeight(50);
+		redisAdImage.setWidth(50);
+		String imageHW = 50 + "-" + 150;
+		redisAdImage.setImageURL("atest");
+		Map<String, AdImageMessage> mapAdImage = new HashMap<String, AdImageMessage>();
+		mapAdImage.put(imageHW, redisAdImage);
+		mapAdImage.put(imageHW + "2", redisAdImage);
+		redisAdCreateMaterialMessage.setMapAdImage(mapAdImage);
+		String createPackageMessageKey = RedisConstant.AD_CREATE_MATERIAL + 12 + "_" + 32;
 		jedis.set(createPackageMessageKey, JsonUtil.toJson(redisAdCreateMaterialMessage));
 		
+		System.out.println(jedis.get(createPackageMessageKey));
+		AdMaterialMessage adMaterialMessage1 = JsonUtil.fromJson(jedis.get(createPackageMessageKey), AdMaterialMessage.class);
+		System.out.println(adMaterialMessage1.getMapAdImage());
 		
-		RedisAdCreateMaterialMessage redisAdCreateMaterialMessage2 = new RedisAdCreateMaterialMessage();
-		redisAdCreateMaterialMessage2.setCreateId(createId);
-		redisAdCreateMaterialMessage2.setMeterialId(materialId2);
-		redisAdCreateMaterialMessage2.setMeterialType(3);
-		redisAdCreateMaterialMessage2.setTitle(title);
-		redisAdCreateMaterialMessage2.setDetail(detail);
+		jedisPools.closeJedis(jedis);
+	}
+	
+	@Test
+	public void testAddAd2() {
+		Long adId = 2l;
+		Jedis jedis = jedisPools.getJedis();
+		int adxType = 3;
+		int adCategory = 1;
+		//广告基本信息
+		long createId = 2;
+		long materialId = 2;
+		String title = "散人私服 散人私服 散人私服" + adId;
 //		广告素材类型1 纯图片 2 图文 3 图文描述(单图) 4 图文描述(多图) 5纯文字链接
-		String createPackageMessageKey2 = RedisConstant.AD_CREATE_MATERIAL + adId + "_" + createId + "_" + materialId2;
-		jedis.set(createPackageMessageKey2, JsonUtil.toJson(redisAdCreateMaterialMessage2));
-		
-		RedisAdImage redisAdImage = new RedisAdImage();
 		int width = 160;
 		int height = 120;
-		redisAdImage.setHeight(height);
-		redisAdImage.setWidth(width);
+		int meterialType = 2;
 		String imageHW = height + "-" + width;
-		redisAdImage.setImgURL("http://d.zhidian3g.cn/zhidian-smart/youdao/160x120.jpg");
-		String imageKey1 = RedisConstant.AD_IMAGE + adId + "_" + createId + "_" + materialId + "_" + imageHW;
-		jedis.set(imageKey1, JsonUtil.toJson(redisAdImage));
 		
-		RedisAdImage redisAdImage2 = new RedisAdImage();
-		int width1 = 170;
-		int height1 = 130;
-		redisAdImage2.setHeight(height1);
-		redisAdImage2.setWidth(width1); 
-		String imageHW2 = height1 + "-" + width1;
-		redisAdImage2.setImgURL("http://d.zhidian3g.cn/zhidian-smart/youdao/170x130.jpg");
-		String imageKey2 = RedisConstant.AD_IMAGE + adId + "_" + createId + "_" + materialId2 + "_" + imageHW2;
-		jedis.set(imageKey2, JsonUtil.toJson(redisAdImage2));
+		
+		setRedisBaseMessage(jedis, adId, null, adCategory);
+		setMaterialMessage(jedis, adId, createId, materialId, meterialType, title, null,height, width, "http://d.zhidian.cn/zhidian-smart/youdao/160x120.jpg");
 		
 		//落地页的选择
-		RedisAdLandingPageMessage adLandingPageMessage = new RedisAdLandingPageMessage();
-		adLandingPageMessage.setId(1);
-		adLandingPageMessage.setLandingPageUrl("http://d.zhidian3g.cn/zdy6/static/srsf/16022958976.html");
+		AdLandpageMessage adLandingPageMessage = new AdLandpageMessage();
+		adLandingPageMessage.setId(1l);
+		adLandingPageMessage.setLandPageUrl("http://d.zhidian.cn/zdy6/static/srsf/16022958976.html");
 		
 		//落地页的选择
-		RedisAdLandingPageMessage adLandingPageMessage1 = new RedisAdLandingPageMessage();
-		adLandingPageMessage1.setId(2);
-		adLandingPageMessage1.setLandingPageUrl("http://www.baidu2.com");
+		AdLandpageMessage adLandingPageMessage1 = new AdLandpageMessage();
+		adLandingPageMessage1.setId(2l);
+		adLandingPageMessage1.setLandPageUrl("http://www.baidu2.com");
 		
 		String adLandingPageKey = RedisConstant.AD_CREATE_LANDINGPAGE + "" + adId + "_" + createId;
 		jedis.hset(adLandingPageKey, "1", JsonUtil.toJson(adLandingPageMessage));
 		jedis.hset(adLandingPageKey, "2", JsonUtil.toJson(adLandingPageMessage1));
 		
-		AdBaseMessage adBaseMessage = new AdBaseMessage();
-		adBaseMessage.setAdCategory(1);
-		adBaseMessage.setAdType(1);
+		AdBaseDocumentSourceMessage adBaseMessage = new AdBaseDocumentSourceMessage();
+		adBaseMessage.setAdCategory(adCategory);
 		adBaseMessage.setAdxType(adxType);
 		adBaseMessage.setAreas("广东省");
 		adBaseMessage.setId(adId);
 		adBaseMessage.setOsPlatform(DspConstant.OS_ANDROID + " " + DspConstant.OS_IOS);
 		adBaseMessage.setTerminalType(1);
-		adBaseMessage.setTimeZones("09-00, 10-00, 11-00, 12-00, 13-00,14-00, 15-00, 16-00, 17-00, 18-00");
+		adBaseMessage.setTimeZones("hour9, hour10, hour11, hour12, hour13, hour14, hour15, hour16, hour17, hour18");
 		
-		List<AdMaterialMessage> list = new ArrayList<AdMaterialMessage>();
-		list.add(new AdMaterialMessage(createId, materialId, redisAdCreateMaterialMessage.getMeterialType(), imageHW, title.length(), null));
-		list.add(new AdMaterialMessage(createId, materialId2, redisAdCreateMaterialMessage2.getMeterialType(), imageHW2 + " " + imageHW, title.length(), detail.length()));
+		List<AdMaterialDocumentSourceMessage> list = new ArrayList<AdMaterialDocumentSourceMessage>();
+		list.add(new AdMaterialDocumentSourceMessage(createId, materialId, meterialType, imageHW, title.length(), null));
 		adBaseMessage.setAdMaterialMessageList(list);
 	
 		SolrDMIAdServiceImpl solrDMIAdServiceImpl = new SolrDMIAdServiceImpl();
 		solrDMIAdServiceImpl.addAdToSolr(adBaseMessage);
-		
 	}
 	
+	@Test
+	public void testAddAd3() {
+		Long adId = 3l;
+		Jedis jedis = jedisPools.getJedis();
+		int adxType = 3;
+		int adCategory = 1;
+		//广告基本信息
+		long createId = 2;
+		String title = "散人私服 散人私服 散人私服" + adId;
+		String detail = "散人私服 散人私服 描述 散人私服 散人私服 描述 散人私服 散人私服 描述" + adId;
+//		广告素材类型1 纯图片 2 图文 3 图文描述(单图) 4 图文描述(多图) 5纯文字链接
+		
+		long materialId2 = 3;
+		int meterialType2 = 3;
+		int width1 = 170;
+		int height1 = 130;
+		String imageHW2 = height1 + "-" + width1;
+		setRedisBaseMessage(jedis, adId, null, adCategory);
+		setMaterialMessage(jedis, adId, createId, materialId2, meterialType2, title, detail, height1, width1, "http://d.zhidian.cn/zhidian-smart/youdao/170x130.jpg");
+		setImage(jedis, adId, height1, width1, createId, materialId2, "http://d.zhidian.cn/zhidian-smart/youdao/170x130.jpg");
+		
+		//落地页的选择
+		AdLandpageMessage adLandingPageMessage = new AdLandpageMessage();
+		adLandingPageMessage.setId(1l);
+		adLandingPageMessage.setLandPageUrl("http://d.zhidian.cn/zdy6/static/srsf/16022958976.html");
+		
+		//落地页的选择
+		AdLandpageMessage adLandingPageMessage1 = new AdLandpageMessage();
+		adLandingPageMessage1.setId(2l);
+		adLandingPageMessage1.setLandPageUrl("http://www.baidu2.com");
+		
+		String adLandingPageKey = RedisConstant.AD_CREATE_LANDINGPAGE + "" + adId + "_" + createId;
+		jedis.hset(adLandingPageKey, "1", JsonUtil.toJson(adLandingPageMessage));
+		jedis.hset(adLandingPageKey, "2", JsonUtil.toJson(adLandingPageMessage1));
+		
+		AdBaseDocumentSourceMessage adBaseMessage = new AdBaseDocumentSourceMessage();
+		adBaseMessage.setAdCategory(adCategory);
+		adBaseMessage.setAdxType(adxType);
+		adBaseMessage.setAreas("广东省");
+		adBaseMessage.setId(adId);
+		adBaseMessage.setOsPlatform(DspConstant.OS_ANDROID + " " + DspConstant.OS_IOS);
+		adBaseMessage.setTerminalType(1);
+		adBaseMessage.setTimeZones("hour9, hour10, hour11, hour12, hour13, hour14, hour15, hour16, hour17, hour18");
+		
+		List<AdMaterialDocumentSourceMessage> list = new ArrayList<AdMaterialDocumentSourceMessage>();
+		list.add(new AdMaterialDocumentSourceMessage(createId, materialId2, meterialType2, imageHW2, title.length(), detail.length()));
+		adBaseMessage.setAdMaterialMessageList(list);
+	
+		SolrDMIAdServiceImpl solrDMIAdServiceImpl = new SolrDMIAdServiceImpl();
+		solrDMIAdServiceImpl.addAdToSolr(adBaseMessage);
+	}
+	
+	@Test
+	public void testAddAd4() {
+		Long adId = 4l;
+		Jedis jedis = jedisPools.getJedis();
+		int adxType = 4;
+		int adCategory = 15;
+		//广告基本信息
+		long createId = 2;
+		long materialId = 2;
+		String title = "散人私服 散人私服 散人私服" + adId;
+//		广告素材类型1 纯图片 2 图文 3 图文描述(单图) 4 图文描述(多图) 5纯文字链接
+		int meterialType = 4;
+		
+		int height = 50;
+		int width = 60;
+		String imageHW = height + "-" + width;
+		
+		int height1 = 70;
+		int width1 = 80;
+		String imageHW1 = height1 + "-" + width1;
+		
+		
+		Map<String,Object> map = new HashMap<String, Object>();
+		map.put("adid", "4");
+		map.put("adVersion", "1.0.0");
+		map.put("adFileName", "test.apk");
+		setRedisBaseMessage(jedis, adId, null, adCategory);
+		setMaterialMessage(jedis, adId, createId, materialId, meterialType, title, null, height, width, "http://d.zhidian.cn/zhidian-smart/youdao/50x60.jpg");
+		setImage(jedis, adId, height, width, createId, materialId, "http://d.zhidian.cn/zhidian-smart/youdao/50x60.jpg");
+		setImage(jedis, adId, height1, width1, createId, materialId, "http://d.zhidian.cn/zhidian-smart/youdao/70x80.jpg");
+		
+		//落地页的选择
+		AdLandpageMessage adLandingPageMessage = new AdLandpageMessage();
+		adLandingPageMessage.setId(1l);
+		adLandingPageMessage.setLandPageUrl("http://d.zhidian.cn/zdy6/static/srsf/16022958976.html");
+		
+		//落地页的选择
+		AdLandpageMessage adLandingPageMessage1 = new AdLandpageMessage();
+		adLandingPageMessage1.setId(2l);
+		adLandingPageMessage1.setLandPageUrl("http://www.baidu2.com");
+		
+		String adLandingPageKey = RedisConstant.AD_CREATE_LANDINGPAGE + "" + adId + "_" + createId;
+		jedis.hset(adLandingPageKey, "1", JsonUtil.toJson(adLandingPageMessage));
+		jedis.hset(adLandingPageKey, "2", JsonUtil.toJson(adLandingPageMessage1));
+		
+		AdBaseDocumentSourceMessage adBaseMessage = new AdBaseDocumentSourceMessage();
+		adBaseMessage.setAdCategory(adCategory);
+		adBaseMessage.setAdxType(adxType);
+		adBaseMessage.setAreas("广东省");
+		adBaseMessage.setId(adId);
+		adBaseMessage.setOsPlatform(DspConstant.OS_ANDROID + " " + DspConstant.OS_IOS);
+		adBaseMessage.setTerminalType(1);
+		adBaseMessage.setTimeZones("hour9, hour10, hour11, hour12, hour13, hour14, hour15, hour16, hour17, hour18");
+		
+		List<AdMaterialDocumentSourceMessage> list = new ArrayList<AdMaterialDocumentSourceMessage>();
+		list.add(new AdMaterialDocumentSourceMessage(createId, materialId, meterialType, imageHW + " " + imageHW1, title.length(), null));
+		adBaseMessage.setAdMaterialMessageList(list);
+	
+		SolrDMIAdServiceImpl solrDMIAdServiceImpl = new SolrDMIAdServiceImpl();
+		solrDMIAdServiceImpl.addAdToSolr(adBaseMessage);
+	}
+	
+	
+	@Test
+	public void testAddAd5() {
+		Long adId = 5l;
+		Jedis jedis = jedisPools.getJedis();
+		int adxType = 4;
+		int adCategory = 15;
+		//广告基本信息
+		long createId = 2;
+		long materialId = 2;
+		String title = "文字链广告" + adId;
+//		广告素材类型1 纯图片 2 图文 3 图文描述(单图) 4 图文描述(多图) 5纯文字链接
+		int meterialType = 5;
+		
+		Map<String,Object> map = new HashMap<String, Object>();
+		map.put("adid", "5");
+		map.put("adVersion", "1.0.0");
+		map.put("adFileName", "test5.apk");
+		setRedisBaseMessage(jedis, adId, null, adCategory);
+		setMaterialMessage(jedis, adId, createId, materialId, meterialType, title, null, null ,null , null);
+		
+		//落地页的选择
+		AdLandpageMessage adLandingPageMessage = new AdLandpageMessage();
+		adLandingPageMessage.setId(1l);
+		adLandingPageMessage.setLandPageUrl("http://d.zhidian.cn/zdy6/static/srsf/16022958976.html");
+		
+		//落地页的选择
+		AdLandpageMessage adLandingPageMessage1 = new AdLandpageMessage();
+		adLandingPageMessage1.setId(2l);
+		adLandingPageMessage1.setLandPageUrl("http://www.baidu2.com");
+		
+		String adLandingPageKey = RedisConstant.AD_CREATE_LANDINGPAGE + "" + adId + "_" + createId;
+		jedis.hset(adLandingPageKey, "1", JsonUtil.toJson(adLandingPageMessage));
+		jedis.hset(adLandingPageKey, "2", JsonUtil.toJson(adLandingPageMessage1));
+		
+		AdBaseDocumentSourceMessage adBaseMessage = new AdBaseDocumentSourceMessage();
+		adBaseMessage.setAdCategory(adCategory);
+		adBaseMessage.setAdxType(adxType);
+		adBaseMessage.setAreas("广东省");
+		adBaseMessage.setId(adId);
+		adBaseMessage.setOsPlatform(DspConstant.OS_ANDROID + " " + DspConstant.OS_IOS);
+		adBaseMessage.setTerminalType(1);
+		adBaseMessage.setTimeZones("hour9, hour10, hour11, hour12, hour13, hour14, hour15, hour16, hour17, hour18");
+		
+		List<AdMaterialDocumentSourceMessage> list = new ArrayList<AdMaterialDocumentSourceMessage>();
+		list.add(new AdMaterialDocumentSourceMessage(createId, materialId, meterialType, null, title.length(), null));
+		adBaseMessage.setAdMaterialMessageList(list);
+	
+		SolrDMIAdServiceImpl solrDMIAdServiceImpl = new SolrDMIAdServiceImpl();
+		solrDMIAdServiceImpl.addAdToSolr(adBaseMessage);
+	}
 }

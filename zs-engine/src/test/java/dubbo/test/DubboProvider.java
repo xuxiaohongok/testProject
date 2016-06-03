@@ -7,9 +7,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 /**
  * 
  * @描述: 启动Dubbo服务用的MainClass.
- * @作者: WuShuicheng .
- * @创建时间: 2013-11-5,下午9:47:55 .
- * @版本: 1.0 .
+ * @版本: 1.0 .-
  */
 public class DubboProvider {
 	

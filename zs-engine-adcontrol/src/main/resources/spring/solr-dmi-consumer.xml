@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans  
+        http://www.springframework.org/schema/beans/spring-beans.xsd  
+        http://code.alibabatech.com/schema/dubbo  
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+	<!-- 使用zookeeper注册中心暴露服务地址 -->
+	<!-- 用户服务接口 -->
+	<dubbo:reference interface="com.zhidian.dsp.solr.service.SolrDMIAdService" id="solrDMIAdService" timeout="6000" retries="0" />
+	
+	<!-- 计费系统客服端接口 -->
+	<dubbo:reference  interface="com.zhidian.ad.billing.service.AdService" id="billAdService" retries="0" timeout="6000" check="false"/>
+	<dubbo:reference  interface="com.zhidian.ad.billing.service.BillingQueryService" id="billingQueryService" timeout="6000" retries="0" check="false"/>
+    <dubbo:reference  interface="com.zhidian.ad.billing.service.BalanceService" id="billBalanceService" timeout="6000" retries="0" check="false"/>
+	
+</beans>  

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zhidian.ad.domain.AdCreateRelationMessage">
+	 
+	<resultMap id="BaseResultMap" type="com.zhidian.ad.domain.AdCreateRelationMessage">
+		<result column="plan_id" jdbcType="BIGINT" property="adId" />
+		<result column="creative_package_id" jdbcType="BIGINT" property="createId" />
+	    <result column="material_id" jdbcType="BIGINT" property="materialId" />
+	    <result column="loading_page_id" jdbcType="BIGINT" property="landPageId" />
+	    <result column="material_type" jdbcType="TINYINT" property="materialType" />
+    </resultMap>	
+    
+  <select id="getAdCreateRelationMessageList"  resultMap="BaseResultMap" parameterType="java.lang.Long">
+    	select * FROM oss_audit where oss_audit_status=1 and channel_audit_status=1 and plan_id=#{adId,jdbcType=BIGINT}
+  </select>
+  
+</mapper>

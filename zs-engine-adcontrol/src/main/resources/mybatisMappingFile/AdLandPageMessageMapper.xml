@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zhidian.ad.domain.AdLandpageMessage">
+	 
+  <select id="getAdLandPageMessage"  resultType="com.zhidian.ad.domain.AdLandpageMessage" parameterType="java.lang.Long">
+    	select lp.id, lp.name, lp.out_link_addr AS landPageUrl  FROM loading_page lp where id=#{landPageId,jdbcType=BIGINT}
+    	 and status=1
+    	 
+  </select>
+  
+</mapper>

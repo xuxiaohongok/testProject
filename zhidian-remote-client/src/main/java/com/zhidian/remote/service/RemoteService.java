@@ -2,6 +2,7 @@ package com.zhidian.remote.service;
 
 
 
+
 /**
  * @描述: 用户Dubbo服务接口 .
  * @版本号: V1.0 .
@@ -23,5 +24,11 @@ public interface RemoteService {
 	 * @return
 	 */
 	public String getAdMessageV1(String adMessage);
+	
+	
+	public String addAdTempMessage(Integer adMessage, Condition condition);
+	
+	
+	
 
 }
