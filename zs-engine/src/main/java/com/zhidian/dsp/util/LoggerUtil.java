@@ -11,6 +11,7 @@ public class LoggerUtil {
 	
 	private static final Logger requestAdLog = LoggerFactory.getLogger("requestAdLog");
 	private static final Logger receiveAdLog = LoggerFactory.getLogger("receiveAdLog");
+	private static final Logger adRequestMessageLog = LoggerFactory.getLogger("adRequestMessageLog");
 	/**
 	 * 
 	 * @param logName 对应的日志名称
@@ -22,6 +23,10 @@ public class LoggerUtil {
 	
 	public static void addAdReceiveLogMessage(AdOperationLogMessage logMessage) {
 		receiveAdLog.info(JsonUtil.toJson(logMessage));
+	}
+	
+	public static void addAdRequestMessageLog(AdOperationLogMessage logMessage) {
+		adRequestMessageLog.info(JsonUtil.toJson(logMessage));
 	}
 	
 	

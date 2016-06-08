@@ -28,12 +28,6 @@
 			<version>${zhidian-remote-client.version}</version>
 		</dependency>
 
-		<dependency>
-			<groupId>com.zhidian</groupId>
-			<artifactId>ip-finder</artifactId>
-			<version>1.0-SNAPSHOT</version>
-		</dependency>
-
 		<!-- Common Dependency Begin -->
 		<dependency>
 			<groupId>antlr</groupId>

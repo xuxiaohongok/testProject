@@ -37,7 +37,7 @@ import com.zhidian.common.util.CommonLoggerUtil;
 import com.zhidian.common.util.DateUtil;
 import com.zhidian.common.util.JsonUtil;
 import com.zhidian.common.util.SpringContextUtil;
-import com.zhidian.dsp.control.service.DSPAdControlOSSService;
+import com.zhidian.dsp.control.service.ZSAdControlOSSService;
 import com.zhidian.dsp.control.service.impl.AdControlService;
 import com.zhidian.dsp.control.service.impl.AdHanderService;
 import com.zhidian.dsp.solr.service.SolrDMIAdService;
@@ -59,7 +59,7 @@ public class SpringServiceTestCase extends AbstractJUnit4SpringContextTests {
 	private SolrDMIAdService solrDMIAdService;
 	
 	@Resource
-	private DSPAdControlOSSService dspAdControlOSSService;
+	private ZSAdControlOSSService dspAdControlOSSService;
 	
 	@Resource
 	private BillingQueryService billingQueryService;

@@ -1,11 +1,8 @@
 package com.zhidian.dsp.sy.init;
 
-import java.io.IOException;
-
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 
-import com.zhidian.IpFinder;
 import com.zhidian.common.util.CommonLoggerUtil;
 
 /**

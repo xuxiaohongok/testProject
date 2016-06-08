@@ -12,9 +12,8 @@
     <dubbo:application name="ad-postback-consumer"/>
 
     <!-- 使用multicast广播注册中心暴露发现服务地址 -->
-
-    <dubbo:registry address="zookeeper://192.168.2.21:2181"/>
+    <dubbo:registry address="zookeeper://${zookeeper_address}"/>
     
     <!--广告扣费接口  -->
-	<dubbo:reference  interface="com.zhidian.ad.billing.service.PostBackService" id="postBackService"/>
+	<dubbo:reference  interface="com.zhidian.ad.billing.service.PostBackService" id="postBackService" check="false"/>
 </beans>

@@ -40,5 +40,6 @@ public class PropertieConstant {
 	public static final String AD_CLICK_POST_BACK_URL = propertiesUtil.getValue("ad_click_post_back_url");
 	
 	public static final String CX_PRICE_TYPE = "cx.price.type";
+	public static final String EVERYHOUR_LOG_NAMES = propertiesUtil.getValue("everyhour_log_names");
 	
 }

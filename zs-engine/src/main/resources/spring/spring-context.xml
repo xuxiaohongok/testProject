@@ -16,10 +16,36 @@
 
 	<!-- 配置要扫描的包 -->
 	<context:component-scan base-package="com.zhidian.remote.service, com.zhidian.ad.service, com.zhidian.dsp.solr.service" />
+	<!--初始化系统  -->
 	<bean class="com.zhidian.dsp.sy.init.InitDataListener" init-method="initMethod"  destroy-method="destroyMethod" />
 
 	<!-- 读入配置属性文件 -->
-	<!-- <context:property-placeholder location="classpath:jdbc.properties" /> -->
+	<context:property-placeholder location="classpath:application.properties" />
+	
+	<!-- 日志时间任务  -->
+	<bean id="everyHourLogTimeJob"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<bean class="com.zhidian.dsp.adPostback.timerjob.EveryHourLogTimeJob" />
+		</property>
+		<property name="targetMethod" value="execute" />
+		<!-- 作业不并发调度 -->
+		<property name="concurrent" value="false" />
+	</bean>
+
+	<bean id="cronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="everyHourLogTimeJob" />
+		<!-- 每小时运行一次 -->
+		<property name="cronExpression" value="${server_logger_interval_time}" />
+	</bean>
+
+	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<ref bean="cronTrigger" />
+			</list>
+		</property>
+	</bean>
 
 	<!-- proxy-target-class默认"false",更改为"ture"使用CGLib动态代理 -->
 	<aop:aspectj-autoproxy proxy-target-class="true" />	

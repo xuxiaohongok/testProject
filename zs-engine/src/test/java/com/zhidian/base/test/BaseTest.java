@@ -1,6 +1,7 @@
 package com.zhidian.base.test;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.junit.Test;
@@ -9,11 +10,31 @@ import redis.clients.jedis.Jedis;
 
 import com.google.common.base.Joiner;
 import com.zhidian.common.redisClient.JedisPools;
+import com.zhidian.common.util.JsonUtil;
 import com.zhidian.dsp.constant.DspConstant;
+import com.zhidian.dsp.vo.ad.AdMaterialMessage;
 
 public class BaseTest {
 	
 	JedisPools jedisPools = JedisPools.getInstance();
+	
+	@Test
+	public void testJson() {
+		try {
+			AdMaterialMessage redisAdCreateMaterialMessage = JsonUtil.fromJson(null, AdMaterialMessage.class);
+			System.out.println(redisAdCreateMaterialMessage);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void testMap() {
+		for(int i=0; i<100; i++) {
+			int random = (int)(Math.random() * (3));
+			System.out.println(Math.random() + "=" + random);
+		}
+	}
 	
 	@Test
 	public void testOk() {

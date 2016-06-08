@@ -32,11 +32,13 @@ import com.zhidian.ad.domain.AdPutStrategyMessage;
 import com.zhidian.ad.domain.AdTargetsMessage;
 import com.zhidian.ad.service.AdService;
 import com.zhidian.ad.vo.redis.RedisAdBaseMessage;
+import com.zhidian.common.contans.AdOpertionStatus;
 import com.zhidian.common.contans.RedisConstant;
 import com.zhidian.common.redisClient.JedisPools;
 import com.zhidian.common.util.CommonLoggerUtil;
 import com.zhidian.common.util.DateUtil;
 import com.zhidian.common.util.JsonUtil;
+import com.zhidian.dsp.control.service.impl.OperationStatus.OperationMark;
 import com.zhidian.dsp.solr.service.SolrDMIAdService;
 import com.zhidian.dsp.solr.vo.AdBaseDocumentSourceMessage;
 import com.zhidian.dsp.solr.vo.AdMaterialDocumentSourceMessage;
@@ -94,6 +96,7 @@ public class AdHanderService {
 	 */
 	public void addAllAd(boolean isCleanAllMessage) {
 		Jedis jedis  = null;
+		Map<Object, Object> allAdOperationStatus = new HashMap<Object, Object>();
 		//清楚所有的广告
 		try {
 			
@@ -129,8 +132,8 @@ public class AdHanderService {
 			List<Long> adPutAdIdList = new ArrayList<Long>();
 			for(int i=0; i<adIdListSize; i++) {
 				Long adId = adIdList.get(i);
-				boolean isScuessful = adPutHandler(adId, jedis);
-				if(isScuessful) {
+				Integer responseCode = adPutHandler(adId, jedis);
+				if(responseCode == AdOpertionStatus.AD_OPERTIONS_IS_OK) {
 					adPutAdIdList.add(adId);
 				}
 			}
@@ -153,9 +156,10 @@ public class AdHanderService {
 	/**
 	 * @param adId
 	 */
-	public boolean addAd(Long adId) {
+	public String addAd(Long adId) {
 		//先暂停广告的投放清楚索引文档、缓存
-		boolean isSucessful = true;
+		String statusString = null;
+		Integer responseStatus =  AdOpertionStatus.AD_OPERTIONS_IS_FAIL;
 		try {
 			AdControlLoggerUtil.addTimeLog("===添加广告前删除之前广告索引文档=========" + adId);
 			solrDMIAdService.delAdFromSolr(adId);
@@ -170,9 +174,9 @@ public class AdHanderService {
 			//广告设置停止投放
 			jedis.sadd(RedisConstant.AD_STOP_IDS, adId + "");
 			
-			isSucessful = adPutHandler(adId, jedis);
+			responseStatus = adPutHandler(adId, jedis);
 			//广告符合投放条件设置广告速度次数
-			if(isSucessful) {
+			if(responseStatus == AdOpertionStatus.AD_OPERTIONS_IS_OK) {
 				//设置广告投放速度
 				adControlService.setAdControlTimes(adId);
 				//更改广告的投放状态为投放中
@@ -184,40 +188,42 @@ public class AdHanderService {
 			jedis.srem(RedisConstant.AD_STOP_IDS, adId + "");
 			jedisPools.closeJedis(jedis);
 		} catch (Exception e) {
-			AdControlLoggerUtil.addExceptionLog(e,  DateUtil.getDateTime() + "添加广告索引失败");
-			isSucessful = false;
+			AdControlLoggerUtil.addExceptionLog(e,  DateUtil.getDateTime() + "添加广告失败");
+			statusString = OperationStatus.setOperationMessage(OperationMark.ERR, AdOpertionStatus.AD_OPERTION_UNKNOW);
 		}
 		
-		return isSucessful;
+		
+		return statusString;
 	}
 
 
 	/**
+	 * 
 	 * 广告投放逻辑处理
 	 * @param adId
 	 * @param jedis
 	 */
-	private boolean adPutHandler(Long adId, Jedis jedis) {
-		boolean isScuessful = false;
+	private Integer adPutHandler(Long adId, Jedis jedis) {
+		Integer adHandlerStatus = AdOpertionStatus.AD_OPERTIONS_IS_OK;
 		try {
 			AdBaseMessage adBaseMessage = adService.getAdBaseMessage(adId);
 			
 			if(adBaseMessage == null) {
 				AdControlLoggerUtil.addTimeLog(adId + "==广告条件不符合,获取不到===========");
-				return isScuessful;
+				return AdOpertionStatus.AD_CONDITION_INVALID;
 			}
 			
 			String nowDateString = DateUtil.getDateTime();
 			Date startDate = adBaseMessage.getPutStartTime();
 			if(startDate == null) {
 				AdControlLoggerUtil.addTimeLog(adBaseMessage.getId() + "==投放起始日期为空");
-				return isScuessful;
+				return AdOpertionStatus.AD_DATE_IS_NULL;
 			}
 			
 			String adStartDateString = DateUtil.get(startDate, "yyyy-MM-dd HH:mm:ss");
 			if(DateUtil.isMax_date(nowDateString, adStartDateString)){
 				AdControlLoggerUtil.addTimeLog(adBaseMessage.getId() + "==投放起始日期未到");
-				return isScuessful;
+				return AdOpertionStatus.AD_DATE_IS_PREVIOUS;
 			} 
 			
 			/**
@@ -228,7 +234,7 @@ public class AdHanderService {
 				String endDateString = DateUtil.get(endDate, "yyyy-MM-dd") + " 23:59:59";
 				if(DateUtil.isMax_date(endDateString, nowDateString)){
 					AdControlLoggerUtil.addTimeLog("adId" + adId + "=====已过期=======");
-					return isScuessful;
+					return AdOpertionStatus.AD_DATE_IS_OUT;
 				}
 			}
 			
@@ -236,7 +242,7 @@ public class AdHanderService {
 			Map<Integer, Object> putStatryMap = adPutStatry(adId);
 			if(!(Boolean)putStatryMap.get(0)) {
 				AdControlLoggerUtil.addTimeLog("adId" + adId + "====不符合投放策略条件=======");
-				return isScuessful;
+				return AdOpertionStatus.AD_STRATEGY_INVALID;
 			}
 			
 			Set<String> adKeySet = new HashSet<String>();
@@ -244,7 +250,7 @@ public class AdHanderService {
 			List<AdMaterialDocumentSourceMessage> adMaterialMessageList = getMaterialDocumentList(jedis, adId, adKeySet);
 			if(adMaterialMessageList == null) {
 				AdControlLoggerUtil.addTimeLog("adId" + adId + "=====广告暂时没有投放素材=======");
-				return isScuessful;
+				return AdOpertionStatus.AD_HAS_NO_MATERIAL;
 			}
 			
 			long dateTime = System.currentTimeMillis();
@@ -265,7 +271,7 @@ public class AdHanderService {
 				
 				if(accountFeeMessage == null) {
 					AdControlLoggerUtil.addTimeLog("=====广告没有对用的账户,添加失败=======");
-					return isScuessful;
+					return AdOpertionStatus.AD_HAS_NO_ACCOUTN;
 				}
 				
 				Long balance = accountFeeMessage.getBalance();
@@ -277,7 +283,7 @@ public class AdHanderService {
 					AdControlLoggerUtil.addTimeLog("=====成功添加广告账户=======");
 				} else {
 					AdControlLoggerUtil.addTimeLog("=====广告添加账户失败=======");
-					return isScuessful;
+					return AdOpertionStatus.AD_HAS_NO_ACCOUTN;
 				}
 				
 				//判断账户是否成功，重新添加广告
@@ -288,20 +294,19 @@ public class AdHanderService {
 			if(status == ReturnCode.BALANCE_NOT_ENOUGH_CODE) {
 				AdControlLoggerUtil.addTimeLog("=====广告账户余额不足,添加失败=======");
 				adService.updateAdStatus(adId, 7);
-				return isScuessful;
+				return AdOpertionStatus.AD_ACCOUTN_IS_ARREARAGE;
 			} else if(status == ReturnCode.TOTAL_BUDGET_NOT_ENOUGH_CODE) {
 				//广告预算用光
 				AdControlLoggerUtil.addTimeLog("=====广告总预算用光,添加失败=======");
 				adService.updateAdStatus(adId, 6);
-				return isScuessful;
+				return AdOpertionStatus.AD_TOTAL_BUDGET_IS_OVER;
 			} else if(status == ReturnCode.DAY_BUDGET_NOT_ENOUGH_CODE) {
 				//广告日预算用关
 				AdControlLoggerUtil.addTimeLog("=====广告日预算用关,添加失败=======");
 				adService.updateAdStatus(adId, 5);
-				return isScuessful;
+				return AdOpertionStatus.AD_TOTAY_BUDGET_IS_OVER;
 			}
 			
-			Integer adxType = adBaseMessage.getAdxType().intValue();
 			AdBaseDocumentSourceMessage adDocumentBaseMessage  = new AdBaseDocumentSourceMessage();
 			adDocumentBaseMessage.setAdCategory(adBaseMessage.getAdCategory());
 			adDocumentBaseMessage.setAdxType(adBaseMessage.getAdxType().intValue());
@@ -328,17 +333,19 @@ public class AdHanderService {
 			adDocumentBaseMessage.setAdMaterialMessageList(adMaterialMessageList);
 			
 			//调用广告引擎添加广告索引文档
-			isScuessful = solrDMIAdService.addAdToSolr(adDocumentBaseMessage);
+			Boolean isScuessful = solrDMIAdService.addAdToSolr(adDocumentBaseMessage);
 			//判断索引文档是否添加成功
 			if(!isScuessful) {
 				AdControlLoggerUtil.addTimeLog("adId=" + adId + "=========索引文档添加失败==");
+				adHandlerStatus = AdOpertionStatus.AD_OPERTION_UNKNOW;
 			} else {
 				AdControlLoggerUtil.addTimeLog("=adId=" + adId + "=========已投放==");
 			}
 		} catch (Exception e) {
 			AdControlLoggerUtil.addExceptionLog(e);
+			adHandlerStatus= AdOpertionStatus.SERVER_ERR;
 		}
-		return isScuessful;
+		return adHandlerStatus;
 	}
 	
 	public String delAd(Long adId, Integer adPutState) {

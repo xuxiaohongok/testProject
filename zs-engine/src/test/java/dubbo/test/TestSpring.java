@@ -4,8 +4,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import com.zhidian.IpFinder;
-
 /**
  * 
  * @描述: 启动Dubbo服务用的MainClass.

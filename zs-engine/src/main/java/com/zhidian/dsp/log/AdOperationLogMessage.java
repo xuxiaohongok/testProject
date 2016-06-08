@@ -75,6 +75,27 @@ public class AdOperationLogMessage implements Serializable{
 		super();
 		this.logcode = logcode;
 	}
+	
+	public AdOperationLogMessage(Integer logcode, String rid, String uid,
+			String hws, Integer chid, String mdid, Long mp, String abid,
+			String rat, String rt, String aa, String ip, Integer os) {
+		super();
+		this.logcode = logcode;
+		this.rid = rid;
+		this.uid = uid;
+		this.hws = hws;
+		this.chid = chid;
+		this.mdid = mdid;
+		this.mp = mp;
+		this.abid = abid;
+		this.rat = rat;
+		this.rt = rt;
+		this.aa = aa;
+		this.ip = ip;
+		this.os = os;
+	}
+
+
 
 	@Override
 	public String toString() {

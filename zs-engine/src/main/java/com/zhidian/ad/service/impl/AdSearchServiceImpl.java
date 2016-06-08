@@ -106,22 +106,24 @@ public class AdSearchServiceImpl implements AdSearchService{
 			
 			String ip = param.getIp();
 			String ipArea = IpAreaUtil.getGGCity(ip);
-			System.out.println("ipArea=" + ipArea);
-			
 			String userId = param.getUserId();
 			String requestTime = DateUtil.get("yyyy-MM-dd_HH:mm:ss");
 			
 			//String userId = param.getUserId();
 			MobileParam mobile = param.getMobile();
 			MobileAppParam mobileAppParam =  param.getMobileApp();
-			String appId = "";
+			String mdId = null;
+			String abId = null;
+			String hws = null;
+			
 			if(mobileAppParam != null) {
-				appId = mobileAppParam.getAppId();
+				mdId = mobileAppParam.getAppId();
 			}
 			
 			//获取系统类型1、IOS  2、Android  3、windows_phone
 			Integer OS = mobile.getDeviceOS();
 			Integer networkType = mobile.getNetworkType();
+			
 			
 			//获取所有的广告位
 			List<ImpParam> listImplList = param.getImps();
@@ -343,7 +345,7 @@ public class AdSearchServiceImpl implements AdSearchService{
 							nativeAdEntity.setExtendObject(adxTypeAdextendMessage);
 						}
 						
-						String abId = adxType + "_" + appId + "_" + showType + "_" + impParam.getAdPosition();
+						abId = adxType + "_" + mdId + "_" + showType + "_" + impParam.getAdPosition();
 						String commonParments = setParments(serialNumber, adxType, requestTime);
 						
 						Map<String, String> callBackURLMap = getCallBackURL(commonParments, adxType);
@@ -356,7 +358,7 @@ public class AdSearchServiceImpl implements AdSearchService{
 						bidEntity.setNativeAd(nativeAdEntity);
 						
 						Integer biddingType = redisAdBaseMessage.getBiddingType();
-						setAdReveiceLog(serialNumber, adxType, appId, ip, ipArea,
+						setAdReveiceLog(serialNumber, adxType, mdId, ip, ipArea,
 								userId, requestTime, minPrice, bidPrice,
 								imageString, adId, redisAdBaseMessage.getAccountId(), createId, materialId, landingPageId, abId,
 								biddingType, OS);
@@ -412,7 +414,7 @@ public class AdSearchServiceImpl implements AdSearchService{
 						Long createId = adMaterialMessage.getCreateId();
 						
 						//渠道媒体的广告位标识
-						String abId = adxType + "_" + appId + "_" + showType + "_" + impParam.getAdPosition();
+						abId = adxType + "_" + mdId + "_" + showType + "_" + impParam.getAdPosition();
 						Integer biddingType = redisAdBaseMessage.getBiddingType();
 						
 						//回传地址设置
@@ -444,14 +446,13 @@ public class AdSearchServiceImpl implements AdSearchService{
 //						}
 						
 						bidEntity.setImageAd(imageAdEntity);
-						setAdReveiceLog(serialNumber, adxType, appId, ip, ipArea, userId, requestTime, minPrice, bidPrice, 
+						setAdReveiceLog(serialNumber, adxType, mdId, ip, ipArea, userId, requestTime, minPrice, bidPrice, 
 								imageHW, adId, redisAdBaseMessage.getAccountId(), createId, 
 								materialId, landingPageId, abId, biddingType, OS);
 					}
 					//广告竞价对象
 					listBidEntities.add(bidEntity);
 				} else {
-					System.out.println("==没有符合类型的广告============");
 					noAd(adResponseEntity, param);
 					return JSON.toJSONString(adResponseEntity);
 				}
@@ -459,10 +460,13 @@ public class AdSearchServiceImpl implements AdSearchService{
 				//条件
 				impBidEntity.setBids(listBidEntities);
 				responseListImpBidEntities.add(impBidEntity);
+				AdOperationLogMessage adOperationLogMessage = new AdOperationLogMessage(1, serialNumber, userId, hws, adxType, mdId, minPrice, abId, requestTime.replace("_", " "), requestTime.replace("_", " "), ipArea, ip, OS);
+				LoggerUtil.addAdRequestMessageLog(adOperationLogMessage);
 			}
+			
 			adResponseEntity.setImpBids(responseListImpBidEntities);
 			long endTime = System.currentTimeMillis();
-			System.out.println("用时==" + (endTime - startTime));
+//			System.out.println("用时==" + (endTime - startTime));
 			return JSON.toJSONString(adResponseEntity);
 		} catch (Exception e) {
 			noAd(adResponseEntity, param);
@@ -519,7 +523,6 @@ public class AdSearchServiceImpl implements AdSearchService{
 		adOperationLogMessage.setIp(ip);
 		adOperationLogMessage.setOs(OS);
 		adOperationLogMessage.setAcid(acId);
-		System.out.println(adOperationLogMessage);
 		LoggerUtil.addAdReceiveLogMessage(adOperationLogMessage);
 		
 		Jedis jedis = jedisPools.getJedis();

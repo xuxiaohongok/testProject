@@ -126,7 +126,6 @@ public class SolrSearchAdServiceImpl implements SolrSearchAdService {
 		String oneImageHW = null;
 		if(meterialType != 4 && meterialType != 5 ) { 
 			oneImageHW = imagesHWS;
-			System.out.println("oneImageHW=" + oneImageHW);
 		}
 		
 		//一张图片的大小
@@ -204,7 +203,6 @@ public class SolrSearchAdServiceImpl implements SolrSearchAdService {
 		
 		//获取到广告进行筛选
 		Long adId = mapAdIdList.get(chooseSolrDocument(mapAdIdList.size() - 1));
-		System.out.println("mapAdIdList=" + mapAdIdList + "随机adId=" + adId);
 		
 		SolrDocumentList solrDocumentList =  adAdMaterilmap.get(adId);
 		SolrDocument solrDocument = solrDocumentList.get(chooseSolrDocument(solrDocumentList.size() - 1));
@@ -227,11 +225,25 @@ public class SolrSearchAdServiceImpl implements SolrSearchAdService {
 		//缓存数据转换成对象 
 		RedisAdBaseMessage adBaseMessage = JsonUtil.fromJson(responseaAdBase.get(), RedisAdBaseMessage.class);
 		AdMaterialMessage redisAdCreateMaterialMessage = JsonUtil.fromJson(responseaCreatePackageMessage.get(), AdMaterialMessage.class);
+		if(redisAdCreateMaterialMessage == null) {
+			jedisPools.closeJedis(jedis);
+			CommonLoggerUtil.addErrQuest("=============获取不到素材信息=========");
+			return null;
+		}
+		
+		
 		Map<String, String> map = responseAdLandingPage.get();
+		
+		if(map.size() == 0) {
+			jedisPools.closeJedis(jedis);
+			CommonLoggerUtil.addErrQuest("==============获取不到落地页信息======");
+			return null;
+		}
+		
 //		广告素材类型1 纯图片 2 图文 3 图文描述(单图) 4 图文描述(多图) 5纯文字链接
 		SearchAd searchAd = new SearchAd();
 		String[] landpingKeyArray = map.keySet().toArray(new String[0]);
-		int mapIndex = chooseSolrDocument(map.size() - 1);
+		int mapIndex = chooseSolrDocument(map.size());
 		String jsonLandingPageString = map.get(landpingKeyArray[mapIndex]);
 		AdLandpageMessage adLandingPageMessage = JsonUtil.fromJson(jsonLandingPageString, AdLandpageMessage.class);
 		Map<String, AdImageMessage> redisAdImageMap = null;
